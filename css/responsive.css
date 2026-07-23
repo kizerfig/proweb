@@ -1,0 +1,215 @@
+/* ==========================================
+   FIFA WORLD CUP 2026 - RESPONSIVE STYLES (responsive.css)
+   ========================================== */
+
+/* ------------------------------------------
+   1. MEDIA QUERY: MOBILE (< 767px)
+   ------------------------------------------ */
+@media screen and (max-width: 767px) {
+  /* Layout Padding */
+  .container {
+    padding: 0 1rem;
+  }
+
+  .section-padding {
+    padding: 2.25rem 0;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+  }
+
+  /* Header & Navbar Adaptation */
+  .menu-toggle {
+    display: flex;
+  }
+
+  .main-nav {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: var(--bg-primary);
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 1.5rem;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+    z-index: 999;
+    overflow-y: auto;
+  }
+
+  .main-nav.active {
+    transform: translateX(0);
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.85rem 1.25rem;
+    font-size: 1rem;
+    min-height: 48px; /* Touch target >= 44px */
+    border-radius: var(--radius-md);
+  }
+
+  .header-bottom {
+    display: none; /* Collapsed in mobile for clean navigation */
+  }
+
+  /* Hero Slider */
+  .hero-slider-container {
+    height: 380px;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .slider-arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .slider-arrow.prev { left: 0.5rem; }
+  .slider-arrow.next { right: 0.5rem; }
+
+  /* News Section */
+  .news-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Matches Section */
+  .match-card {
+    width: 210px;
+    padding: 1rem;
+  }
+
+  /* Events Grid */
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Split Preview: Teams & Cities */
+  .preview-split-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .teams-mini-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .cities-mini-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Explore Section */
+  .explore-grid-featured {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .explore-grid-sub {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* ODS Section */
+  .ods-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  /* Footer */
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* ------------------------------------------
+   2. MEDIA QUERY: TABLET (768px - 1023px)
+   ------------------------------------------ */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .hero-slider-container {
+    height: 420px;
+  }
+
+  .hero-title {
+    font-size: 2.4rem;
+  }
+
+  .news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .preview-split-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .teams-mini-grid, .cities-mini-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .explore-grid-featured {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .explore-grid-featured .explore-card:last-child {
+    grid-column: span 2;
+  }
+
+  .explore-grid-sub {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ods-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ------------------------------------------
+   3. MEDIA QUERY: DESKTOP (>= 1024px)
+   ------------------------------------------ */
+@media screen and (min-width: 1024px) {
+  .main-nav {
+    display: flex !important;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+}

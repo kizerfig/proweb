@@ -1,0 +1,986 @@
+/* ==========================================
+   FIFA WORLD CUP 2026 - COMPONENTS (components.css)
+   ========================================== */
+
+/* ------------------------------------------
+   1. HEADER & NAVBAR
+   ------------------------------------------ */
+.site-header {
+  background-color: #090D12;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #161B22, #21262D);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-info h1 {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.brand-info p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Main Nav Links */
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+  background-color: var(--accent-mint);
+  color: #000;
+  font-weight: 700;
+  box-shadow: var(--shadow-glow-mint);
+}
+
+.nav-link.active:hover {
+  background-color: #33eb91;
+}
+
+/* Secondary Sub-Navbar */
+.header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding: 0.6rem 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.header-bottom::-webkit-scrollbar {
+  display: none;
+}
+
+.sub-link {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+}
+
+.sub-link:hover {
+  color: var(--accent-mint);
+}
+
+/* Hamburger Toggle Button */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+  border-radius: 2px;
+  transition: all var(--transition-fast);
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ------------------------------------------
+   2. HERO SLIDER
+   ------------------------------------------ */
+.hero-section {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+.hero-slider-container {
+  position: relative;
+  width: 100%;
+  height: 460px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(13, 17, 23, 0.4) 0%, rgba(13, 17, 23, 0.85) 100%),
+              linear-gradient(to top, rgba(13, 17, 23, 0.95) 0%, transparent 60%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+  padding: 0 1.5rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  background: linear-gradient(180deg, #FFFFFF 30%, #E6EDF3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-weight: 400;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  min-height: 48px;
+  min-width: 140px;
+}
+
+.btn-secondary {
+  background: rgba(33, 38, 45, 0.8);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  backdrop-filter: blur(8px);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card);
+  border-color: var(--text-secondary);
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: #FFFFFF;
+  color: #0D1117;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+}
+
+.btn-primary:hover {
+  background: #E6EDF3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
+}
+
+/* Slider Controls */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(13, 17, 23, 0.65);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  z-index: 10;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(4px);
+}
+
+.slider-arrow:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+  color: #FFF;
+}
+
+.slider-arrow.prev { left: 1.25rem; }
+.slider-arrow.next { right: 1.25rem; }
+
+.slider-dots {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dot.active {
+  width: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+}
+
+/* ------------------------------------------
+   3. ÚLTIMAS NOTICIAS
+   ------------------------------------------ */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.news-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.news-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.news-image-wrap {
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-surface);
+}
+
+.news-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.news-card:hover .news-image-wrap img {
+  transform: scale(1.06);
+}
+
+.news-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.news-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.badge-tag {
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--accent-mint);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.news-time {
+  color: var(--text-secondary);
+}
+
+.news-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ------------------------------------------
+   4. PRÓXIMOS PARTIDOS
+   ------------------------------------------ */
+.matches-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  scrollbar-width: thin;
+}
+
+.matches-grid {
+  display: flex;
+  gap: 1.25rem;
+  min-width: max-content;
+}
+
+.match-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.match-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-blue);
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.match-venue {
+  color: var(--text-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.status-badge.live {
+  background: rgba(255, 51, 102, 0.15);
+  color: var(--accent-red);
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.status-badge.live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent-red);
+  animation: pulse-red 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+.status-badge.scheduled {
+  background: rgba(31, 111, 235, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(31, 111, 235, 0.3);
+}
+
+.status-badge.finished {
+  background: rgba(139, 148, 158, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(139, 148, 158, 0.3);
+}
+
+.match-teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.flag-box {
+  width: 28px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.flag-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-code {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.team-name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.team-score {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.match-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------------------
+   5. PRÓXIMOS EVENTOS Y TORNEOS
+   ------------------------------------------ */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.event-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.event-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-mint);
+}
+
+.event-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.org-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.event-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0.2rem 0;
+}
+
+.event-details {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* ------------------------------------------
+   6. EQUIPOS & CIUDADES (PREVIEW SPLIT)
+   ------------------------------------------ */
+.preview-split-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.teams-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.team-tile {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.team-tile:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-blue);
+  transform: translateY(-3px);
+}
+
+.team-tile-code {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.team-tile-name {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.cities-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.city-tile {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  transition: all var(--transition-fast);
+}
+
+.city-tile:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-mint);
+  transform: translateY(-3px);
+}
+
+.city-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 230, 118, 0.1);
+  color: var(--accent-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.city-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ------------------------------------------
+   7. EXPLORA EL MUNDIAL (IDENTIDAD)
+   ------------------------------------------ */
+.explore-grid-featured {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.explore-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  border: 1px solid var(--border-color);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.explore-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.explore-img-wrap {
+  height: 190px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  position: relative;
+}
+
+.explore-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.explore-card:hover .explore-img-wrap img {
+  transform: scale(1.05);
+}
+
+.explore-banner-footer {
+  padding: 1.25rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Specific Card Theme Gradients matching Prototype */
+.explore-card.mint-card .explore-banner-footer {
+  background: linear-gradient(135deg, #00A859 0%, #00E676 100%);
+  color: #000;
+}
+
+.explore-card.blue-card .explore-banner-footer {
+  background: linear-gradient(135deg, #0052CC 0%, #1F6FEB 100%);
+  color: #FFF;
+}
+
+.explore-card.red-card .explore-banner-footer {
+  background: linear-gradient(135deg, #E60039 0%, #FF3366 100%);
+  color: #FFF;
+}
+
+.explore-banner-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.explore-banner-desc {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  line-height: 1.3;
+  margin-bottom: 0.85rem;
+}
+
+.explore-btn-link {
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Secondary Explore Grid */
+.explore-grid-sub {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.explore-sub-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.explore-sub-card:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-blue);
+  transform: translateY(-2px);
+}
+
+.explore-sub-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(31, 111, 235, 0.15);
+  color: var(--accent-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.explore-sub-content h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.explore-sub-content p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ------------------------------------------
+   8. SECCIÓN ODS (SOSTENIBILIDAD)
+   ------------------------------------------ */
+.ods-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.ods-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.ods-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-mint);
+}
+
+.ods-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-hover);
+}
+
+.ods-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ods-number {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent-mint);
+}
+
+.ods-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.ods-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.ods-stat {
+  margin-top: auto;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ------------------------------------------
+   9. FOOTER
+   ------------------------------------------ */
+.site-footer {
+  background-color: #06090E;
+  border-top: 1px solid var(--border-color);
+  margin-top: 4rem;
+  padding-top: 3.5rem;
+  padding-bottom: 2rem;
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-brand h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-brand p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+.footer-col h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.footer-links a {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+}
+
+.footer-links a:hover {
+  color: var(--accent-mint);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(48, 54, 61, 0.6);
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
