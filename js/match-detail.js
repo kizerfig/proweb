@@ -73,12 +73,15 @@ function renderHero(match) {
  const team1 = match.team1 || { code: 'T1', name: 'Equipo 1', score: '-' };
  const team2 = match.team2 || { code: 'T2', name: 'Equipo 2', score: '-' };
 
- const isScheduled = match.status === 'Programado';
+ const isScheduled = match.status === 'Programado' || match.status === 'Scheduled';
+
+ // Format date nicely
+ let dateStr = match.datetime || match.date || 'Próximamente';
 
  container.innerHTML = `
  <div class="hero-header-info">
- <span class="hero-group-round">${match.group || 'Fase de Grupos'} • ${match.round || 'Fase de Grupos'}</span>
- <span class="hero-datetime"> ${match.datetime || 'Próximamente'}</span>
+ <span class="hero-group-round">${match.group ? 'Grupo ' + match.group + ' •' : ''} ${match.round || 'Fase de Grupos'}</span>
+ <span class="hero-datetime"> ${dateStr}</span>
  <span class="hero-location"> ${match.stadium || 'Estadio FIFA'}, ${match.city || 'Ciudad Anfitriona'}</span>
  ${match.referee ? `<span class="hero-referee">️ Árbitro: ${match.referee}</span>` : ''}
  </div>
@@ -88,7 +91,7 @@ function renderHero(match) {
  <div class="hero-team home">
  <div class="hero-code">${team1.code}</div>
  <div class="hero-team-name">${team1.name}</div>
- <div class="hero-score">${team1.score}</div>
+ <div class="hero-score">${team1.score ?? '-'}</div>
  </div>
 
  <!-- Divider / Separator -->
@@ -100,7 +103,7 @@ function renderHero(match) {
  <div class="hero-team away">
  <div class="hero-code">${team2.code}</div>
  <div class="hero-team-name">${team2.name}</div>
- <div class="hero-score">${team2.score}</div>
+ <div class="hero-score">${team2.score ?? '-'}</div>
  </div>
  </div>
  `;
@@ -108,6 +111,8 @@ function renderHero(match) {
 
 /**
  * Render Timeline Tab (#tab-cronologia)
+ * The API returns chronology sorted descending (most recent first).
+ * We reverse to show ascending order (earliest events first).
  */
 function renderTimeline(match) {
  const container = document.getElementById('timeline-list');
@@ -125,16 +130,22 @@ function renderTimeline(match) {
  return;
  }
 
- container.innerHTML = timeline.map(event => {
+ // Reverse to show chronological order (earliest first)
+ const ordered = [...timeline].reverse();
+
+ container.innerHTML = ordered.map(event => {
  let badgeClass = 'badge-mint';
- let icon = '';
+ let icon = '⚽';
 
  if (event.type === 'card-yellow') {
  badgeClass = 'badge-yellow';
- icon = '';
+ icon = '🟨';
  } else if (event.type === 'card-red') {
  badgeClass = 'badge-red';
- icon = '';
+ icon = '🟥';
+ } else if (event.type === 'substitution') {
+ badgeClass = 'badge-blue';
+ icon = '🔄';
  }
 
  return `
@@ -153,6 +164,8 @@ function renderTimeline(match) {
 
 /**
  * Render Statistics Tab (#tab-estadisticas)
+ * Uses the new allStats array from the API for a full table,
+ * or falls back to the basic stats object fields.
  */
 function renderStats(match) {
  const container = document.getElementById('stats-list');
@@ -163,7 +176,7 @@ function renderStats(match) {
  if (!stats) {
  container.innerHTML = `
  <div class="empty-tab-box">
- <span></span>
+ <span>📊</span>
  <p>Estadísticas no disponibles para este encuentro.</p>
  </div>
  `;
@@ -173,6 +186,46 @@ function renderStats(match) {
  const team1Name = match.team1?.name || 'Local';
  const team2Name = match.team2?.name || 'Visitante';
 
+ // If we have the full allStats array from the API, show everything
+ if (stats.allStats && stats.allStats.length > 0) {
+ const rows = stats.allStats.map(s => ({
+ label: translateStatName(s.name),
+ val1:  s.home || String(s.home_value || 0),
+ val2:  s.away || String(s.away_value || 0),
+ num1:  parseFloat(s.home_value) || 0,
+ num2:  parseFloat(s.away_value) || 0
+ }));
+
+ container.innerHTML = `
+ <div class="stats-header-teams">
+ <span class="team-lbl home">${match.team1?.code} ${team1Name}</span>
+ <span class="team-lbl away">${team2Name} ${match.team2?.code}</span>
+ </div>
+ <div class="stats-rows">
+ ${rows.map(row => {
+ const total = (row.num1 + row.num2) || 1;
+ const pct1 = Math.round((row.num1 / total) * 100);
+ const pct2 = 100 - pct1;
+ return `
+ <div class="stat-row">
+ <div class="stat-meta">
+ <span class="stat-val home">${row.val1}</span>
+ <span class="stat-label">${row.label}</span>
+ <span class="stat-val away">${row.val2}</span>
+ </div>
+ <div class="stat-bar-wrapper">
+ <div class="stat-bar-left" style="width: ${pct1}%;"></div>
+ <div class="stat-bar-right" style="width: ${pct2}%;"></div>
+ </div>
+ </div>
+ `;
+ }).join('')}
+ </div>
+ `;
+ return;
+ }
+
+ // Fallback to basic stats fields
  const rows = [
  { label: 'Posesión', val1: `${stats.possession[0]}%`, val2: `${stats.possession[1]}%`, num1: stats.possession[0], num2: stats.possession[1] },
  { label: 'Tiros a puerta', val1: stats.shotsOnTarget[0], val2: stats.shotsOnTarget[1], num1: stats.shotsOnTarget[0], num2: stats.shotsOnTarget[1] },
@@ -211,6 +264,33 @@ function renderStats(match) {
  `;
 }
 
+/**
+ * Translate English stat name to Spanish
+ */
+function translateStatName(name) {
+ const map = {
+ 'Ball possession': 'Posesión',
+ 'Distance covered': 'Distancia recorrida',
+ 'Expected goals': 'Goles esperados (xG)',
+ 'Big chances': 'Ocasiones claras',
+ 'Total shots': 'Tiros totales',
+ 'Shots on target': 'Tiros a puerta',
+ 'Goalkeeper saves': 'Paradas del portero',
+ 'Number of sprints': 'Número de sprints',
+ 'Corner kicks': 'Corners',
+ 'Fouls': 'Faltas',
+ 'Passes': 'Pases',
+ 'Accurate passes': 'Pases precisos',
+ 'Yellow cards': 'Tarjetas amarillas',
+ 'Red cards': 'Tarjetas rojas',
+ 'Offsides': 'Fueras de juego',
+ 'Free kicks': 'Tiros libres',
+ 'Throw-ins': 'Saques de banda',
+ 'Goal kicks': 'Saques de puerta'
+ };
+ return map[name] || name;
+}
+
 function renderCardBadges(count, type) {
  if (!count || count === 0) return `<span>0</span>`;
  const badgeHTML = `<span class="mini-card-icon ${type}"></span>`.repeat(count);
@@ -226,9 +306,8 @@ function renderLineups(match) {
 
  const lineups = match.lineups;
 
- // Validation rule: If starting 11 are not available for either team, display explicit fallback message
- const hasTeam1 = lineups?.team1?.starting && lineups.team1.starting.length >= 11;
- const hasTeam2 = lineups?.team2?.starting && lineups.team2.starting.length >= 11;
+ const hasTeam1 = lineups?.team1?.starting && lineups.team1.starting.length >= 1;
+ const hasTeam2 = lineups?.team2?.starting && lineups.team2.starting.length >= 1;
 
  if (!hasTeam1 || !hasTeam2) {
  container.innerHTML = `
@@ -249,44 +328,32 @@ function renderLineups(match) {
  container.innerHTML = `
  <div class="lineups-wrapper">
  
- <!-- Interactive Pitch -->
- <div class="soccer-pitch">
- <div class="pitch-half top-half">
- <div class="pitch-team-title">${match.team1?.name} (${team1.formation})</div>
- ${team1.starting.map(p => `
- <div class="pitch-player team-home" style="top: ${p.row * 22}%; left: ${p.col}%;">
- <div class="player-circle">${p.number}</div>
- <span class="player-name">${p.name}</span>
- </div>
- `).join('')}
- </div>
-
- <div class="pitch-center-line"></div>
- <div class="pitch-center-circle"></div>
-
- <div class="pitch-half bottom-half">
- <div class="pitch-team-title bottom">${match.team2?.name} (${team2.formation})</div>
- ${team2.starting.map(p => `
- <div class="pitch-player team-away" style="bottom: ${(5 - p.row) * 22}%; left: ${p.col}%;">
- <div class="player-circle">${p.number}</div>
- <span class="player-name">${p.name}</span>
- </div>
- `).join('')}
- </div>
- </div>
-
- <!-- Lineup Extras (Substitutes & Coaches) -->
- <div class="lineup-extras-grid">
+ <!-- Lineup Lists side by side -->
+ <div class="lineup-extras-grid" style="margin-bottom: 1.5rem;">
  <div class="extras-card">
- <h4> Suplentes - ${match.team1?.name}</h4>
+ <h4>🏠 ${match.team1?.name} ${team1.formation ? '('+team1.formation+')' : ''}</h4>
+ <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;">DT: ${team1.coach || 'N/D'}</p>
+ <p style="font-size:0.78rem;font-weight:700;color:var(--accent-mint);margin-bottom:0.4rem;">TITULARES</p>
+ <ul>
+ ${team1.starting.map(p => `<li><strong>#${p.number}</strong> ${p.name} <span style="color:var(--text-secondary);font-size:0.75rem;">(${p.pos})</span></li>`).join('')}
+ </ul>
+ ${team1.substitutes && team1.substitutes.length > 0 ? `
+ <p style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);margin:0.6rem 0 0.4rem;">SUPLENTES</p>
  <ul>${team1.substitutes.map(s => `<li>• ${s}</li>`).join('')}</ul>
- <p class="coach-info"> <strong>Director Técnico:</strong> ${team1.coach}</p>
+ ` : ''}
  </div>
 
  <div class="extras-card">
- <h4> Suplentes - ${match.team2?.name}</h4>
+ <h4>✈️ ${match.team2?.name} ${team2.formation ? '('+team2.formation+')' : ''}</h4>
+ <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;">DT: ${team2.coach || 'N/D'}</p>
+ <p style="font-size:0.78rem;font-weight:700;color:var(--accent-mint);margin-bottom:0.4rem;">TITULARES</p>
+ <ul>
+ ${team2.starting.map(p => `<li><strong>#${p.number}</strong> ${p.name} <span style="color:var(--text-secondary);font-size:0.75rem;">(${p.pos})</span></li>`).join('')}
+ </ul>
+ ${team2.substitutes && team2.substitutes.length > 0 ? `
+ <p style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);margin:0.6rem 0 0.4rem;">SUPLENTES</p>
  <ul>${team2.substitutes.map(s => `<li>• ${s}</li>`).join('')}</ul>
- <p class="coach-info"> <strong>Director Técnico:</strong> ${team2.coach}</p>
+ ` : ''}
  </div>
  </div>
 
@@ -296,6 +363,7 @@ function renderLineups(match) {
 
 /**
  * Render Highlights Tab (#tab-highlights)
+ * The API provides YouTube links, so we embed them via iframe or show link cards.
  */
 function renderHighlights(match) {
  const container = document.getElementById('highlights-view');
@@ -306,7 +374,7 @@ function renderHighlights(match) {
  if (!highlights || !highlights.main) {
  container.innerHTML = `
  <div class="empty-tab-box">
- <span></span>
+ <span>🎬</span>
  <p>Los resúmenes en video estarán disponibles al finalizar el encuentro.</p>
  </div>
  `;
@@ -316,34 +384,50 @@ function renderHighlights(match) {
  const main = highlights.main;
  const gallery = highlights.gallery || [];
 
+ // Extract YouTube ID if possible
+ function getYouTubeId(url) {
+ if (!url) return null;
+ const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+ return match ? match[1] : null;
+ }
+
+ const mainYtId = getYouTubeId(main.url);
+ const mainEmbed = mainYtId
+ ? `<iframe width="100%" height="380" src="https://www.youtube.com/embed/${mainYtId}"
+ frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen
+ style="border-radius: var(--radius-md); border: 1px solid var(--border-color);"></iframe>`
+ : main.url
+ ? `<a href="${main.url}" target="_blank" rel="noopener"
+ style="display:block;padding:1.5rem;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);text-decoration:none;color:var(--accent-mint);">
+ ▶ Ver video: ${main.title}</a>`
+ : '';
+
  container.innerHTML = `
  <div class="highlights-wrapper">
  
- <!-- Main Player -->
+ <!-- Main Video / Link -->
  <div class="main-video-box">
- <div class="video-container">
- <video controls poster="${main.poster}">
- <source src="${main.videoUrl}" type="video/mp4">
- Tu navegador no soporta el reproductor de video.
- </video>
- </div>
- <h3 class="video-main-title">${main.title}</h3>
+ ${main.poster && !mainYtId ? `<img src="${main.poster}" alt="${main.title}" style="width:100%;border-radius:var(--radius-md);margin-bottom:0.75rem;object-fit:cover;max-height:220px;">` : ''}
+ ${mainEmbed}
+ <h3 class="video-main-title" style="margin-top:0.75rem;">${main.title}${main.subtitle ? ' — '+main.subtitle : ''}</h3>
  </div>
 
- <!-- Gallery / Carousel of clip thumbnails -->
+ <!-- Gallery clips -->
  ${gallery.length > 0 ? `
- <h4 class="gallery-section-title">Momento a Momento</h4>
+ <h4 class="gallery-section-title">📽️ Más Clips del Partido</h4>
  <div class="highlights-gallery">
- ${gallery.map(clip => `
- <div class="clip-card">
+ ${gallery.map(clip => {
+ const ytId = getYouTubeId(clip.url);
+ return `
+ <a class="clip-card" href="${clip.url}" target="_blank" rel="noopener" style="text-decoration:none;">
  <div class="clip-thumb-wrap">
- <img src="${clip.image}" alt="${clip.title}" loading="lazy" />
- <span class="clip-duration">⏱️ ${clip.duration}</span>
+ ${clip.image ? `<img src="${clip.image}" alt="${clip.title}" loading="lazy" />` : `<div style="width:100%;height:80px;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:2rem;">🎬</div>`}
  <div class="play-overlay">▶</div>
  </div>
  <p class="clip-title">${clip.title}</p>
- </div>
- `).join('')}
+ </a>
+ `;
+ }).join('')}
  </div>
  ` : ''}
 

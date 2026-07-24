@@ -974,25 +974,141 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
 }
 
 /**
- * Normaliza detalle de partido (/v1/matches/{id}) reutilizando el listado
+ * Normaliza detalle de partido (/v1/matches/{id})
+ * Mapea los campos reales de la API: chronology, statistics, line_ups, highlight
  */
 function normalizeMatchDetail(raw, requestedId) {
   const item = raw?.data || raw?.match || raw;
   const base = normalizeMatch(item);
   if (!base) return null;
 
+  // --- Cronología (events) ---
+  const chronology = Array.isArray(item.chronology) ? item.chronology : [];
+  const timeline = chronology
+    .sort((a, b) => (b.time || 0) - (a.time || 0)) // más reciente primero
+    .map(ev => {
+      const playerName = ev.player?.name || ev.player_in?.name || '';
+      const playerOut  = ev.player_out?.name || '';
+      let type  = 'goal';
+      let title = '⚽ Gol';
+      let desc  = playerName || 'Desconocido';
+
+      if (ev.type === 'goal') {
+        type  = 'goal';
+        title = `⚽ ¡Gol!`;
+        desc  = playerName || 'Desconocido';
+      } else if (ev.type === 'card') {
+        type  = ev.card === 'red' ? 'card-red' : 'card-yellow';
+        title = ev.card === 'red' ? '🟥 Tarjeta Roja' : '🟨 Tarjeta Amarilla';
+        desc  = playerName || 'Desconocido';
+      } else if (ev.type === 'substitution') {
+        type  = 'substitution';
+        title = '🔄 Sustitución';
+        desc  = `Entra: ${ev.player_in?.name || '?'} — Sale: ${playerOut || '?'}`;
+      }
+
+      return {
+        minute: `${ev.time || '?'}'`,
+        type,
+        title,
+        desc
+      };
+    });
+
+  // --- Estadísticas ---
+  let stats = null;
+  const rawStats = Array.isArray(item.statistics) ? item.statistics : [];
+  if (rawStats.length > 0) {
+    // La API devuelve grupos de estadísticas; las aplanamos en el objeto que espera renderStats
+    const allStats = [];
+    rawStats.forEach(group => {
+      if (Array.isArray(group.statistics)) allStats.push(...group.statistics);
+    });
+    const find = name => allStats.find(s => s.name?.toLowerCase().includes(name.toLowerCase())) || { home_value: 0, away_value: 0, home: '0', away: '0' };
+
+    const pos   = find('possession');
+    const shots = find('total shots');
+    const onT   = find('shots on target') || find('goalkeeper saves');
+    const cor   = find('corner');
+    const fouls = find('foul');
+    const yc    = find('yellow card') || { home_value: 0, away_value: 0 };
+    const rc    = find('red card') || { home_value: 0, away_value: 0 };
+
+    stats = {
+      possession:    [pos.home_value || 0,   pos.away_value || 0],
+      shotsOnTarget: [onT.home_value || 0,   onT.away_value || 0],
+      totalShots:    [shots.home_value || 0,  shots.away_value || 0],
+      corners:       [cor.home_value || 0,   cor.away_value || 0],
+      fouls:         [fouls.home_value || 0, fouls.away_value || 0],
+      yellowCards:   [yc.home_value || 0,    yc.away_value || 0],
+      redCards:      [rc.home_value || 0,    rc.away_value || 0],
+      allStats       // all stats for extended table
+    };
+  }
+
+  // --- Alineaciones ---
+  let lineups = null;
+  if (item.line_ups?.home && item.line_ups?.away) {
+    const mapTeam = (side) => {
+      const t = item.line_ups[side];
+      if (!t) return null;
+      const starters = Object.values(t.starting_players || {});
+      return {
+        formation:   t.formation || '',
+        coach:       t.coach || '',
+        starting:    starters.map((p, i) => ({
+          number: p.number,
+          name:   p.name,
+          pos:    p.position,
+          photo:  p.photo_url || '',
+          row:    Math.floor(i / 3) + 1,
+          col:    [20, 50, 80][i % 3]
+        })),
+        substitutes: (t.substitutes || []).map(p => `${p.name} (#${p.number})`)
+      };
+    };
+    lineups = { team1: mapTeam('home'), team2: mapTeam('away') };
+  }
+
+  // --- Highlights ---
+  let highlights = null;
+  const rawHighlights = Array.isArray(item.highlight) ? item.highlight : [];
+  if (rawHighlights.length > 0) {
+    const main = rawHighlights.find(h => h.url?.includes('sofascore') || h.url?.includes('highlights')) || rawHighlights[0];
+    highlights = {
+      main: {
+        title:    main?.title || 'Resumen del partido',
+        subtitle: main?.subtitle || '',
+        url:      main?.url || '',
+        poster:   main?.thumbnail_url || ''
+      },
+      gallery: rawHighlights.slice(1).map(h => ({
+        title:    `${h.title}${h.subtitle ? ' — ' + h.subtitle : ''}`,
+        url:      h.url || '',
+        image:    h.thumbnail_url || '',
+        duration: ''
+      }))
+    };
+  }
+
+  // --- Ciudad y Estadio ---
+  const city = item.city || {};
+  const stadium = city.stadium?.name || '';
+  const cityName = city.name || base.city || '';
+
   return {
-    ...MATCH_DETAILS_MOCK['m1'],
     ...base,
-    id: base.id || requestedId,
-    status: base.status,
+    id:          base.id || requestedId,
+    city:        cityName,
+    stadium:     stadium,
+    referee:     item.referee || base.referee || '',
+    status:      base.status,
     statusLabel: base.statusLabel,
     statusClass: base.statusClass,
-    timeline: Array.isArray(item.timeline) ? item.timeline : (MATCH_DETAILS_MOCK['m1']?.timeline || []),
-    stats: item.stats || MATCH_DETAILS_MOCK['m1']?.stats || null,
-    lineups: item.lineups || MATCH_DETAILS_MOCK['m1']?.lineups || null,
-    media: item.media || MATCH_DETAILS_MOCK['m1']?.media || null,
-    gallery: item.gallery || MATCH_DETAILS_MOCK['m1']?.gallery || []
+    timeline,
+    stats,
+    lineups,
+    highlights
   };
 }
 
@@ -1228,13 +1344,27 @@ function mapMatchStatus(rawStatus) {
 function normalizeMatch(match) {
   if (!match) return null;
 
+  // El endpoint de lista usa home_id/away_id; el endpoint de detalle usa home_team.id/away_team.id
   const isApiFormat = match.home_id !== undefined || match.home_score !== undefined || match.city_id !== undefined;
+  const isDetailFormat = match.home_team !== undefined || match.away_team !== undefined;
 
-  const homeCode = String(isApiFormat ? (match.home_id || 'MEX') : (match.team1?.code || match.homeCode || 'MEX')).toUpperCase();
-  const awayCode = String(isApiFormat ? (match.away_id || 'ARG') : (match.team2?.code || match.awayCode || 'ARG')).toUpperCase();
+  let homeCode, awayCode;
+  if (isDetailFormat) {
+    // Endpoint /v1/matches/{id}: usa home_team.id y away_team.id
+    homeCode = String(match.home_team?.id || match.home_id || match.team1?.code || 'TBD').toUpperCase();
+    awayCode = String(match.away_team?.id || match.away_id || match.team2?.code || 'TBD').toUpperCase();
+  } else if (isApiFormat) {
+    // Endpoint /v1/matches: usa home_id y away_id directamente
+    homeCode = String(match.home_id || match.team1?.code || 'TBD').toUpperCase();
+    awayCode = String(match.away_id || match.team2?.code || 'TBD').toUpperCase();
+  } else {
+    // Formato mock / legacy
+    homeCode = String(match.team1?.code || match.homeCode || 'TBD').toUpperCase();
+    awayCode = String(match.team2?.code || match.awayCode || 'TBD').toUpperCase();
+  }
 
-  const homeName = match.team1?.name || match.home_name || COUNTRY_NAMES[homeCode] || homeCode;
-  const awayName = match.team2?.name || match.away_name || COUNTRY_NAMES[awayCode] || awayCode;
+  const homeName = match.home_team?.name || match.team1?.name || match.home_name || COUNTRY_NAMES[homeCode] || homeCode;
+  const awayName = match.away_team?.name || match.team2?.name || match.away_name || COUNTRY_NAMES[awayCode] || awayCode;
 
   const { status, statusLabel, statusClass } = mapMatchStatus(match.status);
 
