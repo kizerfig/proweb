@@ -4,21 +4,20 @@
    ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 let allMatches = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('📅 FIFA World Cup 2026 - Calendario de Partidos Initialized');
-
-  // 1. Initialize mobile navbar
-  initNavbar();
-
-  // 2. Setup filter listeners
+export function initMatchesPage() {
+  initLayout('partidos');
   setupFilterListeners();
-
-  // 3. Load matches with 15-min LocalStorage cache strategy
   loadMatches();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('matches-grid-container')) {
+    initMatchesPage();
+  }
 });
 
 /**
@@ -102,10 +101,10 @@ function filterAndRenderMatches() {
     const groupMatch = group === 'all' || match.group === group;
 
     const teamMatch = !search ||
-      (match.team1.name && match.team1.name.toLowerCase().includes(search)) ||
-      (match.team1.code && match.team1.code.toLowerCase().includes(search)) ||
-      (match.team2.name && match.team2.name.toLowerCase().includes(search)) ||
-      (match.team2.code && match.team2.code.toLowerCase().includes(search));
+      (match.team1?.name?.toLowerCase().includes(search)) ||
+      (match.team1?.code?.toLowerCase().includes(search)) ||
+      (match.team2?.name?.toLowerCase().includes(search)) ||
+      (match.team2?.code?.toLowerCase().includes(search));
 
     return cityMatch && roundMatch && statusMatch && groupMatch && teamMatch;
   });
@@ -131,42 +130,44 @@ function renderSkeletons(container, count = 6) {
  */
 function renderMatchCards(container, matchesList) {
   container.innerHTML = matchesList.map(match => {
+    const team1 = match.team1 || { code: '—', name: 'Por definir', score: '-' };
+    const team2 = match.team2 || { code: '—', name: 'Por definir', score: '-' };
     let statusClass = 'scheduled';
     if (match.status === 'En vivo') statusClass = 'live';
     if (match.status === 'Finalizado') statusClass = 'finished';
 
     return `
-      <div class="match-card">
+      <a href="partido-detalle.html?id=${match.id || ''}" class="match-card match-card-link">
         <div class="match-header">
-          <span class="match-venue">📍 ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
-          <span class="status-badge ${statusClass}">${match.status}</span>
+          <span class="match-venue">${match.city || 'Por definir'}${match.stadium ? ' • ' + match.stadium : ''}</span>
+          <span class="status-badge ${statusClass}">${match.status || 'Programado'}</span>
         </div>
         
         <div class="match-teams">
           <div class="team-row">
             <div class="team-info">
-              <div class="flag-box">${match.team1.code}</div>
-              <span class="team-code">${match.team1.code}</span>
-              <span class="team-name">${match.team1.name}</span>
+              <div class="flag-box">${team1.code}</div>
+              <span class="team-code">${team1.code}</span>
+              <span class="team-name">${team1.name}</span>
             </div>
-            <span class="team-score">${match.team1.score}</span>
+            <span class="team-score">${team1.score ?? '-'}</span>
           </div>
           
           <div class="team-row">
             <div class="team-info">
-              <div class="flag-box">${match.team2.code}</div>
-              <span class="team-code">${match.team2.code}</span>
-              <span class="team-name">${match.team2.name}</span>
+              <div class="flag-box">${team2.code}</div>
+              <span class="team-code">${team2.code}</span>
+              <span class="team-name">${team2.name}</span>
             </div>
-            <span class="team-score">${match.team2.score}</span>
+            <span class="team-score">${team2.score ?? '-'}</span>
           </div>
         </div>
 
         <div class="match-footer">
-          <span>📅 ${match.datetime}</span>
-          <span>🏆 ${match.group || match.round || 'Mundial'}</span>
+          <span>${match.datetime || 'Por confirmar'}</span>
+          <span>${match.group || match.round || 'Mundial'}</span>
         </div>
-      </div>
+      </a>
     `;
   }).join('');
 }
