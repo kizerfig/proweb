@@ -119,50 +119,69 @@ const MOCK_DATA = {
       team2: { code: 'NL', name: 'Países Bajos', score: '-' },
       datetime: '19 jun • 17:00',
       group: 'Grupo F'
+    }
+  ],
+
+  standings: [
+    {
+      groupId: 'A',
+      groupName: 'Grupo A',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
     },
     {
-      id: 'm7',
-      city: 'Boston',
-      stadium: 'Gillette Stadium',
-      status: 'Programado',
-      round: 'Fase de Grupos',
-      team1: { code: 'UY', name: 'Uruguay', score: '-' },
-      team2: { code: 'CO', name: 'Colombia', score: '-' },
-      datetime: '20 jun • 15:00',
-      group: 'Grupo G'
+      groupId: 'B',
+      groupName: 'Grupo B',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
     },
     {
-      id: 'm8',
-      city: 'Filadelfia',
-      stadium: 'Lincoln Financial Field',
-      status: 'Programado',
-      round: 'Fase de Grupos',
-      team1: { code: 'BE', name: 'Bélgica', score: '-' },
-      team2: { code: 'HR', name: 'Croacia', score: '-' },
-      datetime: '21 jun • 18:30',
-      group: 'Grupo H'
+      groupId: 'C',
+      groupName: 'Grupo C',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
     },
     {
-      id: 'm9',
-      city: 'Guadalajara',
-      stadium: 'Estadio Akron',
-      status: 'Finalizado',
-      round: 'Fase de Grupos',
-      team1: { code: 'JP', name: 'Japón', score: 2 },
-      team2: { code: 'KR', name: 'Corea del Sur', score: 0 },
-      datetime: '13 jun • 14:00',
-      group: 'Grupo A'
+      groupId: 'D',
+      groupName: 'Grupo D',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
     },
     {
-      id: 'm10',
-      city: 'Miami',
-      stadium: 'Hard Rock Stadium',
-      status: 'En vivo',
-      round: 'Octavos',
-      team1: { code: 'AR', name: 'Argentina', score: 3 },
-      team2: { code: 'NL', name: 'Países Bajos', score: 2 },
-      datetime: '28 jun • 19:00',
-      group: 'Octavos'
+      groupId: 'E',
+      groupName: 'Grupo E',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
+    },
+    {
+      groupId: 'F',
+      groupName: 'Grupo F',
+      teams: [
+        { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
+        { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
+        { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
+        { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
+      ]
     }
   ],
 
@@ -300,8 +319,9 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
     let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
     if (fallbackKey === 'news') fallbackKey = 'news';
     if (fallbackKey === 'matches') fallbackKey = 'matches';
+    if (fallbackKey === 'standings' || fallbackKey === 'clasificacion') fallbackKey = 'standings';
     
-    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.matches || [];
+    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.standings || [];
     
     // Save fallback to cache temporarily
     localStorage.setItem(cacheKey, JSON.stringify({
@@ -317,6 +337,7 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
 export const FIFA_API = {
   getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
   getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
+  getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', 'fifa_standings_data', forceRefresh),
   getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
   getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
   getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),

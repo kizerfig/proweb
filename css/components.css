@@ -696,6 +696,192 @@
 }
 
 /* ------------------------------------------
+   4c. CLASIFICACIÓN Y FASES (group-grid & group-card)
+   ------------------------------------------ */
+.tab-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-surface);
+  padding: 0.35rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-color);
+}
+
+.tab-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  min-height: 38px;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background-color: var(--accent-mint);
+  color: #000;
+  box-shadow: var(--shadow-glow-mint);
+}
+
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.group-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.group-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.group-card-header {
+  background: linear-gradient(135deg, #00A859 0%, #00E676 100%);
+  color: #000;
+  padding: 0.85rem 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.group-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.group-table th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(13, 17, 23, 0.4);
+}
+
+.group-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+  vertical-align: middle;
+}
+
+.group-table tr:last-child td {
+  border-bottom: none;
+}
+
+.group-table .col-rank {
+  width: 40px;
+  text-align: center;
+}
+
+.group-table .col-pj,
+.group-table .col-pts {
+  width: 50px;
+  text-align: center;
+}
+
+.rank-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin: 0 auto;
+}
+
+.rank-badge.qualified {
+  background: var(--accent-mint);
+  color: #000;
+  box-shadow: 0 0 8px rgba(0, 230, 118, 0.3);
+}
+
+.rank-badge.eliminated {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.team-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+}
+
+.team-code-bold {
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.team-full-name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Knockout Eliminatorias Tree Layout */
+.knockout-container {
+  grid-column: 1 / -1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.knockout-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--accent-mint);
+  text-transform: uppercase;
+}
+
+.knockout-rounds {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.knockout-round-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 220px;
+}
+
+.knockout-round-col h4 {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+/* ------------------------------------------
    5. PRÓXIMOS EVENTOS Y TORNEOS
    ------------------------------------------ */
 .events-grid {
