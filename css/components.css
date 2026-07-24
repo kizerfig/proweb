@@ -2084,4 +2084,640 @@
   line-height: 1.3;
 }
 
+/* ------------------------------------------
+   12. PRÓXIMOS TORNEOS Y EVENTOS (TORNEOS.HTML)
+   ------------------------------------------ */
 
+.page-title-section {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* KPIs Top Row (.tournaments-stats) */
+.tournaments-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card-kpi {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.stat-card-kpi:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+}
+
+.kpi-num {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.kpi-num.mint { color: var(--accent-mint); }
+.kpi-num.blue { color: var(--accent-blue); }
+.kpi-num.red { color: var(--accent-red); }
+.kpi-num.gold { color: var(--accent-gold); }
+
+.kpi-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Tournament Card List Container */
+.tournament-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Individual Tournament Card */
+.tournament-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.tournament-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* Colored accent bar / border indicator per organization */
+.tournament-card.conmebol { border-left: 4px solid var(--accent-mint); }
+.tournament-card.concacaf { border-left: 4px solid var(--accent-blue); }
+.tournament-card.fifa { border-left: 4px solid var(--accent-red); }
+.tournament-card.uefa { border-left: 4px solid var(--accent-purple); }
+
+/* Left Icon Box */
+.tournament-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.tournament-card-icon.conmebol { background: rgba(0, 230, 118, 0.1); border-color: rgba(0, 230, 118, 0.3); }
+.tournament-card-icon.concacaf { background: rgba(31, 111, 235, 0.1); border-color: rgba(31, 111, 235, 0.3); }
+.tournament-card-icon.fifa { background: rgba(255, 51, 102, 0.1); border-color: rgba(255, 51, 102, 0.3); }
+.tournament-card-icon.uefa { background: rgba(137, 87, 229, 0.1); border-color: rgba(137, 87, 229, 0.3); }
+
+/* Card Body */
+.tournament-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex-grow: 1;
+}
+
+.tournament-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tournament-card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* Status Badges */
+.status-badge.finished {
+  background: rgba(139, 148, 158, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(139, 148, 158, 0.3);
+}
+
+.status-badge.future {
+  background: rgba(31, 111, 235, 0.15);
+  color: var(--accent-blue);
+  border: 1px solid rgba(31, 111, 235, 0.3);
+}
+
+.tournament-card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.tournament-card-desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-top: 0.2rem;
+}
+
+/* Right Action Column */
+.tournament-card-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  min-width: 140px;
+}
+
+.org-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.org-label.conmebol strong { color: var(--accent-mint); }
+.org-label.concacaf strong { color: var(--accent-blue); }
+.org-label.fifa strong { color: var(--accent-red); }
+.org-label.uefa strong { color: var(--accent-purple); }
+
+/* Official Site Button */
+.btn-official-site {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-official-site:hover {
+  background: var(--accent-mint);
+  color: #000000;
+  border-color: var(--accent-mint);
+  box-shadow: var(--shadow-glow-mint);
+  transform: translateX(2px);
+}
+
+.btn-official-site.conmebol:hover {
+  background: var(--accent-mint);
+  color: #000000;
+  border-color: var(--accent-mint);
+  box-shadow: var(--shadow-glow-mint);
+}
+
+.btn-official-site.concacaf:hover {
+  background: var(--accent-blue);
+  color: #FFFFFF;
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.btn-official-site.fifa:hover {
+  background: var(--accent-red);
+  color: #FFFFFF;
+  border-color: var(--accent-red);
+  box-shadow: 0 0 16px rgba(255, 51, 102, 0.3);
+}
+
+.btn-official-site.uefa:hover {
+  background: var(--accent-purple);
+  color: #FFFFFF;
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 16px rgba(137, 87, 229, 0.3);
+}
+
+/* ------------------------------------------
+   13. IDENTIDAD Y MARCA (IDENTIDAD.HTML)
+   ------------------------------------------ */
+
+.identity-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Green & Red Themes for Ball and Soundtrack Blocks */
+.identity-block {
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  color: #FFFFFF;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.identity-block.green-theme {
+  background: linear-gradient(135deg, #005634 0%, #00874E 100%);
+  border: 1px solid #00a862;
+}
+
+.identity-block.red-theme {
+  background: linear-gradient(135deg, #A80B2B 0%, #E5173F 100%);
+  border: 1px solid #ff2a54;
+}
+
+.identity-block-header {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.identity-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+/* Ball Section */
+.ball-img-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.ball-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ball-info-content, .album-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ball-title, .album-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.ball-desc, .album-desc {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+.ball-features-list, .album-meta-list {
+  list-style: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.ball-features-list li::before, .album-meta-list li::before {
+  content: "• ";
+  color: #FFFFFF;
+  font-weight: 900;
+}
+
+/* Mascot Section */
+.mascots-section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mascots-header {
+  margin-bottom: 0.5rem;
+}
+
+.mascots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.mascot-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.mascot-card.us-theme { border-top: 4px solid var(--accent-blue); }
+.mascot-card.mx-theme { border-top: 4px solid var(--accent-mint); }
+.mascot-card.ca-theme { border-top: 4px solid var(--accent-red); }
+
+.mascot-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-hover);
+}
+
+.mascot-img-box {
+  width: 100%;
+  height: 240px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.mascot-img-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.mascot-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex-grow: 1;
+}
+
+.mascot-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mascot-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.mascot-country-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.mascot-country-badge.us { background: rgba(31, 111, 235, 0.2); color: var(--accent-blue); }
+.mascot-country-badge.mx { background: rgba(0, 230, 118, 0.2); color: var(--accent-mint); }
+.mascot-country-badge.ca { background: rgba(255, 51, 102, 0.2); color: var(--accent-red); }
+
+.mascot-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mascot-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--accent-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mascot-card.mx-theme .mascot-label { color: var(--accent-mint); }
+.mascot-card.ca-theme .mascot-label { color: var(--accent-red); }
+
+.mascot-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Album Cover Box */
+.album-cover-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.album-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.album-cover-badge {
+  position: absolute;
+  bottom: 0;
+  inset-x: 0;
+  background: rgba(0, 0, 0, 0.85);
+  color: #FFFFFF;
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.btn-listen-album {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.8rem 1.75rem;
+  background: #FFFFFF;
+  color: #000000;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.btn-listen-album:hover {
+  transform: translateY(-2px);
+  background: #F0F6FC;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ------------------------------------------
+   14. VIDEOS HISTÓRICOS (VIDEOS.HTML)
+   ------------------------------------------ */
+
+.video-tabs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.video-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.videos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.video-horizontal-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.35rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.video-horizontal-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-mint);
+}
+
+.video-thumb-wrapper {
+  position: relative;
+  width: 200px;
+  height: 115px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000000;
+}
+
+.video-thumb-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-duration-overlay {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.play-hover-btn {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #FFFFFF;
+  background: rgba(0, 0, 0, 0.35);
+  transition: opacity var(--transition-fast);
+}
+
+.video-horizontal-card:hover .play-hover-btn {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.video-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex-grow: 1;
+}
+
+.video-card-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.category-badge-mint {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--accent-mint);
+  padding: 0.15rem 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.year-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.video-card-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.video-card-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.video-card-submeta {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+.video-card-views {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
