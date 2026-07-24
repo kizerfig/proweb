@@ -5,11 +5,11 @@
 
 const API_CONFIG = {
   BASE_URL: 'https://wc-api-u378.onrender.com/wc-api/api/v1',
-  CORS_PROXY: 'https://corsproxy.io/?',
+  CORS_PROXY: 'https://api.allorigins.win/raw?url=',
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '16';
+const CACHE_VERSION = '18';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -19,6 +19,88 @@ function isLocalEnvironment() {
     window.location.hostname === '127.0.0.1' ||
     window.location.protocol === 'file:'
   );
+}
+
+/**
+ * URL base de la API: en producción (Vercel) usa proxy same-origin para evitar CORS
+ */
+function getApiBaseUrl() {
+  if (typeof window === 'undefined') return API_CONFIG.BASE_URL;
+
+  if (!isLocalEnvironment()) {
+    return `${window.location.origin}/api/wc-api`;
+  }
+
+  return API_CONFIG.BASE_URL;
+}
+
+/** Rutas alternativas del proxy en producción (función serverless + rewrite legacy) */
+function getProductionProxyUrls(endpoint) {
+  const origin = window.location.origin;
+  return [
+    buildApiUrl(getApiBaseUrl(), endpoint),
+    buildApiUrl(`${origin}/wc-api/api/v1`, endpoint)
+  ];
+}
+
+function buildApiUrl(baseUrl, endpoint) {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${baseUrl}/${cleanEndpoint}`;
+}
+
+function isValidApiPayload(data) {
+  return data !== null && data !== undefined;
+}
+
+async function fetchJsonFromUrl(url, label = 'fetch') {
+  try {
+    const response = await fetchWithTimeout(url, 25000);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (!isValidApiPayload(data)) return null;
+
+    console.log(`[API OK] ${label}`);
+    return data;
+  } catch (err) {
+    console.warn(`[API FAIL] ${label} (${err.message})`);
+    return null;
+  }
+}
+
+/**
+ * Intenta cargar un endpoint probando proxy same-origin, URL directa y proxy CORS
+ */
+async function fetchApiEndpoint(endpoint) {
+  const renderUrl = buildApiUrl(API_CONFIG.BASE_URL, endpoint);
+  const attempts = [];
+
+  if (!isLocalEnvironment()) {
+    getProductionProxyUrls(endpoint).forEach((url, index) => {
+      attempts.push({
+        url,
+        label: index === 0 ? 'vercel proxy' : 'vercel rewrite'
+      });
+    });
+  } else {
+    attempts.push({ url: renderUrl, label: 'direct render' });
+    attempts.push({
+      url: `${API_CONFIG.CORS_PROXY}${encodeURIComponent(renderUrl)}`,
+      label: 'cors proxy'
+    });
+    return tryFetchAttempts(attempts);
+  }
+
+  // En producción el navegador bloquea Render por CORS; solo usar proxy same-origin
+  return tryFetchAttempts(attempts);
+}
+
+async function tryFetchAttempts(attempts) {
+  for (const attempt of attempts) {
+    const data = await fetchJsonFromUrl(attempt.url, attempt.label);
+    if (data !== null) return data;
+  }
+  return null;
 }
 
 function clearFifaCache() {
@@ -734,41 +816,10 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   }
 
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  const directUrl = `${API_CONFIG.BASE_URL}/${cleanEndpoint}`;
 
-  let data = null;
-  let fetchSuccess = false;
+  const data = await fetchApiEndpoint(cleanEndpoint);
 
-  // Intento 1: Fetch directo (Render cold start puede tardar)
-  try {
-    const response = await fetchWithTimeout(directUrl, 25000);
-    if (response.ok) {
-      data = await response.json();
-      if (data && (Array.isArray(data) ? data.length > 0 : true)) {
-        fetchSuccess = true;
-      }
-    }
-  } catch (err) {
-    console.warn(`[Fetch Directo] Endpoint '${endpoint}' no respondió a tiempo (${err.message})`);
-  }
-
-  // Intento 2: Si estamos en local y falló directo, intentar Proxy CORS
-  if (!fetchSuccess && isLocalEnvironment()) {
-    try {
-      const proxyUrl = `${API_CONFIG.CORS_PROXY}${encodeURIComponent(directUrl)}`;
-      const response = await fetchWithTimeout(proxyUrl, 25000);
-      if (response.ok) {
-        data = await response.json();
-        if (data && (Array.isArray(data) ? data.length > 0 : true)) {
-          fetchSuccess = true;
-        }
-      }
-    } catch (err) {
-      console.warn(`[Fetch Proxy] Proxy para '${endpoint}' tampoco respondió (${err.message})`);
-    }
-  }
-
-  if (fetchSuccess && data) {
+  if (data !== null) {
     try {
       localStorage.setItem(cacheKey, JSON.stringify({
         timestamp: Date.now(),
