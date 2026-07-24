@@ -13,7 +13,7 @@ const MOCK_DATA = {
       id: '1',
       category: 'Equipos',
       time: 'Hace 2 horas',
-      title: 'México presenta nueva convocatoria para la Copa del Mundo 2026',
+      title: 'México presenta nueva convocatoria para Copa del Mundo 2026',
       image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'
     },
     {
@@ -27,14 +27,14 @@ const MOCK_DATA = {
       id: '3',
       category: 'Oficial',
       time: 'Hace 1 día',
-      title: 'FIFA confirma calendario oficial de partidos del Mundial 2026',
+      title: 'FIFA confirma calendario oficial del Mundial 2026',
       image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80'
     },
     {
       id: '4',
       category: 'Cultura',
       time: 'Hace 2 días',
-      title: 'Reveladas las mascotas oficiales que representan la unión tri-nacional',
+      title: 'Revelada la mascota oficial del Mundial 2026',
       image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80'
     },
     {
@@ -48,7 +48,7 @@ const MOCK_DATA = {
       id: '6',
       category: 'Historia',
       time: 'Hace 4 días',
-      title: 'Los mejores momentos inolvidables de la historia del Mundial',
+      title: 'Los mejores momentos de la historia del Mundial',
       image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80'
     }
   ],
@@ -192,12 +192,12 @@ const MOCK_DATA = {
  * Fetch data using LocalStorage strategy with 15 minutes TTL check
  * @param {string} endpoint - API Endpoint relative path
  * @param {string} cacheKey - LocalStorage key identifier
+ * @param {boolean} forceRefresh - If true, bypasses valid cache to force network request
  */
-async function fetchWithCache(endpoint, cacheKey) {
-  const fullCacheKey = `fifa_2026_${cacheKey}`;
-  const cachedItem = localStorage.getItem(fullCacheKey);
+export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
+  const cachedItem = localStorage.getItem(cacheKey);
 
-  if (cachedItem) {
+  if (cachedItem && !forceRefresh) {
     try {
       const parsed = JSON.parse(cachedItem);
       const now = Date.now();
@@ -211,7 +211,7 @@ async function fetchWithCache(endpoint, cacheKey) {
       }
     } catch (e) {
       console.warn(`[Cache Error] Error al leer localStorage para '${cacheKey}':`, e);
-      localStorage.removeItem(fullCacheKey);
+      localStorage.removeItem(cacheKey);
     }
   }
 
@@ -232,7 +232,7 @@ async function fetchWithCache(endpoint, cacheKey) {
       timestamp: Date.now(),
       data: data
     };
-    localStorage.setItem(fullCacheKey, JSON.stringify(cacheObject));
+    localStorage.setItem(cacheKey, JSON.stringify(cacheObject));
     console.log(`[Cache STORED] Guardado en localStorage para '${cacheKey}'`);
 
     return data;
@@ -240,11 +240,14 @@ async function fetchWithCache(endpoint, cacheKey) {
   } catch (error) {
     console.warn(`[Fetch API Fallback] No se pudo conectar a Render API (${endpoint}). Usando mock data estructurado:`, error.message);
     
-    // Return curated mock fallback
-    const fallbackData = MOCK_DATA[cacheKey] || [];
+    // Map mock fallback
+    let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
+    if (fallbackKey === 'news') fallbackKey = 'news';
     
-    // Save fallback to cache temporarily to avoid continuous failing fetches
-    localStorage.setItem(fullCacheKey, JSON.stringify({
+    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.news || [];
+    
+    // Save fallback to cache temporarily
+    localStorage.setItem(cacheKey, JSON.stringify({
       timestamp: Date.now(),
       data: fallbackData
     }));
@@ -255,10 +258,10 @@ async function fetchWithCache(endpoint, cacheKey) {
 
 // Public API Methods
 export const FIFA_API = {
-  getNews: () => fetchWithCache('news', 'news'),
-  getMatches: () => fetchWithCache('matches', 'matches'),
-  getEvents: () => fetchWithCache('events', 'events'),
-  getTeams: () => fetchWithCache('teams', 'teams'),
-  getCities: () => fetchWithCache('cities', 'cities'),
-  getODS: () => fetchWithCache('ods', 'ods')
+  getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
+  getMatches: () => fetchWithCache('matches', 'fifa_2026_matches'),
+  getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
+  getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
+  getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
+  getODS: () => fetchWithCache('ods', 'fifa_2026_ods')
 };
