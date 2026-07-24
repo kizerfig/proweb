@@ -57,16 +57,20 @@ const MOCK_DATA = {
     {
       id: 'm1',
       city: 'Ciudad de México',
+      stadium: 'Estadio Azteca',
       status: 'En vivo',
+      round: 'Fase de Grupos',
       team1: { code: 'MX', name: 'México', score: 2 },
       team2: { code: 'AR', name: 'Argentina', score: 1 },
-      datetime: '11 jun • 15:00',
+      datetime: '15 jun • 18:00',
       group: 'Grupo A'
     },
     {
       id: 'm2',
       city: 'Nueva York',
+      stadium: 'MetLife Stadium',
       status: 'Programado',
+      round: 'Fase de Grupos',
       team1: { code: 'BR', name: 'Brasil', score: '-' },
       team2: { code: 'DE', name: 'Alemania', score: '-' },
       datetime: '16 jun • 20:00',
@@ -75,7 +79,9 @@ const MOCK_DATA = {
     {
       id: 'm3',
       city: 'Toronto',
+      stadium: 'BMO Field',
       status: 'Finalizado',
+      round: 'Fase de Grupos',
       team1: { code: 'ES', name: 'España', score: 1 },
       team2: { code: 'FR', name: 'Francia', score: 1 },
       datetime: '14 jun • 16:00',
@@ -84,7 +90,9 @@ const MOCK_DATA = {
     {
       id: 'm4',
       city: 'Los Ángeles',
+      stadium: 'SoFi Stadium',
       status: 'Programado',
+      round: 'Fase de Grupos',
       team1: { code: 'US', name: 'Estados Unidos', score: '-' },
       team2: { code: 'CA', name: 'Canadá', score: '-' },
       datetime: '17 jun • 19:00',
@@ -93,7 +101,9 @@ const MOCK_DATA = {
     {
       id: 'm5',
       city: 'Dallas',
+      stadium: 'AT&T Stadium',
       status: 'Programado',
+      round: 'Fase de Grupos',
       team1: { code: 'GB', name: 'Inglaterra', score: '-' },
       team2: { code: 'IT', name: 'Italia', score: '-' },
       datetime: '18 jun • 21:00',
@@ -102,11 +112,57 @@ const MOCK_DATA = {
     {
       id: 'm6',
       city: 'Kansas City',
+      stadium: 'Arrowhead Stadium',
       status: 'Programado',
+      round: 'Fase de Grupos',
       team1: { code: 'PT', name: 'Portugal', score: '-' },
       team2: { code: 'NL', name: 'Países Bajos', score: '-' },
       datetime: '19 jun • 17:00',
       group: 'Grupo F'
+    },
+    {
+      id: 'm7',
+      city: 'Boston',
+      stadium: 'Gillette Stadium',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'UY', name: 'Uruguay', score: '-' },
+      team2: { code: 'CO', name: 'Colombia', score: '-' },
+      datetime: '20 jun • 15:00',
+      group: 'Grupo G'
+    },
+    {
+      id: 'm8',
+      city: 'Filadelfia',
+      stadium: 'Lincoln Financial Field',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'BE', name: 'Bélgica', score: '-' },
+      team2: { code: 'HR', name: 'Croacia', score: '-' },
+      datetime: '21 jun • 18:30',
+      group: 'Grupo H'
+    },
+    {
+      id: 'm9',
+      city: 'Guadalajara',
+      stadium: 'Estadio Akron',
+      status: 'Finalizado',
+      round: 'Fase de Grupos',
+      team1: { code: 'JP', name: 'Japón', score: 2 },
+      team2: { code: 'KR', name: 'Corea del Sur', score: 0 },
+      datetime: '13 jun • 14:00',
+      group: 'Grupo A'
+    },
+    {
+      id: 'm10',
+      city: 'Miami',
+      stadium: 'Hard Rock Stadium',
+      status: 'En vivo',
+      round: 'Octavos',
+      team1: { code: 'AR', name: 'Argentina', score: 3 },
+      team2: { code: 'NL', name: 'Países Bajos', score: 2 },
+      datetime: '28 jun • 19:00',
+      group: 'Octavos'
     }
   ],
 
@@ -243,8 +299,9 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
     // Map mock fallback
     let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
     if (fallbackKey === 'news') fallbackKey = 'news';
+    if (fallbackKey === 'matches') fallbackKey = 'matches';
     
-    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.news || [];
+    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.matches || [];
     
     // Save fallback to cache temporarily
     localStorage.setItem(cacheKey, JSON.stringify({
@@ -259,7 +316,7 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
 // Public API Methods
 export const FIFA_API = {
   getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
-  getMatches: () => fetchWithCache('matches', 'fifa_2026_matches'),
+  getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
   getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
   getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
   getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
