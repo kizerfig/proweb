@@ -197,6 +197,15 @@ function renderErrorState(container, message) {
 }
 
 /**
+ * Extrae el ID de YouTube de una URL si aplica
+ */
+function extractYouTubeId(url) {
+  if (!url || typeof url !== 'string') return null;
+  const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  return match ? match[1] : null;
+}
+
+/**
  * Abre el reproductor de video modal con la información del registro
  */
 function openVideoModal(record) {
@@ -216,16 +225,27 @@ function openVideoModal(record) {
   if (linkEl) linkEl.href = record.url || '#';
 
   const videoUrl = record.url || '';
-  const isEmbed = videoUrl.includes('youtube.com') || videoUrl.includes('vimeo.com') || videoUrl.includes('embed');
+  const ytId = extractYouTubeId(videoUrl);
+  const isIframeTarget = Boolean(ytId) || videoUrl.includes('sofascore.com') || videoUrl.includes('video-player') || videoUrl.includes('vimeo.com') || videoUrl.includes('.html');
 
-  if (isEmbed && iframeEl && videoEl) {
+  if (videoEl) {
     videoEl.pause();
     videoEl.style.display = 'none';
+    videoEl.removeAttribute('src');
+  }
+
+  if (iframeEl) {
+    iframeEl.style.display = 'none';
+    iframeEl.src = '';
+  }
+
+  if (ytId && iframeEl) {
+    iframeEl.style.display = 'block';
+    iframeEl.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+  } else if (isIframeTarget && iframeEl) {
     iframeEl.style.display = 'block';
     iframeEl.src = videoUrl;
-  } else if (videoEl && iframeEl) {
-    iframeEl.src = '';
-    iframeEl.style.display = 'none';
+  } else if (videoEl) {
     videoEl.style.display = 'block';
     videoEl.src = videoUrl;
     videoEl.play().catch(() => {});

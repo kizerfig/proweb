@@ -158,47 +158,55 @@ function renderSkeletons(container, count = 6) {
  * Render Match Cards into DOM
  */
 function renderMatchCards(container, matchesList) {
- container.innerHTML = matchesList.map(match => {
- const statusClass = match.statusClass || (
- match.status === 'En vivo' || match.status === 'live' ? 'live' :
- match.status === 'Finalizado' || match.status === 'finished' ? 'finished' : 'scheduled'
- );
- const statusText = match.statusLabel || match.status || 'Programado';
+  const getFlagImgHtml = (code, name) => {
+    const flagUrl = `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}`;
+    return `<div class="flag-box" style="padding:0; overflow:hidden; display:flex; align-items:center; justify-content:center; width:32px; height:22px; border-radius:3px; border:1px solid rgba(255,255,255,0.15); flex-shrink:0;">
+      <img src="${flagUrl}" alt="${name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <span style="display:none; font-weight:800; font-size:0.7rem;">${code}</span>
+    </div>`;
+  };
 
- return `
- <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
- <div class="match-header">
- <span class="match-venue"> ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
- <span class="status-badge ${statusClass}">${statusText}</span>
- </div>
- 
- <div class="match-teams">
- <div class="team-row">
- <div class="team-info">
- <div class="flag-box">${match.team1.code}</div>
- <span class="team-code">${match.team1.code}</span>
- <span class="team-name">${match.team1.name}</span>
- </div>
- <span class="team-score">${match.team1.score}</span>
- </div>
- 
- <div class="team-row">
- <div class="team-info">
- <div class="flag-box">${match.team2.code}</div>
- <span class="team-code">${match.team2.code}</span>
- <span class="team-name">${match.team2.name}</span>
- </div>
- <span class="team-score">${match.team2.score}</span>
- </div>
- </div>
+  container.innerHTML = matchesList.map(match => {
+    const statusClass = match.statusClass || (
+      match.status === 'En vivo' || match.status === 'live' ? 'live' :
+      match.status === 'Finalizado' || match.status === 'finished' ? 'finished' : 'scheduled'
+    );
+    const statusText = match.statusLabel || match.status || 'Finalizado';
 
- <div class="match-footer">
- <span> ${match.datetime}</span>
- <span> ${match.group || match.round || 'Mundial'}</span>
- </div>
- </a>
- `;
- }).join('');
+    return `
+    <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
+      <div class="match-header">
+        <span class="match-venue">📍 ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
+        <span class="status-badge ${statusClass}">${statusText}</span>
+      </div>
+      
+      <div class="match-teams">
+        <div class="team-row">
+          <div class="team-info">
+            ${getFlagImgHtml(match.team1.code, match.team1.name)}
+            <span class="team-code">${match.team1.code}</span>
+            <span class="team-name">${match.team1.name}</span>
+          </div>
+          <span class="team-score">${match.team1.score}</span>
+        </div>
+        
+        <div class="team-row">
+          <div class="team-info">
+            ${getFlagImgHtml(match.team2.code, match.team2.name)}
+            <span class="team-code">${match.team2.code}</span>
+            <span class="team-name">${match.team2.name}</span>
+          </div>
+          <span class="team-score">${match.team2.score}</span>
+        </div>
+      </div>
+
+      <div class="match-footer">
+        <span>📅 ${match.datetime}</span>
+        <span>🏆 ${match.group || match.round || 'Mundial'}</span>
+      </div>
+    </a>
+    `;
+  }).join('');
 }
 
 /**

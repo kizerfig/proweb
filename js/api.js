@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '18';
+const CACHE_VERSION = '20';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // In-Memory RAM Cache & In-Flight Request Deduplication
@@ -1645,13 +1645,32 @@ function normalizeTeam(item) {
 }
 
 /**
+ * Helper genérico para intentar cargar datos locales JSON antes del endpoint de la API
+ */
+async function fetchLocalData(filename, fallbackEndpoint, forceRefresh = false) {
+  try {
+    const isHtmlDir = window.location.pathname.includes('/html/');
+    const localPath = isHtmlDir ? `../data/${filename}` : `./data/${filename}`;
+    const res = await fetch(localPath);
+    if (res.ok) {
+      const json = await res.json();
+      if (json) return json;
+    }
+  } catch (e) {
+    console.warn(`[fetchLocalData] Fallo al cargar data/${filename}, usando API:`, e);
+  }
+  return fetchWithCache(fallbackEndpoint, forceRefresh);
+}
+
+/**
  * Obtiene el listado completo de equipos/selecciones (/v1/teams)
  */
 export async function getTeams(forceRefresh = false) {
   try {
-    const data = await fetchWithCache('teams', forceRefresh);
+    const data = await fetchLocalData('teams.json', 'teams', forceRefresh);
     const list = Array.isArray(data) ? data : (data?.teams || data?.data || []);
-    return list.map(normalizeTeam).filter(Boolean);
+    const normalized = list.map(normalizeTeam).filter(Boolean);
+    return normalized.length > 0 ? normalized : MOCK_DATA.teams.map(normalizeTeam);
   } catch (error) {
     console.warn('[getTeams] Fallback a MOCK_DATA.teams:', error);
     return MOCK_DATA.teams.map(normalizeTeam);
@@ -1663,12 +1682,11 @@ export async function getTeams(forceRefresh = false) {
  */
 export async function getTeamById(id, forceRefresh = false) {
   try {
-    const data = await fetchWithCache(`teams/${id}`, forceRefresh);
-    if (data && (data.id || data.code || data.name)) {
-      return normalizeTeam(data);
-    }
+    const teamsList = await getTeams(forceRefresh);
+    const found = teamsList.find(t => String(t.id).toLowerCase() === String(id).toLowerCase() || String(t.code).toLowerCase() === String(id).toLowerCase());
+    if (found) return found;
   } catch (error) {
-    console.warn(`[getTeamById] Fallback a MOCK_DATA para id ${id}:`, error);
+    console.warn(`[getTeamById] Fallback para id ${id}:`, error);
   }
 
   const mockItem = MOCK_DATA.teams.find(t => String(t.id).toLowerCase() === String(id).toLowerCase() || String(t.code).toLowerCase() === String(id).toLowerCase()) || MOCK_DATA.teams[0];
@@ -1708,21 +1726,22 @@ export async function getNewsById(id, forceRefresh = false) {
  * @param {boolean} forceRefresh - Forzar actualización ignorando caché
  */
 export async function getMatches(filters = {}, forceRefresh = false) {
-  const queryParams = new URLSearchParams();
-  if (typeof filters === 'object' && filters !== null) {
-    Object.keys(filters).forEach(key => {
-      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
-        queryParams.append(key, filters[key]);
-      }
-    });
-  }
-
-  const queryString = queryParams.toString();
-  const endpoint = queryString ? `matches?${queryString}` : 'matches';
-
   try {
-    const data = await fetchWithCache(endpoint, forceRefresh);
-    return normalizeMatchesList(data);
+    const rawData = await fetchLocalData('matches.json', 'matches', forceRefresh);
+    let normalized = normalizeMatchesList(rawData);
+    if (!normalized || normalized.length === 0) {
+      normalized = normalizeMatchesList(MOCK_DATA.matches);
+    }
+    // Aplicar filtros si fueron provistos
+    if (filters && typeof filters === 'object') {
+      if (filters.city_id && filters.city_id !== 'all') normalized = normalized.filter(m => String(m.cityId) === String(filters.city_id));
+      if (filters.round && filters.round !== 'all') normalized = normalized.filter(m => String(m.round).toLowerCase() === String(filters.round).toLowerCase());
+      if (filters.status && filters.status !== 'all') normalized = normalized.filter(m => String(m.status).toLowerCase() === String(filters.status).toLowerCase());
+      if (filters.group && filters.group !== 'all') normalized = normalized.filter(m => String(m.group).toLowerCase() === String(filters.group).toLowerCase());
+      if (filters.home_id) normalized = normalized.filter(m => m.home?.code === filters.home_id || m.team1?.code === filters.home_id);
+      if (filters.away_id) normalized = normalized.filter(m => m.away?.code === filters.away_id || m.team2?.code === filters.away_id);
+    }
+    return normalized;
   } catch (error) {
     console.warn('[getMatches] Fallback a MOCK_DATA matches:', error);
     return normalizeMatchesList(MOCK_DATA.matches);
@@ -1735,13 +1754,12 @@ export async function getMatches(filters = {}, forceRefresh = false) {
 function normalizeRankingItem(item, idx) {
   if (!item) return null;
   
-  // Soporte para estructura anidada de la API (`{ team: {...}, rank, points, previous_rank }`) o plana (mock)
   const rawTeam = item.team || item;
 
   const code = rawTeam.id || rawTeam.code || rawTeam.isoCode || 'FIFA';
   const name = rawTeam.name || rawTeam.nombre || COUNTRY_NAMES[code] || code;
   const conf = rawTeam.confederation || rawTeam.confederacion || rawTeam.conf || 'FIFA';
-  const flagUri = rawTeam.flag_uri || rawTeam.flag || rawTeam.bandera || (code && code !== 'FIFA' ? `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}` : '');
+  const flagUri = rawTeam.flag_uri || rawTeam.flag_url || rawTeam.flag || rawTeam.bandera || (code && code !== 'FIFA' ? `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}` : '');
 
   const pos = item.rank !== undefined && item.rank !== null ? Number(item.rank) : (item.pos || idx + 1);
   const previousRank = item.previous_rank !== undefined && item.previous_rank !== null ? Number(item.previous_rank) : (item.previousRank ?? pos);
@@ -1749,7 +1767,7 @@ function normalizeRankingItem(item, idx) {
   const pointsVal = item.points !== undefined && item.points !== null ? Number(item.points) : (pos ? Math.max(1200, 2000 - pos * 15) : 0);
   const previousPointsVal = item.previous_points !== undefined && item.previous_points !== null ? Number(item.previous_points) : pointsVal;
   
-  const worldRank = rawTeam.world_ranking || item.world_ranking || pos;
+  const worldRank = item.rank || rawTeam.world_ranking || pos;
   const appearances = rawTeam.appearances || rawTeam.participaciones || item.appearances || item.titles || 0;
   const titles = item.titles ?? rawTeam.titles ?? rawTeam.titulos ?? 0;
   const dt = item.dt || rawTeam.coach || rawTeam.entrenador || item.coach || 'Director Técnico';
@@ -1775,7 +1793,7 @@ function normalizeRankingItem(item, idx) {
  */
 export async function getRanking(forceRefresh = false) {
   try {
-    const data = await fetchWithCache('ranking', forceRefresh);
+    const data = await fetchLocalData('ranking.json', 'ranking', forceRefresh);
     const list = Array.isArray(data) ? data : (data?.ranking || data?.data || []);
     const normalized = list.map(normalizeRankingItem).filter(Boolean);
     return normalized.length > 0 ? normalized : MOCK_DATA.ranking.map(normalizeRankingItem);
@@ -1831,8 +1849,8 @@ function normalizeCity(item) {
  */
 export async function getCities(forceRefresh = false) {
   try {
-    const data = await fetchWithCache('cities', forceRefresh);
-    const list = Array.isArray(data) ? data : (data?.cities || data?.data || []);
+    const data = await fetchLocalData('cities.json', 'cities', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.cities || data?.data || (typeof data === 'object' ? Object.values(data) : []));
     const normalized = list.map(normalizeCity).filter(Boolean);
     return normalized.length > 0 ? normalized : MOCK_DATA.cities.map(normalizeCity);
   } catch (error) {
@@ -2099,26 +2117,50 @@ function normalizeRecordItem(item, idx) {
   if (!item) return null;
   const raw = item.data || item;
   const id = raw.id ?? raw._id ?? (idx + 1);
-  const title = raw.title || raw.titulo || 'Resumen del Partido';
-  const subtitle = raw.subtitle || raw.subtitulo || raw.description || raw.descripcion || 'Momentos destacados y jugadas del Mundial 2026.';
-  const rawUrl = raw.url || raw.video_url || raw.link || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-  const rawThumb = raw.thumbnail_url || raw.thumbnail || raw.image || raw.imagen || '';
-  const thumbnail = resolveFifaImageUrl(rawThumb) || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80';
 
+  let title = String(raw.title || raw.titulo || '').trim();
+  let subtitle = String(raw.subtitle || raw.subtitulo || raw.description || raw.descripcion || '').trim();
+  let rawUrl = String(raw.url || raw.video_url || raw.link || '').trim();
+  let rawThumb = raw.thumbnail_url || raw.thumbnail || raw.image || raw.imagen || '';
+
+  // Sanear placeholder "string" de Swagger en la API si aplica
+  if (title === 'string' || !title) title = `Highlight del Partido #${idx + 1}`;
+  if (subtitle === 'string') subtitle = 'Momento destacado de la Copa Mundial de la FIFA 2026';
+  if (rawUrl === 'string') rawUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
+  let thumbnail = resolveFifaImageUrl(rawThumb);
+  if (!thumbnail || thumbnail.includes('string') || thumbnail.includes('example.com')) {
+    const FALLBACK_POSTERS = [
+      'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80'
+    ];
+    thumbnail = FALLBACK_POSTERS[idx % FALLBACK_POSTERS.length];
+  }
+
+  // Determinar categoría inteligente basada en el título y subtítulo real de la API
   let category = 'Highlights';
-  const titleLower = String(title).toLowerCase();
-  const subLower = String(subtitle).toLowerCase();
-  if (titleLower.includes('gol') || subLower.includes('gol')) category = 'Goles';
-  else if (titleLower.includes('resumen') || subLower.includes('resumen')) category = 'Resúmenes';
-  else if (titleLower.includes('entrevista') || subLower.includes('conferencia')) category = 'Entrevistas';
-  else if (titleLower.includes('atajada') || subLower.includes('portero')) category = 'Atajadas';
-  else if (titleLower.includes('inaugur') || subLower.includes('oficial')) category = 'Oficial';
+  const combinedText = `${title} ${subtitle}`.toLowerCase();
+  if (combinedText.includes('goal') || combinedText.includes('gol')) {
+    category = 'Goles';
+  } else if (combinedText.includes('chance') || combinedText.includes('cross') || combinedText.includes('atajada') || combinedText.includes('save') || combinedText.includes('var')) {
+    category = 'Atajadas';
+  } else if (combinedText.includes('match') || combinedText.includes('resumen') || combinedText.includes('reaction') || combinedText.includes('final') || combinedText.includes('end of')) {
+    category = 'Resúmenes';
+  } else if (combinedText.includes('interview') || combinedText.includes('entrevista') || combinedText.includes('conferencia')) {
+    category = 'Entrevistas';
+  } else if (combinedText.includes('oficial') || combinedText.includes('inaugura')) {
+    category = 'Oficial';
+  }
 
   return {
     id: id,
-    title: String(title),
-    subtitle: String(subtitle),
-    url: String(rawUrl),
+    title: title,
+    subtitle: subtitle,
+    url: rawUrl,
     thumbnail_url: thumbnail,
     image: thumbnail,
     category: category
@@ -2129,8 +2171,22 @@ function normalizeRecordItem(item, idx) {
  * Obtiene el listado completo de récords/archivos del torneo (/v1/records)
  */
 export async function getRecords(forceRefresh = false) {
+  async function fetchRecords() {
+    try {
+      const isHtmlDir = window.location.pathname.includes('/html/');
+      const localPath = isHtmlDir ? '../data/records.json' : './data/records.json';
+      const res = await fetch(localPath);
+      if (res.ok) {
+        const data = await res.json();
+        return data;
+      }
+    } catch (e) {
+      console.warn('Error loading local records:', e);
+    }
+    return fetchWithCache('records', `${API_CONFIG.BASE_URL}/records/`);
+  }
   try {
-    const data = await fetchWithCache('records', forceRefresh);
+    const data = await fetchRecords();
     const list = Array.isArray(data) ? data : (data?.records || data?.data || []);
     const normalized = list.map(normalizeRecordItem).filter(Boolean);
     if (normalized.length > 0) return normalized;
