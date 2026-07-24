@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '6';
+const CACHE_VERSION = '7';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -575,6 +575,190 @@ const MOCK_DATA = {
         { number: 17, name: 'Florian Wirtz', pos: 'DEL', club: 'Bayer Leverkusen' }
       ]
     }
+  ],
+
+  ranking: [
+    { pos: 1, code: 'AR', name: 'Argentina', conf: 'CONMEBOL', rank: 1, titles: 3, dt: 'Lionel Scaloni' },
+    { pos: 2, code: 'FR', name: 'Francia', conf: 'UEFA', rank: 2, titles: 2, dt: 'Didier Deschamps' },
+    { pos: 3, code: 'BR', name: 'Brasil', conf: 'CONMEBOL', rank: 3, titles: 5, dt: 'Dorival Júnior' },
+    { pos: 4, code: 'GB', name: 'Inglaterra', conf: 'UEFA', rank: 4, titles: 1, dt: 'Gareth Southgate' },
+    { pos: 5, code: 'BE', name: 'Bélgica', conf: 'UEFA', rank: 5, titles: 0, dt: 'Domenico Tedesco' },
+    { pos: 6, code: 'PT', name: 'Portugal', conf: 'UEFA', rank: 6, titles: 0, dt: 'Roberto Martínez' },
+    { pos: 7, code: 'NL', name: 'Países Bajos', conf: 'UEFA', rank: 7, titles: 0, dt: 'Ronald Koeman' },
+    { pos: 8, code: 'ES', name: 'España', conf: 'UEFA', rank: 8, titles: 1, dt: 'Luis de la Fuente' },
+    { pos: 9, code: 'IT', name: 'Italia', conf: 'UEFA', rank: 9, titles: 4, dt: 'Luciano Spalletti' },
+    { pos: 10, code: 'CO', name: 'Colombia', conf: 'CONMEBOL', rank: 10, titles: 0, dt: 'Néstor Lorenzo' },
+    { pos: 11, code: 'DE', name: 'Alemania', conf: 'UEFA', rank: 11, titles: 4, dt: 'Julian Nagelsmann' },
+    { pos: 12, code: 'MX', name: 'México', conf: 'CONCACAF', rank: 12, titles: 0, dt: 'Javier Aguirre' },
+    { pos: 13, code: 'US', name: 'Estados Unidos', conf: 'CONCACAF', rank: 13, titles: 0, dt: 'Mauricio Pochettino' },
+    { pos: 14, code: 'UY', name: 'Uruguay', conf: 'CONMEBOL', rank: 14, titles: 2, dt: 'Marcelo Bielsa' },
+    { pos: 15, code: 'JP', name: 'Japón', conf: 'AFC', rank: 15, titles: 0, dt: 'Hajime Moriyasu' },
+    { pos: 16, code: 'MA', name: 'Marruecos', conf: 'CAF', rank: 16, titles: 0, dt: 'Walid Regragui' }
+  ],
+
+  cities: [
+    {
+      id: 'c1',
+      name: 'Ciudad de México',
+      stadium: 'Estadio Azteca',
+      country: 'México',
+      countryCode: 'MEX',
+      capacity: '87,523 personas',
+      image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+      description: 'La Ciudad de México es la capital cultural y deportiva de Norteamérica. Con una altitud de 2,240 metros, ha sido sede de dos finales históricas de la Copa Mundial de la FIFA en 1970 y 1986.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Híbrido Natural',
+        opened: '1966 (Remodelación 2025)',
+        coordinates: '19.3029° N, 99.1505° W',
+        highlights: 'Primer estadio en albergar tres ediciones de la Copa Mundial de la FIFA.'
+      },
+      matches: [
+        { id: 'm1', round: 'Partido Inaugural', teams: 'México vs Argentina', datetime: '11 Jun 2026 • 18:00' },
+        { id: 'm10', round: 'Fase de Grupos', teams: 'México vs España', datetime: '21 Jun 2026 • 20:00' }
+      ]
+    },
+    {
+      id: 'c2',
+      name: 'Nueva York / Nueva Jersey',
+      stadium: 'MetLife Stadium',
+      country: 'Estados Unidos',
+      countryCode: 'USA',
+      capacity: '82,500 personas',
+      image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+      description: 'La metrópolis más icónica del mundo albergará la gran Final de la Copa Mundial de la FIFA 2026 en el imponente MetLife Stadium en East Rutherford.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Natural Avanzado',
+        opened: '2010',
+        coordinates: '40.8135° N, 74.0744° W',
+        highlights: 'Sede confirmada para la Gran Final de la Copa Mundial FIFA 2026 el 19 de julio.'
+      },
+      matches: [
+        { id: 'm-final', round: 'Gran Final Mundial', teams: 'Ganador SF1 vs Ganador SF2', datetime: '19 Jul 2026 • 15:00' },
+        { id: 'm2', round: 'Fase de Grupos', teams: 'Brasil vs Alemania', datetime: '13 Jun 2026 • 20:00' }
+      ]
+    },
+    {
+      id: 'c3',
+      name: 'Toronto',
+      stadium: 'BMO Field',
+      country: 'Canadá',
+      countryCode: 'CAN',
+      capacity: '45,500 personas',
+      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+      description: 'Toronto es la ciudad más multicultural de Canadá y el corazón financiero del país. BMO Field ha sido ampliado para cumplir los estándares FIFA.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Híbrido Natural',
+        opened: '2007 (Ampliación 2025)',
+        coordinates: '43.6332° N, 79.4186° W',
+        highlights: 'Primer partido histórico de la Copa Mundial masculina en suelo canadiense.'
+      },
+      matches: [
+        { id: 'm3', round: 'Fase de Grupos', teams: 'Canadá vs Francia', datetime: '12 Jun 2026 • 19:00' }
+      ]
+    },
+    {
+      id: 'c4',
+      name: 'Los Ángeles',
+      stadium: 'SoFi Stadium',
+      country: 'Estados Unidos',
+      countryCode: 'USA',
+      capacity: '70,240 personas',
+      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+      description: 'Inglewood, Los Ángeles. Un recinto arquitectónico ultramoderno equipado con la pantalla de video 4K de doble cara más grande jamás construida.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+        surface: 'Matrix Turf / Césped Natural Adaptado',
+        opened: '2020',
+        coordinates: '33.9535° N, 118.3390° W',
+        highlights: 'Sede del debut de la Selección Masculina de Estados Unidos.'
+      },
+      matches: [
+        { id: 'm4', round: 'Fase de Grupos', teams: 'EE.UU. vs Colombia', datetime: '12 Jun 2026 • 21:00' }
+      ]
+    },
+    {
+      id: 'c5',
+      name: 'Guadalajara',
+      stadium: 'Estadio Akron',
+      country: 'México',
+      countryCode: 'MEX',
+      capacity: '48,000 personas',
+      image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+      description: 'La cuna del Mariachi y el Tequila albergará partidos de la fase de grupos en uno de los estadios ecológicos más bellos de Latinoamérica.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Natural Pasto Bermuda',
+        opened: '2010',
+        coordinates: '20.6817° N, 103.4626° W',
+        highlights: 'Diseño en forma de volcán integrado con la naturaleza de Zapopan.'
+      },
+      matches: [
+        { id: 'm5', round: 'Fase de Grupos', teams: 'Uruguay vs Portugal', datetime: '18 Jun 2026 • 17:00' }
+      ]
+    },
+    {
+      id: 'c6',
+      name: 'Monterrey',
+      stadium: 'Estadio BBVA',
+      country: 'México',
+      countryCode: 'MEX',
+      capacity: '53,500 personas',
+      image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+      description: 'Conocido como "El Gigante de Acero", el Estadio BBVA ofrece una vista espectacular del imponente Cerro de la Silla en Guadalupe, Nuevo León.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Natural',
+        opened: '2015',
+        coordinates: '25.6702° N, 100.2458° W',
+        highlights: 'Considerado uno de los estadios más modernos y sostenibles de América.'
+      },
+      matches: [
+        { id: 'm6', round: 'Fase de Grupos', teams: 'España vs Japón', datetime: '19 Jun 2026 • 19:00' }
+      ]
+    },
+    {
+      id: 'c7',
+      name: 'Vancouver',
+      stadium: 'BC Place',
+      country: 'Canadá',
+      countryCode: 'CAN',
+      capacity: '54,500 personas',
+      image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+      description: 'Ubicada en la hermosa costa del Pacífico canadiense, Vancouver acogerá a miles de aficionados en el renovado estadio con techo retráctil BC Place.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Certificado FIFA',
+        opened: '1983 (Renovado 2011)',
+        coordinates: '49.2767° N, 123.1119° W',
+        highlights: 'Sede de la Final del Mundial Femenino de la FIFA 2015.'
+      },
+      matches: [
+        { id: 'm7', round: 'Fase de Grupos', teams: 'Canadá vs Marruecos', datetime: '18 Jun 2026 • 21:00' }
+      ]
+    },
+    {
+      id: 'c8',
+      name: 'Miami',
+      stadium: 'Hard Rock Stadium',
+      country: 'Estados Unidos',
+      countryCode: 'USA',
+      capacity: '64,767 personas',
+      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+      description: 'La capital del sol y el fútbol caribeño. Hard Rock Stadium alberga eventos globales de primer nivel como el Super Bowl y la Copa América.',
+      stadiumInfo: {
+        image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+        surface: 'Césped Natural Tifway 419',
+        opened: '1987 (Remodelado 2016)',
+        coordinates: '25.9580° N, 80.2389° W',
+        highlights: 'Sede del partido por el Tercer Lugar del Mundial 2026.'
+      },
+      matches: [
+        { id: 'm8', round: 'Tercer Lugar', teams: 'Perdedor SF1 vs Perdedor SF2', datetime: '18 Jul 2026 • 17:00' }
+      ]
+    }
   ]
 };
 
@@ -1132,6 +1316,118 @@ export async function getMatches(filters = {}, forceRefresh = false) {
   }
 }
 
+/**
+ * Normaliza un ítem del Ranking FIFA Mundial (/v1/ranking)
+ */
+function normalizeRankingItem(item, idx) {
+  if (!item) return null;
+  const code = item.code || item.isoCode || item.id || 'MX';
+  const name = item.name || item.nombre || COUNTRY_NAMES[code] || code;
+  const conf = item.conf || item.confederation || item.confederacion || 'FIFA';
+  const pos = item.pos || item.position || item.rank || (idx + 1);
+  const rank = item.rank || item.points || item.puntos || pos;
+  const titles = item.titles ?? item.titulos ?? 0;
+  const dt = item.dt || item.coach || item.entrenador || 'Director Técnico';
+
+  return {
+    pos: Number(pos),
+    code: code,
+    name: name,
+    conf: conf,
+    rank: Number(rank),
+    titles: Number(titles),
+    dt: dt
+  };
+}
+
+/**
+ * Obtiene el Ranking FIFA Mundial (/v1/ranking)
+ */
+export async function getRanking(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('ranking', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.ranking || data?.data || []);
+    const normalized = list.map(normalizeRankingItem).filter(Boolean);
+    return normalized.length > 0 ? normalized : MOCK_DATA.ranking;
+  } catch (error) {
+    console.warn('[getRanking] Fallback a MOCK_DATA.ranking:', error);
+    return MOCK_DATA.ranking;
+  }
+}
+
+/**
+ * Normaliza una ciudad anfitriona individual (/v1/cities y /v1/cities/{id})
+ */
+function normalizeCity(item) {
+  if (!item) return null;
+  const raw = item.data || item.city || item;
+  const id = String(raw.id || raw.cityId || 'c1');
+  const name = raw.name || raw.nombre || 'Ciudad Anfitriona';
+  const stadium = raw.stadium || raw.estadio || 'Estadio Oficial FIFA';
+  const country = raw.country || raw.pais || 'Estados Unidos';
+  let countryCode = raw.countryCode || raw.codigoPais || 'USA';
+  if (country === 'México' || country === 'Mexico') countryCode = 'MEX';
+  if (country === 'Canadá' || country === 'Canada') countryCode = 'CAN';
+  if (country === 'Estados Unidos' || country === 'EE.UU.' || country === 'EEUU') countryCode = 'USA';
+
+  const capacity = raw.capacity || raw.capacidad || '70,000 personas';
+  const image = raw.image || raw.imagen || raw.img || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80';
+  const description = raw.description || raw.descripcion || `${name} es una de las 16 sedes oficiales confirmadas para la Copa Mundial de la FIFA 2026.`;
+
+  return {
+    id: id,
+    name: name,
+    stadium: stadium,
+    country: country,
+    countryCode: countryCode,
+    capacity: capacity,
+    image: image,
+    description: description,
+    stadiumInfo: raw.stadiumInfo || {
+      image: image,
+      surface: 'Césped Híbrido Certificado FIFA',
+      opened: '2015',
+      coordinates: '37.7749° N, 122.4194° W',
+      highlights: `Sede oficial en ${name} para la Copa Mundial de la FIFA 2026.`
+    },
+    matches: Array.isArray(raw.matches) ? raw.matches : [
+      { id: 'm-fase', round: 'Fase de Grupos', teams: 'Partido Oficial FIFA', datetime: 'Junio 2026' }
+    ]
+  };
+}
+
+/**
+ * Obtiene el listado completo de ciudades anfitrionas (/v1/cities)
+ */
+export async function getCities(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('cities', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.cities || data?.data || []);
+    const normalized = list.map(normalizeCity).filter(Boolean);
+    return normalized.length > 0 ? normalized : MOCK_DATA.cities.map(normalizeCity);
+  } catch (error) {
+    console.warn('[getCities] Fallback a MOCK_DATA.cities:', error);
+    return MOCK_DATA.cities.map(normalizeCity);
+  }
+}
+
+/**
+ * Obtiene el detalle de una ciudad por ID (/v1/cities/{id})
+ */
+export async function getCityById(id, forceRefresh = false) {
+  try {
+    const data = await fetchWithCache(`cities/${id}`, forceRefresh);
+    if (data && (data.id || data.name || data.stadium)) {
+      return normalizeCity(data);
+    }
+  } catch (error) {
+    console.warn(`[getCityById] Fallback a MOCK_DATA para id ${id}:`, error);
+  }
+
+  const mockItem = MOCK_DATA.cities.find(c => String(c.id).toLowerCase() === String(id).toLowerCase() || String(c.name).toLowerCase().includes(String(id).toLowerCase())) || MOCK_DATA.cities[0];
+  return normalizeCity(mockItem);
+}
+
 // Public API Methods
 export const FIFA_API = {
   getNews,
@@ -1141,12 +1437,15 @@ export const FIFA_API = {
   getTeams: (forceRefresh = false) => getTeams(forceRefresh),
   getTeamsList: (forceRefresh = false) => getTeams(forceRefresh),
   getTeamById: (id, forceRefresh = false) => getTeamById(id, forceRefresh),
+  getRanking: (forceRefresh = false) => getRanking(forceRefresh),
+  getRankingList: (forceRefresh = false) => getRanking(forceRefresh),
+  getCities: (forceRefresh = false) => getCities(forceRefresh),
+  getCitiesList: (forceRefresh = false) => getCities(forceRefresh),
+  getCityById: (id, forceRefresh = false) => getCityById(id, forceRefresh),
   getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', forceRefresh),
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
-  getRanking: (forceRefresh = false) => fetchWithCache('ranking', forceRefresh),
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
-  getCities: () => fetchWithCache('cities'),
   getODS: () => fetchWithCache('ods'),
   clearCache: () => {
     clearFifaCache();
