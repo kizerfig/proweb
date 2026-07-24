@@ -5,11 +5,11 @@
 
 const API_CONFIG = {
   BASE_URL: 'https://wc-api-u378.onrender.com/wc-api/api/v1',
-  CORS_PROXY: 'https://corsproxy.io/?',
+  CORS_PROXY: 'https://api.allorigins.win/raw?url=',
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '13';
+const CACHE_VERSION = '18';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -19,6 +19,88 @@ function isLocalEnvironment() {
     window.location.hostname === '127.0.0.1' ||
     window.location.protocol === 'file:'
   );
+}
+
+/**
+ * URL base de la API: en producción (Vercel) usa proxy same-origin para evitar CORS
+ */
+function getApiBaseUrl() {
+  if (typeof window === 'undefined') return API_CONFIG.BASE_URL;
+
+  if (!isLocalEnvironment()) {
+    return `${window.location.origin}/api/wc-api`;
+  }
+
+  return API_CONFIG.BASE_URL;
+}
+
+/** Rutas alternativas del proxy en producción (función serverless + rewrite legacy) */
+function getProductionProxyUrls(endpoint) {
+  const origin = window.location.origin;
+  return [
+    buildApiUrl(getApiBaseUrl(), endpoint),
+    buildApiUrl(`${origin}/wc-api/api/v1`, endpoint)
+  ];
+}
+
+function buildApiUrl(baseUrl, endpoint) {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${baseUrl}/${cleanEndpoint}`;
+}
+
+function isValidApiPayload(data) {
+  return data !== null && data !== undefined;
+}
+
+async function fetchJsonFromUrl(url, label = 'fetch') {
+  try {
+    const response = await fetchWithTimeout(url, 25000);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (!isValidApiPayload(data)) return null;
+
+    console.log(`[API OK] ${label}`);
+    return data;
+  } catch (err) {
+    console.warn(`[API FAIL] ${label} (${err.message})`);
+    return null;
+  }
+}
+
+/**
+ * Intenta cargar un endpoint probando proxy same-origin, URL directa y proxy CORS
+ */
+async function fetchApiEndpoint(endpoint) {
+  const renderUrl = buildApiUrl(API_CONFIG.BASE_URL, endpoint);
+  const attempts = [];
+
+  if (!isLocalEnvironment()) {
+    getProductionProxyUrls(endpoint).forEach((url, index) => {
+      attempts.push({
+        url,
+        label: index === 0 ? 'vercel proxy' : 'vercel rewrite'
+      });
+    });
+  } else {
+    attempts.push({ url: renderUrl, label: 'direct render' });
+    attempts.push({
+      url: `${API_CONFIG.CORS_PROXY}${encodeURIComponent(renderUrl)}`,
+      label: 'cors proxy'
+    });
+    return tryFetchAttempts(attempts);
+  }
+
+  // En producción el navegador bloquea Render por CORS; solo usar proxy same-origin
+  return tryFetchAttempts(attempts);
+}
+
+async function tryFetchAttempts(attempts) {
+  for (const attempt of attempts) {
+    const data = await fetchJsonFromUrl(attempt.url, attempt.label);
+    if (data !== null) return data;
+  }
+  return null;
 }
 
 function clearFifaCache() {
@@ -445,143 +527,68 @@ const MOCK_DATA = {
   ],
 
   teams: [
-    {
-      id: 'MX',
-      code: 'MX',
-      name: 'México',
-      confederation: 'CONCACAF',
-      group: 'Grupo A',
-      rank: 15,
-      appearances: 17,
-      coach: 'Javier Aguirre',
-      squad: [
-        { number: 13, name: 'Guillermo Ochoa', pos: 'POR', club: 'Salernitana' },
-        { number: 3, name: 'César Montes', pos: 'DEF', club: 'Al-Shabab' },
-        { number: 4, name: 'Edson Álvarez', pos: 'MED', club: 'West Ham United' },
-        { number: 9, name: 'Raúl Jiménez', pos: 'DEL', club: 'Fulham' },
-        { number: 10, name: 'Alexis Vega', pos: 'DEL', club: 'Toluca' }
-      ]
-    },
-    {
-      id: 'AR',
-      code: 'AR',
-      name: 'Argentina',
-      confederation: 'CONMEBOL',
-      group: 'Grupo A',
-      rank: 1,
-      appearances: 18,
-      coach: 'Lionel Scaloni',
-      squad: [
-        { number: 23, name: 'Emiliano Martínez', pos: 'POR', club: 'Aston Villa' },
-        { number: 13, name: 'Cristian Romero', pos: 'DEF', club: 'Tottenham Hotspur' },
-        { number: 7, name: 'Rodrigo De Paul', pos: 'MED', club: 'Atlético de Madrid' },
-        { number: 10, name: 'Lionel Messi', pos: 'DEL', club: 'Inter Miami' },
-        { number: 9, name: 'Julián Álvarez', pos: 'DEL', club: 'Atlético de Madrid' }
-      ]
-    },
-    {
-      id: 'BR',
-      code: 'BR',
-      name: 'Brasil',
-      confederation: 'CONMEBOL',
-      group: 'Grupo B',
-      rank: 5,
-      appearances: 22,
-      coach: 'Dorival Júnior',
-      squad: [
-        { number: 1, name: 'Alisson Becker', pos: 'POR', club: 'Liverpool' },
-        { number: 4, name: 'Marquinhos', pos: 'DEF', club: 'PSG' },
-        { number: 5, name: 'Casemiro', pos: 'MED', club: 'Manchester United' },
-        { number: 7, name: 'Vinícius Júnior', pos: 'DEL', club: 'Real Madrid' },
-        { number: 11, name: 'Rodrygo Goes', pos: 'DEL', club: 'Real Madrid' }
-      ]
-    },
-    {
-      id: 'ES',
-      code: 'ES',
-      name: 'España',
-      confederation: 'UEFA',
-      group: 'Grupo C',
-      rank: 3,
-      appearances: 16,
-      coach: 'Luis de la Fuente',
-      squad: [
-        { number: 1, name: 'Unai Simón', pos: 'POR', club: 'Athletic Club' },
-        { number: 14, name: 'Aymeric Laporte', pos: 'DEF', club: 'Al-Nassr' },
-        { number: 16, name: 'Rodri Hernández', pos: 'MED', club: 'Manchester City' },
-        { number: 19, name: 'Lamine Yamal', pos: 'DEL', club: 'FC Barcelona' },
-        { number: 7, name: 'Álvaro Morata', pos: 'DEL', club: 'AC Milan' }
-      ]
-    },
-    {
-      id: 'FR',
-      code: 'FR',
-      name: 'Francia',
-      confederation: 'UEFA',
-      group: 'Grupo C',
-      rank: 2,
-      appearances: 16,
-      coach: 'Didier Deschamps',
-      squad: [
-        { number: 16, name: 'Mike Maignan', pos: 'POR', club: 'AC Milan' },
-        { number: 4, name: 'Dayot Upamecano', pos: 'DEF', club: 'Bayern München' },
-        { number: 8, name: 'Aurelien Tchouaméni', pos: 'MED', club: 'Real Madrid' },
-        { number: 10, name: 'Kylian Mbappé', pos: 'DEL', club: 'Real Madrid' },
-        { number: 7, name: 'Antoine Griezmann', pos: 'DEL', club: 'Atlético de Madrid' }
-      ]
-    },
-    {
-      id: 'US',
-      code: 'US',
-      name: 'Estados Unidos',
-      confederation: 'CONCACAF',
-      group: 'Grupo D',
-      rank: 11,
-      appearances: 11,
-      coach: 'Mauricio Pochettino',
-      squad: [
-        { number: 1, name: 'Matt Turner', pos: 'POR', club: 'Crystal Palace' },
-        { number: 3, name: 'Chris Richards', pos: 'DEF', club: 'Crystal Palace' },
-        { number: 8, name: 'Weston McKennie', pos: 'MED', club: 'Juventus' },
-        { number: 10, name: 'Christian Pulisic', pos: 'DEL', club: 'AC Milan' },
-        { number: 21, name: 'Timothy Weah', pos: 'DEL', club: 'Juventus' }
-      ]
-    },
-    {
-      id: 'CA',
-      code: 'CA',
-      name: 'Canadá',
-      confederation: 'CONCACAF',
-      group: 'Grupo D',
-      rank: 48,
-      appearances: 2,
-      coach: 'Jesse Marsch',
-      squad: [
-        { number: 16, name: 'Maxime Crépeau', pos: 'POR', club: 'Portland Timbers' },
-        { number: 15, name: 'Moïse Bombito', pos: 'DEF', club: 'Nice' },
-        { number: 7, name: 'Stephen Eustaquio', pos: 'MED', club: 'Porto' },
-        { number: 19, name: 'Alphonso Davies', pos: 'DEL', club: 'Bayern München' },
-        { number: 9, name: 'Jonathan David', pos: 'DEL', club: 'Lille' }
-      ]
-    },
-    {
-      id: 'DE',
-      code: 'DE',
-      name: 'Alemania',
-      confederation: 'UEFA',
-      group: 'Grupo B',
-      rank: 9,
-      appearances: 20,
-      coach: 'Julian Nagelsmann',
-      squad: [
-        { number: 1, name: 'Manuel Neuer', pos: 'POR', club: 'Bayern München' },
-        { number: 2, name: 'Antonio Rüdiger', pos: 'DEF', club: 'Real Madrid' },
-        { number: 8, name: 'Toni Kroos', pos: 'MED', club: 'Real Madrid' },
-        { number: 10, name: 'Jamal Musiala', pos: 'DEL', club: 'Bayern München' },
-        { number: 17, name: 'Florian Wirtz', pos: 'DEL', club: 'Bayer Leverkusen' }
-      ]
-    }
+    // ── GRUPO A ──
+    { id: 'MEX', code: 'MEX', name: 'México',           confederation: 'CONCACAF', group: 'A', world_ranking: 14, appearances: 18, host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/MEX' },
+    { id: 'KOR', code: 'KOR', name: 'República de Corea', confederation: 'AFC',    group: 'A', world_ranking: 25, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/KOR' },
+    { id: 'CZE', code: 'CZE', name: 'Chequia',          confederation: 'UEFA',     group: 'A', world_ranking: 40, appearances: 10, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CZE' },
+    { id: 'RSA', code: 'RSA', name: 'Sudáfrica',        confederation: 'CAF',      group: 'A', world_ranking: 60, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/RSA' },
+    // ── GRUPO B ──
+    { id: 'CAN', code: 'CAN', name: 'Canadá',           confederation: 'CONCACAF', group: 'B', world_ranking: 47, appearances: 2,  host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CAN' },
+    { id: 'BIH', code: 'BIH', name: 'Bosnia y Herzegovina', confederation: 'UEFA', group: 'B', world_ranking: 62, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BIH' },
+    { id: 'QAT', code: 'QAT', name: 'Catar',            confederation: 'AFC',      group: 'B', world_ranking: 58, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/QAT' },
+    { id: 'SUI', code: 'SUI', name: 'Suiza',            confederation: 'UEFA',     group: 'B', world_ranking: 19, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SUI' },
+    // ── GRUPO C ──
+    { id: 'HAI', code: 'HAI', name: 'Haití',            confederation: 'CONCACAF', group: 'C', world_ranking: 83, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/HAI' },
+    { id: 'BRA', code: 'BRA', name: 'Brasil',           confederation: 'CONMEBOL', group: 'C', world_ranking: 6,  appearances: 23, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BRA' },
+    { id: 'SCO', code: 'SCO', name: 'Escocia',          confederation: 'UEFA',     group: 'C', world_ranking: 39, appearances: 8,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SCO' },
+    { id: 'MAR', code: 'MAR', name: 'Marruecos',        confederation: 'CAF',      group: 'C', world_ranking: 14, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/MAR' },
+    // ── GRUPO D ──
+    { id: 'AUS', code: 'AUS', name: 'Australia',        confederation: 'AFC',      group: 'D', world_ranking: 24, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/AUS' },
+    { id: 'TUR', code: 'TUR', name: 'Turquía',          confederation: 'UEFA',     group: 'D', world_ranking: 26, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/TUR' },
+    { id: 'USA', code: 'USA', name: 'EE. UU.',          confederation: 'CONCACAF', group: 'D', world_ranking: 11, appearances: 11, host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/USA' },
+    { id: 'PAR', code: 'PAR', name: 'Paraguay',         confederation: 'CONMEBOL', group: 'D', world_ranking: 64, appearances: 9,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/PAR' },
+    // ── GRUPO E ──
+    { id: 'CIV', code: 'CIV', name: 'Costa de Marfil', confederation: 'CAF',      group: 'E', world_ranking: 52, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CIV' },
+    { id: 'GER', code: 'GER', name: 'Alemania',         confederation: 'UEFA',     group: 'E', world_ranking: 12, appearances: 20, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/GER' },
+    { id: 'CUW', code: 'CUW', name: 'Curazao',          confederation: 'CONCACAF', group: 'E', world_ranking: 90, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CUW' },
+    { id: 'ECU', code: 'ECU', name: 'Ecuador',          confederation: 'CONMEBOL', group: 'E', world_ranking: 35, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ECU' },
+    // ── GRUPO F ──
+    { id: 'JPN', code: 'JPN', name: 'Japón',            confederation: 'AFC',      group: 'F', world_ranking: 15, appearances: 8,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/JPN' },
+    { id: 'NED', code: 'NED', name: 'Países Bajos',     confederation: 'UEFA',     group: 'F', world_ranking: 7,  appearances: 11, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NED' },
+    { id: 'SWE', code: 'SWE', name: 'Suecia',           confederation: 'UEFA',     group: 'F', world_ranking: 22, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SWE' },
+    { id: 'TUN', code: 'TUN', name: 'Túnez',            confederation: 'CAF',      group: 'F', world_ranking: 31, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/TUN' },
+    // ── GRUPO G ──
+    { id: 'EGY', code: 'EGY', name: 'Egipto',           confederation: 'CAF',      group: 'G', world_ranking: 34, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/EGY' },
+    { id: 'NZL', code: 'NZL', name: 'Nueva Zelanda',    confederation: 'OFC',      group: 'G', world_ranking: 97, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NZL' },
+    { id: 'IRN', code: 'IRN', name: 'RI de Irán',       confederation: 'AFC',      group: 'G', world_ranking: 21, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/IRN' },
+    { id: 'BEL', code: 'BEL', name: 'Bélgica',          confederation: 'UEFA',     group: 'G', world_ranking: 3,  appearances: 14, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BEL' },
+    // ── GRUPO H ──
+    { id: 'URU', code: 'URU', name: 'Uruguay',          confederation: 'CONMEBOL', group: 'H', world_ranking: 16, appearances: 14, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/URU' },
+    { id: 'CPV', code: 'CPV', name: 'Islas de Cabo Verde', confederation: 'CAF',  group: 'H', world_ranking: 76, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CPV' },
+    { id: 'KSA', code: 'KSA', name: 'Arabia Saudí',     confederation: 'AFC',      group: 'H', world_ranking: 56, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/KSA' },
+    { id: 'ESP', code: 'ESP', name: 'España',            confederation: 'UEFA',     group: 'H', world_ranking: 5,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ESP' },
+    // ── GRUPO I ──
+    { id: 'SEN', code: 'SEN', name: 'Senegal',          confederation: 'CAF',      group: 'I', world_ranking: 20, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SEN' },
+    { id: 'NOR', code: 'NOR', name: 'Noruega',          confederation: 'UEFA',     group: 'I', world_ranking: 18, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NOR' },
+    { id: 'IRQ', code: 'IRQ', name: 'Irak',             confederation: 'AFC',      group: 'I', world_ranking: 64, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/IRQ' },
+    { id: 'FRA', code: 'FRA', name: 'Francia',          confederation: 'UEFA',     group: 'I', world_ranking: 2,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/FRA' },
+    // ── GRUPO J ──
+    { id: 'ALG', code: 'ALG', name: 'Argelia',          confederation: 'CAF',      group: 'J', world_ranking: 28, appearances: 5,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ALG' },
+    { id: 'JOR', code: 'JOR', name: 'Jordania',         confederation: 'AFC',      group: 'J', world_ranking: 74, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/JOR' },
+    { id: 'ARG', code: 'ARG', name: 'Argentina',        confederation: 'CONMEBOL', group: 'J', world_ranking: 1,  appearances: 18, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ARG' },
+    { id: 'AUT', code: 'AUT', name: 'Austria',          confederation: 'UEFA',     group: 'J', world_ranking: 27, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/AUT' },
+    // ── GRUPO K ──
+    { id: 'COL', code: 'COL', name: 'Colombia',         confederation: 'CONMEBOL', group: 'K', world_ranking: 10, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/COL' },
+    { id: 'COD', code: 'COD', name: 'RD Congo',         confederation: 'CAF',      group: 'K', world_ranking: 73, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/COD' },
+    { id: 'POR', code: 'POR', name: 'Portugal',         confederation: 'UEFA',     group: 'K', world_ranking: 8,  appearances: 9,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/POR' },
+    { id: 'UZB', code: 'UZB', name: 'Uzbekistán',       confederation: 'AFC',      group: 'K', world_ranking: 70, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/UZB' },
+    // ── GRUPO L ──
+    { id: 'CRO', code: 'CRO', name: 'Croacia',          confederation: 'UEFA',     group: 'L', world_ranking: 9,  appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CRO' },
+    { id: 'ENG', code: 'ENG', name: 'Inglaterra',       confederation: 'UEFA',     group: 'L', world_ranking: 4,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ENG' },
+    { id: 'GHA', code: 'GHA', name: 'Ghana',            confederation: 'CAF',      group: 'L', world_ranking: 55, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/GHA' },
+    { id: 'PAN', code: 'PAN', name: 'Panamá',           confederation: 'CONCACAF', group: 'L', world_ranking: 49, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/PAN' }
   ],
+
 
   ranking: [
     { pos: 1, code: 'AR', name: 'Argentina', conf: 'CONMEBOL', rank: 1, titles: 3, dt: 'Lionel Scaloni' },
@@ -809,41 +816,10 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   }
 
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  const directUrl = `${API_CONFIG.BASE_URL}/${cleanEndpoint}`;
 
-  let data = null;
-  let fetchSuccess = false;
+  const data = await fetchApiEndpoint(cleanEndpoint);
 
-  // Intento 1: Fetch directo (Render cold start puede tardar)
-  try {
-    const response = await fetchWithTimeout(directUrl, 25000);
-    if (response.ok) {
-      data = await response.json();
-      if (data && (Array.isArray(data) ? data.length > 0 : true)) {
-        fetchSuccess = true;
-      }
-    }
-  } catch (err) {
-    console.warn(`[Fetch Directo] Endpoint '${endpoint}' no respondió a tiempo (${err.message})`);
-  }
-
-  // Intento 2: Si estamos en local y falló directo, intentar Proxy CORS
-  if (!fetchSuccess && isLocalEnvironment()) {
-    try {
-      const proxyUrl = `${API_CONFIG.CORS_PROXY}${encodeURIComponent(directUrl)}`;
-      const response = await fetchWithTimeout(proxyUrl, 25000);
-      if (response.ok) {
-        data = await response.json();
-        if (data && (Array.isArray(data) ? data.length > 0 : true)) {
-          fetchSuccess = true;
-        }
-      }
-    } catch (err) {
-      console.warn(`[Fetch Proxy] Proxy para '${endpoint}' tampoco respondió (${err.message})`);
-    }
-  }
-
-  if (fetchSuccess && data) {
+  if (data !== null) {
     try {
       localStorage.setItem(cacheKey, JSON.stringify({
         timestamp: Date.now(),
@@ -998,25 +974,141 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
 }
 
 /**
- * Normaliza detalle de partido (/v1/matches/{id}) reutilizando el listado
+ * Normaliza detalle de partido (/v1/matches/{id})
+ * Mapea los campos reales de la API: chronology, statistics, line_ups, highlight
  */
 function normalizeMatchDetail(raw, requestedId) {
   const item = raw?.data || raw?.match || raw;
   const base = normalizeMatch(item);
   if (!base) return null;
 
+  // --- Cronología (events) ---
+  const chronology = Array.isArray(item.chronology) ? item.chronology : [];
+  const timeline = chronology
+    .sort((a, b) => (b.time || 0) - (a.time || 0)) // más reciente primero
+    .map(ev => {
+      const playerName = ev.player?.name || ev.player_in?.name || '';
+      const playerOut  = ev.player_out?.name || '';
+      let type  = 'goal';
+      let title = '⚽ Gol';
+      let desc  = playerName || 'Desconocido';
+
+      if (ev.type === 'goal') {
+        type  = 'goal';
+        title = `⚽ ¡Gol!`;
+        desc  = playerName || 'Desconocido';
+      } else if (ev.type === 'card') {
+        type  = ev.card === 'red' ? 'card-red' : 'card-yellow';
+        title = ev.card === 'red' ? '🟥 Tarjeta Roja' : '🟨 Tarjeta Amarilla';
+        desc  = playerName || 'Desconocido';
+      } else if (ev.type === 'substitution') {
+        type  = 'substitution';
+        title = '🔄 Sustitución';
+        desc  = `Entra: ${ev.player_in?.name || '?'} — Sale: ${playerOut || '?'}`;
+      }
+
+      return {
+        minute: `${ev.time || '?'}'`,
+        type,
+        title,
+        desc
+      };
+    });
+
+  // --- Estadísticas ---
+  let stats = null;
+  const rawStats = Array.isArray(item.statistics) ? item.statistics : [];
+  if (rawStats.length > 0) {
+    // La API devuelve grupos de estadísticas; las aplanamos en el objeto que espera renderStats
+    const allStats = [];
+    rawStats.forEach(group => {
+      if (Array.isArray(group.statistics)) allStats.push(...group.statistics);
+    });
+    const find = name => allStats.find(s => s.name?.toLowerCase().includes(name.toLowerCase())) || { home_value: 0, away_value: 0, home: '0', away: '0' };
+
+    const pos   = find('possession');
+    const shots = find('total shots');
+    const onT   = find('shots on target') || find('goalkeeper saves');
+    const cor   = find('corner');
+    const fouls = find('foul');
+    const yc    = find('yellow card') || { home_value: 0, away_value: 0 };
+    const rc    = find('red card') || { home_value: 0, away_value: 0 };
+
+    stats = {
+      possession:    [pos.home_value || 0,   pos.away_value || 0],
+      shotsOnTarget: [onT.home_value || 0,   onT.away_value || 0],
+      totalShots:    [shots.home_value || 0,  shots.away_value || 0],
+      corners:       [cor.home_value || 0,   cor.away_value || 0],
+      fouls:         [fouls.home_value || 0, fouls.away_value || 0],
+      yellowCards:   [yc.home_value || 0,    yc.away_value || 0],
+      redCards:      [rc.home_value || 0,    rc.away_value || 0],
+      allStats       // all stats for extended table
+    };
+  }
+
+  // --- Alineaciones ---
+  let lineups = null;
+  if (item.line_ups?.home && item.line_ups?.away) {
+    const mapTeam = (side) => {
+      const t = item.line_ups[side];
+      if (!t) return null;
+      const starters = Object.values(t.starting_players || {});
+      return {
+        formation:   t.formation || '',
+        coach:       t.coach || '',
+        starting:    starters.map((p, i) => ({
+          number: p.number,
+          name:   p.name,
+          pos:    p.position,
+          photo:  p.photo_url || '',
+          row:    Math.floor(i / 3) + 1,
+          col:    [20, 50, 80][i % 3]
+        })),
+        substitutes: (t.substitutes || []).map(p => `${p.name} (#${p.number})`)
+      };
+    };
+    lineups = { team1: mapTeam('home'), team2: mapTeam('away') };
+  }
+
+  // --- Highlights ---
+  let highlights = null;
+  const rawHighlights = Array.isArray(item.highlight) ? item.highlight : [];
+  if (rawHighlights.length > 0) {
+    const main = rawHighlights.find(h => h.url?.includes('sofascore') || h.url?.includes('highlights')) || rawHighlights[0];
+    highlights = {
+      main: {
+        title:    main?.title || 'Resumen del partido',
+        subtitle: main?.subtitle || '',
+        url:      main?.url || '',
+        poster:   main?.thumbnail_url || ''
+      },
+      gallery: rawHighlights.slice(1).map(h => ({
+        title:    `${h.title}${h.subtitle ? ' — ' + h.subtitle : ''}`,
+        url:      h.url || '',
+        image:    h.thumbnail_url || '',
+        duration: ''
+      }))
+    };
+  }
+
+  // --- Ciudad y Estadio ---
+  const city = item.city || {};
+  const stadium = city.stadium?.name || '';
+  const cityName = city.name || base.city || '';
+
   return {
-    ...MATCH_DETAILS_MOCK['m1'],
     ...base,
-    id: base.id || requestedId,
-    status: base.status,
+    id:          base.id || requestedId,
+    city:        cityName,
+    stadium:     stadium,
+    referee:     item.referee || base.referee || '',
+    status:      base.status,
     statusLabel: base.statusLabel,
     statusClass: base.statusClass,
-    timeline: Array.isArray(item.timeline) ? item.timeline : (MATCH_DETAILS_MOCK['m1']?.timeline || []),
-    stats: item.stats || MATCH_DETAILS_MOCK['m1']?.stats || null,
-    lineups: item.lineups || MATCH_DETAILS_MOCK['m1']?.lineups || null,
-    media: item.media || MATCH_DETAILS_MOCK['m1']?.media || null,
-    gallery: item.gallery || MATCH_DETAILS_MOCK['m1']?.gallery || []
+    timeline,
+    stats,
+    lineups,
+    highlights
   };
 }
 
@@ -1243,6 +1335,10 @@ function mapMatchStatus(rawStatus) {
     return { status: 'Finalizado', statusLabel: 'Finalizado', statusClass: 'finished' };
   }
 
+  if (['not started', 'scheduled', 'fixture', 'ns', 'programado'].includes(value)) {
+    return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
+  }
+
   return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
 }
 
@@ -1252,13 +1348,27 @@ function mapMatchStatus(rawStatus) {
 function normalizeMatch(match) {
   if (!match) return null;
 
+  // El endpoint de lista usa home_id/away_id; el endpoint de detalle usa home_team.id/away_team.id
   const isApiFormat = match.home_id !== undefined || match.home_score !== undefined || match.city_id !== undefined;
+  const isDetailFormat = match.home_team !== undefined || match.away_team !== undefined;
 
-  const homeCode = String(isApiFormat ? (match.home_id || 'MEX') : (match.team1?.code || match.homeCode || 'MEX')).toUpperCase();
-  const awayCode = String(isApiFormat ? (match.away_id || 'ARG') : (match.team2?.code || match.awayCode || 'ARG')).toUpperCase();
+  let homeCode, awayCode;
+  if (isDetailFormat) {
+    // Endpoint /v1/matches/{id}: usa home_team.id y away_team.id
+    homeCode = String(match.home_team?.id || match.home_id || match.team1?.code || 'TBD').toUpperCase();
+    awayCode = String(match.away_team?.id || match.away_id || match.team2?.code || 'TBD').toUpperCase();
+  } else if (isApiFormat) {
+    // Endpoint /v1/matches: usa home_id y away_id directamente
+    homeCode = String(match.home_id || match.team1?.code || 'TBD').toUpperCase();
+    awayCode = String(match.away_id || match.team2?.code || 'TBD').toUpperCase();
+  } else {
+    // Formato mock / legacy
+    homeCode = String(match.team1?.code || match.homeCode || 'TBD').toUpperCase();
+    awayCode = String(match.team2?.code || match.awayCode || 'TBD').toUpperCase();
+  }
 
-  const homeName = match.team1?.name || match.home_name || COUNTRY_NAMES[homeCode] || homeCode;
-  const awayName = match.team2?.name || match.away_name || COUNTRY_NAMES[awayCode] || awayCode;
+  const homeName = match.home_team?.name || match.team1?.name || match.home_name || COUNTRY_NAMES[homeCode] || homeCode;
+  const awayName = match.away_team?.name || match.team2?.name || match.away_name || COUNTRY_NAMES[awayCode] || awayCode;
 
   const { status, statusLabel, statusClass } = mapMatchStatus(match.status);
 
@@ -1349,13 +1459,14 @@ function normalizeMatchesList(rawData) {
 }
 
 /**
- * Descarta partidos basura/placeholder de la API (ej. final falsa id 11111111)
+ * Descarta partidos fuera del calendario de grupos (jun–jul), excepto fases finales
  */
 function isValidApiMatch(match) {
   if (!match) return false;
-  const id = String(match.id ?? '');
-  if (id === '11111111') return false;
-  // Fuera del rango oficial del Mundial 2026 (jun–jul)
+
+  const round = Number(match.round);
+  if (round >= 27 || round === 50) return true;
+
   if (match.date && (match.date < '2026-06-01' || match.date > '2026-07-31')) return false;
   return true;
 }
@@ -1743,6 +1854,122 @@ export async function getSound(forceRefresh = false) {
   }
 }
 
+/**
+ * Normaliza un ítem individual de clasificación de equipo
+ */
+function normalizeStandingItem(item, idx) {
+  if (!item) return null;
+  const rawTeam = item.team || item;
+  const code = rawTeam.id || rawTeam.code || rawTeam.isoCode || 'FIFA';
+  const name = rawTeam.name || rawTeam.nombre || COUNTRY_NAMES[code] || code;
+  const flagUri = rawTeam.flag_uri || rawTeam.flag_url || rawTeam.flag || (code && code !== 'FIFA' ? `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}` : '');
+
+  const rank = item.position !== undefined ? Number(item.position) : (item.rank || item.pos || idx + 1);
+  const pj = item.matches !== undefined ? Number(item.matches) : (item.pj !== undefined ? Number(item.pj) : 0);
+  const wins = item.wins !== undefined ? Number(item.wins) : (item.v !== undefined ? Number(item.v) : 0);
+  const draws = item.draws !== undefined ? Number(item.draws) : (item.e !== undefined ? Number(item.e) : 0);
+  const loss = item.loss !== undefined ? Number(item.loss) : (item.p !== undefined ? Number(item.p) : 0);
+  const gf = item.goals_scored !== undefined ? Number(item.goals_scored) : (item.gf !== undefined ? Number(item.gf) : 0);
+  const ga = item.goals_against !== undefined ? Number(item.goals_against) : (item.ga !== undefined ? Number(item.ga) : 0);
+  const gd = item.goal_difference !== undefined ? Number(item.goal_difference) : (item.dg !== undefined ? Number(item.dg) : (gf - ga));
+  const pts = item.points !== undefined ? Number(item.points) : (item.pts !== undefined ? Number(item.pts) : 0);
+
+  return {
+    rank: Number(rank),
+    position: Number(rank),
+    code: String(code),
+    name: String(name),
+    flagUri: String(flagUri),
+    pj: Number(pj),
+    wins: Number(wins),
+    draws: Number(draws),
+    loss: Number(loss),
+    gf: Number(gf),
+    ga: Number(ga),
+    gd: Number(gd),
+    pts: Number(pts)
+  };
+}
+
+/**
+ * Normaliza la respuesta completa de clasificaciones (/v1/standings)
+ */
+function normalizeStandingsData(rawData) {
+  if (!rawData) return null;
+
+  if (Array.isArray(rawData) && rawData.length > 0) {
+    return rawData.map(group => {
+      const gId = String(group.groupId || group.group || 'A').toUpperCase().replace('GRUPO', '').trim();
+      const gName = group.groupName || `Grupo ${gId}`;
+      const teamsList = Array.isArray(group.teams) ? group.teams : [];
+      return {
+        groupId: gId,
+        groupName: gName,
+        teams: teamsList.map(normalizeStandingItem).filter(Boolean)
+      };
+    });
+  }
+
+  if (typeof rawData === 'object' && rawData !== null) {
+    const groupKeys = Object.keys(rawData).filter(k => k.length === 1 || k.startsWith('Grupo'));
+    if (groupKeys.length === 0) return null;
+
+    let hasAnyData = false;
+    const result = groupKeys.sort().map(key => {
+      const gId = key.toUpperCase().replace('GRUPO', '').trim();
+      const gName = `Grupo ${gId}`;
+      const rawList = Array.isArray(rawData[key]) ? rawData[key] : [];
+      if (rawList.length > 0) hasAnyData = true;
+
+      const teams = rawList.map(normalizeStandingItem).filter(Boolean);
+      return {
+        groupId: gId,
+        groupName: gName,
+        teams: teams
+      };
+    });
+
+    if (!hasAnyData) return null;
+    return result;
+  }
+
+  return null;
+}
+
+/**
+ * Obtiene la tabla completa de posiciones por grupos (/v1/standings)
+ */
+export async function getStandings(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('standings', forceRefresh);
+    const normalized = normalizeStandingsData(data);
+    if (normalized && normalized.length > 0) {
+      return normalized;
+    }
+  } catch (error) {
+    console.warn('[getStandings] Fallback a MOCK_DATA.standings:', error);
+  }
+  return normalizeStandingsData(MOCK_DATA.standings);
+}
+
+/**
+ * Obtiene las posiciones de un grupo específico (/v1/standings/{group}/group)
+ */
+export async function getStandingsByGroup(groupLetter, forceRefresh = false) {
+  const cleanGroup = String(groupLetter || 'A').toUpperCase().replace('GRUPO', '').trim();
+  try {
+    const data = await fetchWithCache(`standings/${cleanGroup}/group`, forceRefresh);
+    if (Array.isArray(data) && data.length > 0) {
+      return data.map(normalizeStandingItem).filter(Boolean);
+    }
+  } catch (error) {
+    console.warn(`[getStandingsByGroup] Fallback para grupo ${cleanGroup}:`, error);
+  }
+  const all = await getStandings(forceRefresh);
+  const found = all.find(g => g.groupId === cleanGroup);
+  return found ? found.teams : [];
+}
+
 // Public API Methods
 export const FIFA_API = {
   getNews,
@@ -1757,7 +1984,8 @@ export const FIFA_API = {
   getCities: (forceRefresh = false) => getCities(forceRefresh),
   getCitiesList: (forceRefresh = false) => getCities(forceRefresh),
   getCityById: (id, forceRefresh = false) => getCityById(id, forceRefresh),
-  getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', forceRefresh),
+  getStandings: (forceRefresh = false) => getStandings(forceRefresh),
+  getStandingsByGroup: (group, forceRefresh = false) => getStandingsByGroup(group, forceRefresh),
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
