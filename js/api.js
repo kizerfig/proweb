@@ -12,6 +12,10 @@ const API_CONFIG = {
 const CACHE_VERSION = '18';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
+// In-Memory RAM Cache & In-Flight Request Deduplication
+const MEMORY_CACHE = new Map();
+const IN_FLIGHT_REQUESTS = new Map();
+
 // Determina si se está ejecutando en servidor local
 function isLocalEnvironment() {
   return (
@@ -54,7 +58,7 @@ function isValidApiPayload(data) {
 
 async function fetchJsonFromUrl(url, label = 'fetch') {
   try {
-    const response = await fetchWithTimeout(url, 25000);
+    const response = await fetchWithTimeout(url, 2500);
     if (!response.ok) return null;
 
     const data = await response.json();
@@ -105,6 +109,8 @@ async function tryFetchAttempts(attempts) {
 
 function clearFifaCache() {
   try {
+    MEMORY_CACHE.clear();
+    IN_FLIGHT_REQUESTS.clear();
     Object.keys(localStorage)
       .filter(key => key.startsWith('fifa_') && key !== CACHE_VERSION_KEY)
       .forEach(key => localStorage.removeItem(key));
@@ -776,9 +782,9 @@ const MOCK_DATA = {
 };
 
 /**
- * Petición con Timeout utilizando AbortController para prevenir bloqueos infinitos (1.5s max)
+ * Petición con Timeout utilizando AbortController (2.5s por defecto para máxima agilidad)
  */
-async function fetchWithTimeout(url, timeoutMs = 25000) {
+async function fetchWithTimeout(url, timeoutMs = 2500) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -796,52 +802,114 @@ async function fetchWithTimeout(url, timeoutMs = 25000) {
 }
 
 /**
- * Petición asíncrona con gestión de caché localStorage, timeout estricto y fallback instantáneo
+ * Ejecuta una petición HTTP deduplicando solicitudes idénticas en vuelo (Request Coalescing)
+ */
+async function executeApiFetch(cleanEndpoint) {
+  if (IN_FLIGHT_REQUESTS.has(cleanEndpoint)) {
+    console.log(`[Deduplication HIT] Reutilizando petición en vuelo para: ${cleanEndpoint}`);
+    return IN_FLIGHT_REQUESTS.get(cleanEndpoint);
+  }
+
+  const fetchPromise = (async () => {
+    try {
+      const data = await fetchApiEndpoint(cleanEndpoint);
+      return data;
+    } finally {
+      IN_FLIGHT_REQUESTS.delete(cleanEndpoint);
+    }
+  })();
+
+  IN_FLIGHT_REQUESTS.set(cleanEndpoint, fetchPromise);
+  return fetchPromise;
+}
+
+/**
+ * Revalida un endpoint en segundo plano sin bloquear la interfaz
+ */
+function revalidateInBackground(cleanEndpoint, cacheKey) {
+  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback 
+    ? window.requestIdleCallback 
+    : (fn) => setTimeout(fn, 150);
+
+  scheduler(async () => {
+    try {
+      const freshData = await executeApiFetch(cleanEndpoint);
+      if (freshData !== null) {
+        const payload = { timestamp: Date.now(), data: freshData };
+        MEMORY_CACHE.set(cleanEndpoint, payload);
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify(payload));
+        } catch (e) {}
+        console.log(`[SWR Revalidated] Caché actualizada en segundo plano para ${cleanEndpoint}`);
+      }
+    } catch (e) {}
+  });
+}
+
+/**
+ * Petición asíncrona optimizada con Caché en Memoria (RAM), Stale-While-Revalidate (SWR),
+ * Deduplicación de Peticiones en Vuelo y Fallback Instantáneo (<100ms)
  */
 export async function fetchWithCache(endpoint, forceRefresh = false) {
-  const cacheKey = `fifa_cache_${endpoint.replace(/[^a-zA-Z0-9]/g, '_')}`;
-  const cachedData = localStorage.getItem(cacheKey);
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  const cacheKey = `fifa_cache_${cleanEndpoint.replace(/[^a-zA-Z0-9]/g, '_')}`;
+  const now = Date.now();
 
-  if (cachedData && !forceRefresh) {
-    try {
-      const { timestamp, data } = JSON.parse(cachedData);
-      const isNotEmpty = Array.isArray(data) ? data.length > 0 : Boolean(data);
-      if (Date.now() - timestamp < API_CONFIG.CACHE_TTL && isNotEmpty) {
-        console.log(`[Caché Local HIT] Cargado desde localStorage: ${endpoint}`);
-        return data;
-      }
-    } catch (e) {
-      console.warn('Error al parsear caché local', e);
+  // 1. RAM Cache HIT (0ms)
+  if (!forceRefresh && MEMORY_CACHE.has(cleanEndpoint)) {
+    const cached = MEMORY_CACHE.get(cleanEndpoint);
+    if (now - cached.timestamp < API_CONFIG.CACHE_TTL && cached.data) {
+      console.log(`[RAM Cache HIT 0ms] Servido desde memoria RAM: ${cleanEndpoint}`);
+      return cached.data;
     }
   }
 
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-
-  const data = await fetchApiEndpoint(cleanEndpoint);
-
-  if (data !== null) {
+  // 2. LocalStorage HIT & RAM Warming
+  let existingCacheData = null;
+  const rawLocalStorage = localStorage.getItem(cacheKey);
+  if (rawLocalStorage) {
     try {
-      localStorage.setItem(cacheKey, JSON.stringify({
-        timestamp: Date.now(),
-        data: data
-      }));
-    } catch (e) {}
-    return data;
-  }
-
-  // Fallback 1: Servir datos de la caché local anterior si era válida y no vacía
-  if (cachedData) {
-    try {
-      const parsed = JSON.parse(cachedData);
+      const parsed = JSON.parse(rawLocalStorage);
       const isNotEmpty = Array.isArray(parsed.data) ? parsed.data.length > 0 : Boolean(parsed.data);
       if (isNotEmpty) {
-        console.warn(`[Fallback Caché] Sirviendo datos previos para ${endpoint}`);
-        return parsed.data;
+        existingCacheData = parsed.data;
+        MEMORY_CACHE.set(cleanEndpoint, { timestamp: parsed.timestamp || 0, data: parsed.data });
+
+        if (!forceRefresh && (now - (parsed.timestamp || 0) < API_CONFIG.CACHE_TTL)) {
+          console.log(`[Caché Local HIT] Cargado desde localStorage: ${cleanEndpoint}`);
+          return parsed.data;
+        }
       }
     } catch (e) {}
   }
 
-  // Fallback 2: Servir MOCK_DATA instantáneamente
+  // 3. Stale-While-Revalidate (SWR): Si tenemos datos de caché anteriores y no se forzó refresco,
+  // responder INMEDIATAMENTE (0ms) y revalidar en segundo plano
+  if (existingCacheData && !forceRefresh) {
+    console.log(`[SWR HIT 0ms] Sirviendo datos en caché mientras se revalida en segundo plano: ${cleanEndpoint}`);
+    revalidateInBackground(cleanEndpoint, cacheKey);
+    return existingCacheData;
+  }
+
+  // 4. Intentar petición de red fresca con deduplicación
+  const networkData = await executeApiFetch(cleanEndpoint);
+
+  if (networkData !== null) {
+    try {
+      const payload = { timestamp: Date.now(), data: networkData };
+      MEMORY_CACHE.set(cleanEndpoint, payload);
+      localStorage.setItem(cacheKey, JSON.stringify(payload));
+    } catch (e) {}
+    return networkData;
+  }
+
+  // 5. Fallback 1: Servir datos de la caché local anterior si existía (incluso si era obsoleta)
+  if (existingCacheData) {
+    console.warn(`[Fallback Caché Stale] Sirviendo datos previos para ${cleanEndpoint}`);
+    return existingCacheData;
+  }
+
+  // 6. Fallback 2: Servir MOCK_DATA instantáneamente si el servidor tarda por cold start
   let rootEndpoint = cleanEndpoint.split('?')[0].split('/')[0];
   if (rootEndpoint === 'noticias') rootEndpoint = 'news';
   if (rootEndpoint === 'partidos') rootEndpoint = 'matches';
@@ -850,8 +918,11 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   if (rootEndpoint === 'torneos') rootEndpoint = 'tournaments';
 
   const mockFallback = MOCK_DATA[rootEndpoint] || MOCK_DATA.news || [];
-  console.warn(`[Fallback Mock Instantáneo] Cargando MOCK_DATA para '${rootEndpoint}'`);
-  // No guardar mock en localStorage: evita envenenar la caché con datos sin imágenes válidas
+  console.warn(`[Fallback Mock Instantáneo <100ms] Cargando MOCK_DATA para '${rootEndpoint}'`);
+  
+  // Revalidar en segundo plano para calentar la instancia de Render si estaba dormida
+  revalidateInBackground(cleanEndpoint, cacheKey);
+
   return mockFallback;
 }
 
@@ -1993,10 +2064,36 @@ export const FIFA_API = {
   getBall: (forceRefresh = false) => getBall(forceRefresh),
   getMascots: (forceRefresh = false) => getMascots(forceRefresh),
   getSound: (forceRefresh = false) => getSound(forceRefresh),
+  prefetchData: prefetchEssentialData,
   clearCache: () => {
     clearFifaCache();
     localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
   }
 };
+
+/**
+ * Precarga de forma inteligente en segundo plano los datos de la API para navegar a velocidad luz (0ms)
+ */
+export function prefetchEssentialData() {
+  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback 
+    ? window.requestIdleCallback 
+    : (fn) => setTimeout(fn, 200);
+
+  scheduler(() => {
+    const endpoints = ['news', 'matches', 'standings', 'teams', 'ranking', 'cities', 'ball', 'mascots', 'sound'];
+    endpoints.forEach(endpoint => {
+      fetchWithCache(endpoint).catch(() => {});
+    });
+  });
+}
+
+// Inicialización automática de precarga al cargar el módulo API
+if (typeof window !== 'undefined') {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(prefetchEssentialData, 300);
+  } else {
+    window.addEventListener('DOMContentLoaded', () => setTimeout(prefetchEssentialData, 300));
+  }
+}
 
 

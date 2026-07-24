@@ -21,16 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const NEWS_IMAGE_FALLBACK = '../imagenes/banner1.jpg';
 
-async function loadHomepageData() {
- // Load Sections in parallel
- await Promise.all([
- loadNewsSection(),
- loadMatchesSection(),
- loadTeamsAndCitiesSection(),
- loadEventsSection(),
- loadIdentitySection(),
- loadODSSection()
- ]);
+function loadHomepageData() {
+  // Carga asíncrona no bloqueante: cada sección se renderiza en cuanto sus datos estén listos
+  loadNewsSection().catch(err => console.warn('Error en sección noticias:', err));
+  loadMatchesSection().catch(err => console.warn('Error en sección partidos:', err));
+  loadTeamsAndCitiesSection().catch(err => console.warn('Error en sección equipos/ciudades:', err));
+  loadEventsSection().catch(err => console.warn('Error en sección eventos:', err));
+  loadIdentitySection().catch(err => console.warn('Error en sección identidad:', err));
+  loadODSSection().catch(err => console.warn('Error en sección ODS:', err));
 }
 
 /**

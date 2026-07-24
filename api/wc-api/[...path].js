@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     const upstream = await fetch(target.toString(), {
       method: req.method,
       headers: { Accept: 'application/json' },
-      signal: AbortSignal.timeout(28000)
+      signal: AbortSignal.timeout(6000)
     });
 
     const body = req.method === 'HEAD' ? null : await upstream.text();
