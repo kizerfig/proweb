@@ -2832,3 +2832,228 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* ==========================================
+   RANKING FIFA PODIUM & TABLE STYLES
+   ========================================== */
+.podium-section {
+  margin-bottom: 2.5rem;
+}
+
+.podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  align-items: end;
+  margin-bottom: 2.5rem;
+}
+
+.podium-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.podium-card:hover {
+  transform: translateY(-4px);
+}
+
+.podium-card.rank-1 {
+  border: 2px solid #D29922;
+  box-shadow: 0 8px 30px rgba(210, 153, 34, 0.25);
+  background: linear-gradient(180deg, rgba(210, 153, 34, 0.1) 0%, var(--bg-surface) 100%);
+  padding: 2rem 1.5rem;
+}
+
+.podium-card.rank-2 {
+  border: 2px solid #8B949E;
+  box-shadow: 0 6px 20px rgba(139, 148, 158, 0.2);
+  background: linear-gradient(180deg, rgba(139, 148, 158, 0.08) 0%, var(--bg-surface) 100%);
+}
+
+.podium-card.rank-3 {
+  border: 2px solid #DB6D28;
+  box-shadow: 0 6px 20px rgba(219, 109, 40, 0.2);
+  background: linear-gradient(180deg, rgba(219, 109, 40, 0.08) 0%, var(--bg-surface) 100%);
+}
+
+.podium-medal {
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.podium-card.rank-1 .podium-medal::after { content: "🥇 1° Lugar"; font-weight: 800; color: #D29922; font-size: 0.9rem; }
+.podium-card.rank-2 .podium-medal::after { content: "🥈 2° Lugar"; font-weight: 800; color: #8B949E; font-size: 0.85rem; }
+.podium-card.rank-3 .podium-medal::after { content: "🥉 3° Lugar"; font-weight: 800; color: #DB6D28; font-size: 0.85rem; }
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ranking-table th {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.ranking-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+.ranking-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@media (max-width: 768px) {
+  .podium-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* ==========================================
+   CITIES MODULE STYLES (.cities-grid, .city-card)
+   ========================================== */
+.cities-grid, .cities-full-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 1023px) {
+  .cities-grid, .cities-full-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .cities-grid, .cities-full-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.city-card, .city-card-full {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.city-card:hover, .city-card-full:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-mint);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.city-card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: #000;
+}
+
+.city-card-img-wrap img, .city-card-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.city-card:hover .city-card-img-wrap img, .city-card-full:hover .city-card-img {
+  transform: scale(1.05);
+}
+
+.country-badge-iso {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.country-badge-iso.MEX { background: #00F58C; }
+.country-badge-iso.USA { background: #58A6FF; }
+.country-badge-iso.CAN { background: #FF7B72; }
+
+.city-card-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.city-card-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.city-stadium-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.city-capacity-info {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-details {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: rgba(0, 245, 140, 0.1);
+  color: var(--accent-mint);
+  border: 1px solid rgba(0, 245, 140, 0.3);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-details:hover {
+  background: var(--accent-mint);
+  color: #000000;
+  border-color: var(--accent-mint);
+}
