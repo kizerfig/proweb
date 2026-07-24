@@ -50,7 +50,7 @@ function renderHeader(activeMain) {
     <div class="container">
       <div class="header-top">
         <a href="index.html" class="brand-logo" aria-label="Inicio FIFA World Cup 2026">
-          <img src="../imagenes/logoOficial.jpg" alt="FIFA World Cup 2026" class="brand-logo-img" width="44" height="44" />
+          <img src="../imagenes/logoOficialActualizado.png" alt="FIFA World Cup 2026" class="brand-logo-img" width="44" height="44" />
           <div class="brand-info">
             <h1>FIFA WORLD CUP 2026</h1>
           </div>

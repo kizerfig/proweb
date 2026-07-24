@@ -30,7 +30,7 @@ async function loadHomepageData() {
 }
 
 /**
- * Render News Cards
+ * Render News Cards (últimas 3 desde API)
  */
 async function loadNewsSection() {
  const container = document.getElementById('news-container');
@@ -38,16 +38,17 @@ async function loadNewsSection() {
 
  try {
  const newsList = await FIFA_API.getNews();
- 
- if (!newsList || newsList.length === 0) {
+ const latestNews = Array.isArray(newsList) ? newsList.slice(0, 3) : [];
+
+ if (latestNews.length === 0) {
  container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-secondary);">No hay noticias disponibles en este momento.</p>`;
  return;
  }
 
- container.innerHTML = newsList.map(news => `
+ container.innerHTML = latestNews.map(news => `
  <article class="news-card">
  <div class="news-image-wrap">
- <img src="${news.image}" alt="${news.title}" loading="lazy" />
+ <img src="${news.image || '../imagenes/banner1.jpg'}" alt="${news.title}" loading="lazy" />
  </div>
  <div class="news-body">
  <div class="news-meta">
@@ -61,25 +62,17 @@ async function loadNewsSection() {
 
  } catch (error) {
  console.error('Error cargando noticias:', error);
+ container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-secondary);">No se pudieron cargar las noticias desde la API.</p>`;
  }
 }
 
 /**
  * Render Upcoming Matches Cards
  */
-async function loadMatchesSection() {
- const container = document.getElementById('matches-container');
- if (!container) return;
+const MATCHES_PREVIEW_LIMIT = 5;
+let homepageMatches = [];
 
- try {
- const matchesList = await FIFA_API.getMatches();
-
- if (!matchesList || matchesList.length === 0) {
- container.innerHTML = `<p style="color: var(--text-secondary);">No hay partidos programados.</p>`;
- return;
- }
-
- container.innerHTML = matchesList.map(match => {
+function renderMatchCard(match) {
  let statusClass = 'scheduled';
  if (match.status === 'En vivo') statusClass = 'live';
  if (match.status === 'Finalizado') statusClass = 'finished';
@@ -117,7 +110,58 @@ async function loadMatchesSection() {
  </div>
  </a>
  `;
- }).join('');
+}
+
+function renderMatchesPreview(expanded) {
+ const container = document.getElementById('matches-container');
+ const toggle = document.getElementById('matches-toggle');
+ if (!container || !homepageMatches.length) return;
+
+ const visibleMatches = expanded
+  ? homepageMatches
+  : homepageMatches.slice(0, MATCHES_PREVIEW_LIMIT);
+
+ container.innerHTML = visibleMatches.map(renderMatchCard).join('');
+
+ if (!toggle) return;
+
+ if (homepageMatches.length <= MATCHES_PREVIEW_LIMIT) {
+  toggle.hidden = true;
+  return;
+ }
+
+ toggle.hidden = false;
+ toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+ toggle.textContent = expanded ? 'Ver menos' : 'Ver más →';
+}
+
+function initMatchesToggle() {
+ const toggle = document.getElementById('matches-toggle');
+ if (!toggle || toggle.dataset.bound === 'true') return;
+
+ toggle.dataset.bound = 'true';
+ let expanded = false;
+
+ toggle.addEventListener('click', () => {
+  expanded = !expanded;
+  renderMatchesPreview(expanded);
+ });
+}
+
+async function loadMatchesSection() {
+ const container = document.getElementById('matches-container');
+ if (!container) return;
+
+ try {
+ homepageMatches = await FIFA_API.getMatches();
+
+ if (!homepageMatches || homepageMatches.length === 0) {
+ container.innerHTML = `<p style="color: var(--text-secondary);">No hay partidos programados.</p>`;
+ return;
+ }
+
+ renderMatchesPreview(false);
+ initMatchesToggle();
 
  } catch (error) {
  console.error('Error cargando partidos:', error);

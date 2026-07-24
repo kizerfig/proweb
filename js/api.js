@@ -603,9 +603,86 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
  return detail;
 }
 
+/**
+ * Normaliza noticias desde distintos formatos de la API
+ */
+function normalizeNewsList(raw) {
+ if (!raw) return [];
+
+ const list = Array.isArray(raw)
+  ? raw
+  : (raw.data || raw.noticias || raw.news || raw.items || []);
+
+ if (!Array.isArray(list)) return [];
+
+ return list.map((item, index) => ({
+  id: item.id ?? item._id ?? String(index + 1),
+  title: item.title ?? item.titulo ?? 'Sin título',
+  category: item.category ?? item.categoria ?? 'Mundial',
+  time: item.time ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
+  image: item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? ''
+ }));
+}
+
+/**
+ * Obtiene noticias desde la API (noticias/news) con caché de 15 min
+ */
+async function getNews(forceRefresh = false) {
+ const cacheKey = 'fifa_news_data';
+ const endpoints = ['noticias', 'news'];
+
+ if (!forceRefresh) {
+  const cachedItem = localStorage.getItem(cacheKey);
+  if (cachedItem) {
+   try {
+    const parsed = JSON.parse(cachedItem);
+    const age = Date.now() - parsed.timestamp;
+    if (age < CACHE_TTL_MS && parsed.data?.length) {
+     return normalizeNewsList(parsed.data);
+    }
+   } catch (e) {
+    localStorage.removeItem(cacheKey);
+   }
+  }
+ }
+
+ for (const endpoint of endpoints) {
+  try {
+   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    headers: { Accept: 'application/json' }
+   });
+
+   if (!response.ok) continue;
+
+   const data = await response.json();
+   const normalized = normalizeNewsList(data);
+
+   if (normalized.length === 0) continue;
+
+   localStorage.setItem(cacheKey, JSON.stringify({
+    timestamp: Date.now(),
+    data: normalized
+   }));
+
+   console.log(`[News API] Cargadas ${normalized.length} noticias desde /${endpoint}`);
+   return normalized;
+  } catch (error) {
+   console.warn(`[News API] Error en /${endpoint}:`, error.message);
+  }
+ }
+
+ console.warn('[News API] Usando mock de respaldo');
+ const fallback = normalizeNewsList(MOCK_DATA.news);
+ localStorage.setItem(cacheKey, JSON.stringify({
+  timestamp: Date.now(),
+  data: fallback
+ }));
+ return fallback;
+}
+
 // Public API Methods
 export const FIFA_API = {
- getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
+ getNews,
  getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
  getMatchById: (id, forceRefresh = false) => getMatchById(id, forceRefresh),
  getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', 'fifa_standings_data', forceRefresh),
