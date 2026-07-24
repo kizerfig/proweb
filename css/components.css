@@ -302,8 +302,8 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: rgba(13, 17, 23, 0.65);
   border: 1px solid var(--border-color);
@@ -311,7 +311,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 2rem;
+  padding-bottom: 4px; /* Centrado óptico de las entidades HTML */
   z-index: 10;
   transition: all var(--transition-fast);
   backdrop-filter: blur(4px);
@@ -323,8 +324,8 @@
   color: #FFF;
 }
 
-.slider-arrow.prev { left: 1.25rem; }
-.slider-arrow.next { right: 1.25rem; }
+.slider-arrow.prev { left: 2.5rem; }
+.slider-arrow.next { right: 2.5rem; }
 
 .slider-dots {
   position: absolute;

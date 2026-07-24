@@ -3,22 +3,9 @@
    ========================================== */
 
 /* ------------------------------------------
-   1. MEDIA QUERY: MOBILE (< 767px)
+   1. MEDIA QUERY: TABLET & MOBILE NAVBAR (< 1199px)
    ------------------------------------------ */
-@media screen and (max-width: 767px) {
-  /* Layout Padding */
-  .container {
-    padding: 0 1rem;
-  }
-
-  .section-padding {
-    padding: 2.25rem 0;
-  }
-
-  .section-title {
-    font-size: 1.35rem;
-  }
-
+@media screen and (max-width: 1199px) {
   /* Header & Navbar Adaptation */
   .menu-toggle {
     display: flex;
@@ -52,12 +39,30 @@
     justify-content: flex-start;
     padding: 0.85rem 1.25rem;
     font-size: calc(1rem + 1px);
-    min-height: 48px; /* Touch target >= 44px */
+    min-height: 48px;
     border-radius: var(--radius-md);
   }
 
   .header-bottom {
-    display: none; /* Collapsed in mobile for clean navigation */
+    display: none;
+  }
+}
+
+/* ------------------------------------------
+   2. MEDIA QUERY: MOBILE (< 767px)
+   ------------------------------------------ */
+@media screen and (max-width: 767px) {
+  /* Layout Padding */
+  .container {
+    padding: 0 1rem;
+  }
+
+  .section-padding {
+    padding: 2.25rem 0;
+  }
+
+  .section-title {
+    font-size: 1.35rem;
   }
 
   /* Hero Slider */
@@ -352,9 +357,9 @@
 }
 
 /* ------------------------------------------
-   3. MEDIA QUERY: DESKTOP (>= 1024px)
+   4. MEDIA QUERY: DESKTOP NAVBAR (>= 1200px)
    ------------------------------------------ */
-@media screen and (min-width: 1024px) {
+@media screen and (min-width: 1200px) {
   .main-nav {
     display: flex !important;
     gap: 0.25rem;
@@ -370,6 +375,12 @@
   .menu-toggle {
     display: none;
   }
+}
+
+/* ------------------------------------------
+   5. MEDIA QUERY: DESKTOP OTHER (>= 1024px)
+   ------------------------------------------ */
+@media screen and (min-width: 1024px) {
 
   .matches-grid-full {
     grid-template-columns: repeat(2, 1fr);
