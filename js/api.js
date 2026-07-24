@@ -5,6 +5,34 @@
 
 const API_BASE_URL = 'https://wc-api-u378.onrender.com/wc-api/api/';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
+const CACHE_VERSION = '2';
+const CACHE_VERSION_KEY = 'fifa_cache_version';
+
+function clearFifaCache() {
+ try {
+ Object.keys(localStorage)
+ .filter(key => key.startsWith('fifa_') && key !== CACHE_VERSION_KEY)
+ .forEach(key => localStorage.removeItem(key));
+ console.log('[Cache] Caché FIFA limpiada');
+ } catch (e) {
+ console.warn('[Cache] No se pudo limpiar localStorage:', e);
+ }
+}
+
+function ensureCacheVersion() {
+ try {
+ const stored = localStorage.getItem(CACHE_VERSION_KEY);
+ if (stored !== CACHE_VERSION) {
+ clearFifaCache();
+ localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
+ console.log(`[Cache] Versión de caché actualizada a ${CACHE_VERSION}`);
+ }
+ } catch (e) {
+ console.warn('[Cache] No se pudo validar versión de caché:', e);
+ }
+}
+
+ensureCacheVersion();
 
 // Curated high-fidelity mock fallback data to handle network failures or Render latency seamlessly
 const MOCK_DATA = {
@@ -119,6 +147,72 @@ const MOCK_DATA = {
  team2: { code: 'NL', name: 'Países Bajos', score: '-' },
  datetime: '19 jun • 17:00',
  group: 'Grupo F'
+ },
+ {
+ id: 'm7',
+ city: 'Miami',
+ stadium: 'Hard Rock Stadium',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'CO', name: 'Colombia', score: '-' },
+ team2: { code: 'UY', name: 'Uruguay', score: '-' },
+ datetime: '20 jun • 16:00',
+ group: 'Grupo G'
+ },
+ {
+ id: 'm8',
+ city: 'Atlanta',
+ stadium: 'Mercedes-Benz Stadium',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'BE', name: 'Bélgica', score: '-' },
+ team2: { code: 'HR', name: 'Croacia', score: '-' },
+ datetime: '20 jun • 19:00',
+ group: 'Grupo H'
+ },
+ {
+ id: 'm9',
+ city: 'Seattle',
+ stadium: 'Lumen Field',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'JP', name: 'Japón', score: '-' },
+ team2: { code: 'MA', name: 'Marruecos', score: '-' },
+ datetime: '21 jun • 14:00',
+ group: 'Grupo I'
+ },
+ {
+ id: 'm10',
+ city: 'Houston',
+ stadium: 'NRG Stadium',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'MX', name: 'México', score: '-' },
+ team2: { code: 'ES', name: 'España', score: '-' },
+ datetime: '21 jun • 20:00',
+ group: 'Grupo J'
+ },
+ {
+ id: 'm11',
+ city: 'Filadelfia',
+ stadium: 'Lincoln Financial Field',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'FR', name: 'Francia', score: '-' },
+ team2: { code: 'GB', name: 'Inglaterra', score: '-' },
+ datetime: '22 jun • 18:00',
+ group: 'Grupo K'
+ },
+ {
+ id: 'm12',
+ city: 'San Francisco',
+ stadium: 'Levi\'s Stadium',
+ status: 'Programado',
+ round: 'Fase de Grupos',
+ team1: { code: 'AR', name: 'Argentina', score: '-' },
+ team2: { code: 'BR', name: 'Brasil', score: '-' },
+ datetime: '22 jun • 21:00',
+ group: 'Grupo L'
  }
  ],
 
@@ -691,7 +785,11 @@ export const FIFA_API = {
  getTournaments: (forceRefresh = false) => fetchWithCache('torneos', 'fifa_tournaments_data', forceRefresh),
  getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
  getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
- getODS: () => fetchWithCache('ods', 'fifa_2026_ods')
+ getODS: () => fetchWithCache('ods', 'fifa_2026_ods'),
+ clearCache: () => {
+ clearFifaCache();
+ localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
+ }
 };
 
 

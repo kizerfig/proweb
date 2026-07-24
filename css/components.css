@@ -496,9 +496,13 @@
 }
 
 .matches-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  min-width: max-content;
+}
+
+.matches-grid .match-card {
+  width: 100%;
 }
 
 /* Full matches grid on partidos.html page (2 columns on desktop) */

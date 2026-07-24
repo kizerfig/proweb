@@ -68,10 +68,15 @@ async function loadNewsSection() {
 }
 
 /**
- * Render Upcoming Matches Cards
+ * Render Upcoming Matches Cards (6 en inicio + enlace al calendario completo)
  */
-const MATCHES_PREVIEW_LIMIT = 5;
-let homepageMatches = [];
+const MATCHES_PREVIEW_LIMIT = 6;
+
+function getUpcomingMatches(matches) {
+ return matches.filter(match =>
+ match.status === 'Programado' || match.status === 'En vivo'
+ );
+}
 
 function renderMatchCard(match) {
  let statusClass = 'scheduled';
@@ -113,40 +118,16 @@ function renderMatchCard(match) {
  `;
 }
 
-function renderMatchesPreview(expanded) {
+function renderHomeMatches(matches) {
  const container = document.getElementById('matches-container');
- const toggle = document.getElementById('matches-toggle');
- if (!container || !homepageMatches.length) return;
+ if (!container) return;
 
- const visibleMatches = expanded
-  ? homepageMatches
-  : homepageMatches.slice(0, MATCHES_PREVIEW_LIMIT);
-
- container.innerHTML = visibleMatches.map(renderMatchCard).join('');
-
- if (!toggle) return;
-
- if (homepageMatches.length <= MATCHES_PREVIEW_LIMIT) {
-  toggle.hidden = true;
-  return;
+ if (!matches.length) {
+ container.innerHTML = `<p style="color: var(--text-secondary);">No hay partidos programados.</p>`;
+ return;
  }
 
- toggle.hidden = false;
- toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
- toggle.textContent = expanded ? 'Ver menos' : 'Ver más →';
-}
-
-function initMatchesToggle() {
- const toggle = document.getElementById('matches-toggle');
- if (!toggle || toggle.dataset.bound === 'true') return;
-
- toggle.dataset.bound = 'true';
- let expanded = false;
-
- toggle.addEventListener('click', () => {
-  expanded = !expanded;
-  renderMatchesPreview(expanded);
- });
+ container.innerHTML = matches.map(renderMatchCard).join('');
 }
 
 async function loadMatchesSection() {
@@ -154,18 +135,15 @@ async function loadMatchesSection() {
  if (!container) return;
 
  try {
- homepageMatches = await FIFA_API.getMatches();
+ const allMatches = await FIFA_API.getMatches();
+ const upcoming = getUpcomingMatches(allMatches || []);
+ const previewMatches = upcoming.slice(0, MATCHES_PREVIEW_LIMIT);
 
- if (!homepageMatches || homepageMatches.length === 0) {
- container.innerHTML = `<p style="color: var(--text-secondary);">No hay partidos programados.</p>`;
- return;
- }
-
- renderMatchesPreview(false);
- initMatchesToggle();
+ renderHomeMatches(previewMatches);
 
  } catch (error) {
  console.error('Error cargando partidos:', error);
+ container.innerHTML = `<p style="color: var(--text-secondary);">No se pudieron cargar los partidos.</p>`;
  }
 }
 
