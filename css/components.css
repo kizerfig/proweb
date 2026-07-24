@@ -845,9 +845,12 @@
 }
 
 .group-table .col-pj,
+.group-table .col-stat,
 .group-table .col-pts {
-  width: 50px;
+  width: 42px;
   text-align: center;
+  font-size: 0.82rem;
+  white-space: nowrap;
 }
 
 .rank-badge {
@@ -911,6 +914,102 @@
   text-transform: uppercase;
 }
 
+/* New ko-bracket: scrollable horizontal layout */
+.ko-bracket {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  align-items: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.ko-bracket::-webkit-scrollbar {
+  height: 6px;
+}
+.ko-bracket::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.ko-round {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 190px;
+  flex-shrink: 0;
+}
+
+.ko-round-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0.25rem;
+}
+
+.ko-round-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ko-match {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: border-color 0.2s;
+}
+
+.ko-match:hover {
+  border-color: rgba(0, 230, 118, 0.3);
+}
+
+.ko-match--final {
+  border-color: rgba(210, 153, 34, 0.4);
+  box-shadow: 0 0 16px rgba(210, 153, 34, 0.12);
+  background: linear-gradient(135deg, var(--bg-card), rgba(210, 153, 34, 0.05));
+}
+
+.ko-team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.ko-team--winner {
+  background: rgba(0, 230, 118, 0.06);
+}
+
+.ko-match--final .ko-team--winner {
+  background: rgba(210, 153, 34, 0.08);
+}
+
+.ko-team-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+/* Legacy classes kept for backward compat */
 .knockout-rounds {
   display: flex;
   gap: 2rem;
@@ -979,6 +1078,7 @@
 .knockout-round-col--highlight h4 {
   color: var(--accent-gold);
 }
+
 
 .standings-filter-bar {
   margin-bottom: 1.5rem;
