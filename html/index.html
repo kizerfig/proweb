@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal Web Oficial de la Copa Mundial de la FIFA 2026 - Estados Unidos, México y Canadá.">
+  <title>Copa Mundial de la FIFA 2026 - Inicio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Segoe+UI&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main-content">
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-slider-container" aria-label="Banners destacados">
+          <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1400&q=80');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h2 class="hero-title">FIFA WORLD CUP 2026</h2>
+              <p class="hero-subtitle">La Copa del Mundo más grande de la historia</p>
+              <div class="hero-actions">
+                <a href="partidos.html" class="btn btn-secondary">Ver Calendario</a>
+                <a href="contacto.html" class="btn btn-primary">Comprar Entradas</a>
+              </div>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1400&q=80');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h2 class="hero-title">3 NACIONES, 16 CIUDADES, 48 SELECCIONES</h2>
+              <p class="hero-subtitle">Una fiesta futbolística sin precedentes en Norteamérica</p>
+              <div class="hero-actions">
+                <a href="ciudades.html" class="btn btn-secondary">Explorar Sedes</a>
+                <a href="partidos.html" class="btn btn-primary">Ver Calendario</a>
+              </div>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1400&q=80');">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+              <h2 class="hero-title">UNIDOS POR EL FÚTBOL</h2>
+              <p class="hero-subtitle">Sigue la pasión y vive la emoción en directo</p>
+              <div class="hero-actions">
+                <a href="noticias.html" class="btn btn-secondary">Ver Noticias</a>
+                <a href="contacto.html" class="btn btn-primary">Comprar Entradas</a>
+              </div>
+            </div>
+          </div>
+          <button class="slider-arrow prev" aria-label="Diapositiva anterior">&lsaquo;</button>
+          <button class="slider-arrow next" aria-label="Diapositiva siguiente">&rsaquo;</button>
+          <div class="slider-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Últimas Noticias</h2>
+          <a href="noticias.html" class="section-link">Ver todas &rarr;</a>
+        </div>
+        <div class="news-grid" id="news-container">
+          <div class="skeleton" style="height: 280px;"></div>
+          <div class="skeleton" style="height: 280px;"></div>
+          <div class="skeleton" style="height: 280px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding" style="background-color: rgba(22, 27, 34, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Próximos Partidos</h2>
+          <a href="partidos.html" class="section-link">Ver todo &rarr;</a>
+        </div>
+        <div class="matches-scroll-container">
+          <div class="matches-grid" id="matches-container">
+            <div class="skeleton" style="width: 240px; height: 160px;"></div>
+            <div class="skeleton" style="width: 240px; height: 160px;"></div>
+            <div class="skeleton" style="width: 240px; height: 160px;"></div>
+            <div class="skeleton" style="width: 240px; height: 160px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding" id="explora">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Explora el Mundial</h2>
+        </div>
+        <div class="explore-grid-featured">
+          <a href="balon.html" class="explore-card mint-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1614632537197-38a17061c2bd?auto=format&fit=crop&w=600&q=80" alt="Balón Oficial Trionda" loading="lazy" />
+            </div>
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Balón Oficial</h3>
+                <p class="explore-banner-desc">Conoce la tecnología de vanguardia detrás del balón oficial de la Copa del Mundo 2026.</p>
+              </div>
+              <span class="explore-btn-link">Ver más &rarr;</span>
+            </div>
+          </a>
+          <a href="mascotas.html" class="explore-card blue-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?auto=format&fit=crop&w=600&q=80" alt="Mascotas Oficiales Mundial 2026" loading="lazy" />
+            </div>
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Mascotas Oficiales</h3>
+                <p class="explore-banner-desc">Descubre a Liberty Eagle, Jaguar Azteca y Maple Beaver representativos del torneo.</p>
+              </div>
+              <span class="explore-btn-link">Ver más &rarr;</span>
+            </div>
+          </a>
+          <a href="banda-sonora.html" class="explore-card red-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80" alt="Banda Sonora Oficial" loading="lazy" />
+            </div>
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Banda Sonora</h3>
+                <p class="explore-banner-desc">Escucha el himno oficial "Unidos por el Fútbol" y la lista de reproducción global.</p>
+              </div>
+              <span class="explore-btn-link">Ver más &rarr;</span>
+            </div>
+          </a>
+        </div>
+        <div class="explore-grid-sub">
+          <a href="ciudades.html" class="explore-sub-card">
+            <div class="explore-sub-icon">+</div>
+            <div class="explore-sub-content">
+              <h4>Ciudades Anfitrionas</h4>
+              <p>Descubre las 16 ciudades que recibirán el Mundial en EE.UU., México y Canadá.</p>
+            </div>
+          </a>
+          <a href="archivos.html" class="explore-sub-card">
+            <div class="explore-sub-icon">+</div>
+            <div class="explore-sub-content">
+              <h4>Archivo de Videos</h4>
+              <p>Revive los mejores momentos y jugadas de la historia del fútbol mundial.</p>
+            </div>
+          </a>
+          <a href="sobre-nosotros.html" class="explore-sub-card">
+            <div class="explore-sub-icon">+</div>
+            <div class="explore-sub-content">
+              <h4>Identidad Oficial</h4>
+              <p>Conoce la marca, valores y elementos gráficos oficiales del Mundial 2026.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding" id="ods">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Compromiso y Sostenibilidad (ODS)</h2>
+        </div>
+        <div class="ods-grid" id="ods-container">
+          <div class="skeleton" style="height: 180px;"></div>
+          <div class="skeleton" style="height: 180px;"></div>
+          <div class="skeleton" style="height: 180px;"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

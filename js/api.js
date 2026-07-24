@@ -6,6 +6,25 @@
 const API_BASE_URL = 'https://wc-api-u378.onrender.com/wc-api/api/';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
 
+function normalizeList(data) {
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === 'object') {
+    if (Array.isArray(data.data)) return data.data;
+    if (Array.isArray(data.items)) return data.items;
+    if (Array.isArray(data.results)) return data.results;
+  }
+  return [];
+}
+
+function getMockKey(cacheKey) {
+  const key = cacheKey
+    .replace('fifa_2026_', '')
+    .replace('fifa_', '')
+    .replace('_data', '');
+
+  return MOCK_DATA[key] ? key : null;
+}
+
 // Curated high-fidelity mock fallback data to handle network failures or Render latency seamlessly
 const MOCK_DATA = {
   news: [
@@ -261,9 +280,7 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
 
       if (age < CACHE_TTL_MS) {
         console.log(`[Cache HIT] Cargando '${cacheKey}' desde localStorage (Edad: ${Math.round(age / 1000)}s)`);
-        return parsed.data;
-      } else {
-        console.log(`[Cache EXPIRED] Expiró la caché para '${cacheKey}'. Consultando servidor...`);
+        return Array.isArray(parsed.data) ? parsed.data : normalizeList(parsed.data);
       }
     } catch (e) {
       console.warn(`[Cache Error] Error al leer localStorage para '${cacheKey}':`, e);
@@ -282,26 +299,22 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
     }
 
     const data = await response.json();
+    const resolvedData = normalizeList(data);
 
-    // Store in LocalStorage with timestamp
     const cacheObject = {
       timestamp: Date.now(),
-      data: data
+      data: resolvedData
     };
     localStorage.setItem(cacheKey, JSON.stringify(cacheObject));
     console.log(`[Cache STORED] Guardado en localStorage para '${cacheKey}'`);
 
-    return data;
+    return resolvedData;
 
   } catch (error) {
     console.warn(`[Fetch API Fallback] No se pudo conectar a Render API (${endpoint}). Usando mock data estructurado:`, error.message);
-    
-    // Map mock fallback
-    let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
-    if (fallbackKey === 'news') fallbackKey = 'news';
-    if (fallbackKey === 'matches') fallbackKey = 'matches';
-    
-    const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.matches || [];
+
+    const fallbackKey = getMockKey(cacheKey);
+    const fallbackData = fallbackKey ? MOCK_DATA[fallbackKey] : [];
     
     // Save fallback to cache temporarily
     localStorage.setItem(cacheKey, JSON.stringify({

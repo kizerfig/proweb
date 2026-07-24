@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contacto - Copa Mundial de la FIFA 2026.">
+  <title>Contacto - Copa Mundial de la FIFA 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Segoe+UI&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-page="inicio">
+  <header id="site-header" class="site-header"></header>
+  <main class="container section-padding content-page" id="main-content">
+    <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 1.5rem;">Contacto y Soporte</h1>
+    <p>¿Tienes preguntas sobre entradas, sedes o información del torneo? Escríbenos.</p>
+    <form class="contact-form" onsubmit="event.preventDefault(); alert('Mensaje enviado. Gracias por contactarnos.');">
+      <input type="text" name="nombre" placeholder="Nombre completo" required aria-label="Nombre completo">
+      <input type="email" name="email" placeholder="Correo electrónico" required aria-label="Correo electrónico">
+      <textarea name="mensaje" placeholder="Tu mensaje" required aria-label="Mensaje"></textarea>
+      <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+    </form>
+  </main>
+  <footer id="site-footer" class="site-footer"></footer>
+  <script type="module" src="js/page-init.js"></script>
+</body>
+</html>
