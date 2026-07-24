@@ -4,17 +4,16 @@
    ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initLayout } from './layout.js';
-
-export function initNewsPage() {
-  initLayout('noticias');
-  loadNews();
-}
+import { initNavbar } from './navbar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('news-grid-container')) {
-    initNewsPage();
-  }
+  console.log('📰 FIFA World Cup 2026 - Noticias Destacadas Initialized');
+  
+  // 1. Initialize mobile navbar logic
+  initNavbar();
+
+  // 2. Load news with 15-min LocalStorage cache strategy
+  loadNews();
 });
 
 /**
@@ -60,14 +59,14 @@ function renderNewsCards(container, newsList) {
   container.innerHTML = newsList.map(news => `
     <article class="news-card">
       <div class="news-image-wrap">
-        <img src="${news.image || ''}" alt="${news.title || 'Noticia'}" loading="lazy" />
+        <img src="${news.image}" alt="${news.title}" loading="lazy" />
       </div>
       <div class="news-body">
         <div class="news-meta">
           <span class="badge-tag">${news.category || 'Mundial'}</span>
           <span class="news-time">${news.time || 'Reciente'}</span>
         </div>
-        <h2 class="news-title">${news.title || 'Sin título'}</h2>
+        <h2 class="news-title">${news.title}</h2>
       </div>
     </article>
   `).join('');

@@ -1,5 +1,5 @@
 /* ==========================================
-   FIFA WORLD CUP 2026 - NAVBAR & MOBILE MENU
+   FIFA WORLD CUP 2026 - NAVBAR & MOBILE MENU MODULE
    js/navbar.js
    ========================================== */
 
@@ -10,6 +10,23 @@ export function initNavbar() {
 
   if (!menuToggle || !mainNav) return;
 
+  function toggleMenu() {
+    const isExpanded = menuToggle.classList.contains('active');
+    
+    if (isExpanded) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  function openMenu() {
+    menuToggle.classList.add('active');
+    mainNav.classList.add('active');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling when mobile menu is open
+  }
+
   function closeMenu() {
     menuToggle.classList.remove('active');
     mainNav.classList.remove('active');
@@ -17,26 +34,12 @@ export function initNavbar() {
     document.body.style.overflow = '';
   }
 
-  function openMenu() {
-    menuToggle.classList.add('active');
-    mainNav.classList.add('active');
-    menuToggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function toggleMenu() {
-    if (menuToggle.classList.contains('active')) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  }
-
   menuToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleMenu();
   });
 
+  // Close menu when clicking on any nav link
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       if (window.innerWidth <= 767) {
@@ -45,12 +48,14 @@ export function initNavbar() {
     });
   });
 
+  // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (mainNav.classList.contains('active') && !mainNav.contains(e.target) && !menuToggle.contains(e.target)) {
       closeMenu();
     }
   });
 
+  // Reset menu state on window resize to desktop
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 1024) {
       closeMenu();

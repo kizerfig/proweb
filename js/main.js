@@ -1,120 +1,199 @@
 /* ==========================================
-   FIFA WORLD CUP 2026 - MAIN (index.html)
+   FIFA WORLD CUP 2026 - MAIN APP ORCHESTRATOR
    js/main.js
    ========================================== */
 
 import { FIFA_API } from './api.js';
 import { initHeroSlider } from './slider.js';
-import { initLayout } from './layout.js';
+import { initNavbar } from './navbar.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  initLayout('inicio');
+  console.log('⚽ FIFA World Cup 2026 Portal Initialized');
+  
+  // 1. Initialize UI Controls
+  initNavbar();
   initHeroSlider();
+
+  // 2. Load Dynamic Content from API/Cache
   loadHomepageData();
 });
 
 async function loadHomepageData() {
+  // Load Sections in parallel
   await Promise.all([
-    loadNewsPreview(),
-    loadMatchesPreview(),
+    loadNewsSection(),
+    loadMatchesSection(),
+    loadEventsSection(),
+    loadTeamsAndCitiesSection(),
     loadODSSection()
   ]);
 }
 
-async function loadNewsPreview() {
+/**
+ * Render News Cards
+ */
+async function loadNewsSection() {
   const container = document.getElementById('news-container');
   if (!container) return;
 
   try {
     const newsList = await FIFA_API.getNews();
-    if (!Array.isArray(newsList) || newsList.length === 0) {
+    
+    if (!newsList || newsList.length === 0) {
       container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-secondary);">No hay noticias disponibles en este momento.</p>`;
       return;
     }
 
-    const preview = newsList.slice(0, 3);
-    container.innerHTML = preview.map(news => `
+    container.innerHTML = newsList.map(news => `
       <article class="news-card">
         <div class="news-image-wrap">
-          <img src="${news.image || ''}" alt="${news.title || 'Noticia'}" loading="lazy" />
+          <img src="${news.image}" alt="${news.title}" loading="lazy" />
         </div>
         <div class="news-body">
           <div class="news-meta">
             <span class="badge-tag">${news.category || 'Mundial'}</span>
             <span class="news-time">${news.time || 'Reciente'}</span>
           </div>
-          <h3 class="news-title">${news.title || 'Sin título'}</h3>
+          <h3 class="news-title">${news.title}</h3>
         </div>
       </article>
     `).join('');
+
   } catch (error) {
     console.error('Error cargando noticias:', error);
   }
 }
 
-async function loadMatchesPreview() {
+/**
+ * Render Upcoming Matches Cards
+ */
+async function loadMatchesSection() {
   const container = document.getElementById('matches-container');
   if (!container) return;
 
   try {
     const matchesList = await FIFA_API.getMatches();
-    if (!Array.isArray(matchesList) || matchesList.length === 0) {
+
+    if (!matchesList || matchesList.length === 0) {
       container.innerHTML = `<p style="color: var(--text-secondary);">No hay partidos programados.</p>`;
       return;
     }
 
-    container.innerHTML = matchesList.slice(0, 6).map(match => renderMatchCard(match)).join('');
+    container.innerHTML = matchesList.map(match => {
+      let statusClass = 'scheduled';
+      if (match.status === 'En vivo') statusClass = 'live';
+      if (match.status === 'Finalizado') statusClass = 'finished';
+
+      return `
+        <div class="match-card">
+          <div class="match-header">
+            <span class="match-venue">${match.city}</span>
+            <span class="status-badge ${statusClass}">${match.status}</span>
+          </div>
+          
+          <div class="match-teams">
+            <div class="team-row">
+              <div class="team-info">
+                <div class="flag-box">${match.team1.code}</div>
+                <span class="team-code">${match.team1.code}</span>
+                <span class="team-name">${match.team1.name}</span>
+              </div>
+              <span class="team-score">${match.team1.score}</span>
+            </div>
+            
+            <div class="team-row">
+              <div class="team-info">
+                <div class="flag-box">${match.team2.code}</div>
+                <span class="team-code">${match.team2.code}</span>
+                <span class="team-name">${match.team2.name}</span>
+              </div>
+              <span class="team-score">${match.team2.score}</span>
+            </div>
+          </div>
+
+          <div class="match-footer">
+            <span>${match.datetime}</span>
+            <span>${match.group}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
   } catch (error) {
     console.error('Error cargando partidos:', error);
   }
 }
 
-function renderMatchCard(match) {
-  const team1 = match.team1 || { code: '—', name: 'Por definir', score: '-' };
-  const team2 = match.team2 || { code: '—', name: 'Por definir', score: '-' };
-  let statusClass = 'scheduled';
-  if (match.status === 'En vivo') statusClass = 'live';
-  if (match.status === 'Finalizado') statusClass = 'finished';
+/**
+ * Render Events Cards
+ */
+async function loadEventsSection() {
+  const container = document.getElementById('events-container');
+  if (!container) return;
 
-  return `
-    <a href="partido-detalle.html?id=${match.id || ''}" class="match-card match-card-link">
-      <div class="match-header">
-        <span class="match-venue">${match.city || 'Por definir'}</span>
-        <span class="status-badge ${statusClass}">${match.status || 'Programado'}</span>
-      </div>
-      <div class="match-teams">
-        <div class="team-row">
-          <div class="team-info">
-            <div class="flag-box">${team1.code}</div>
-            <span class="team-code">${team1.code}</span>
-            <span class="team-name">${team1.name}</span>
-          </div>
-          <span class="team-score">${team1.score ?? '-'}</span>
+  try {
+    const eventsList = await FIFA_API.getEvents();
+
+    container.innerHTML = eventsList.map(event => `
+      <div class="event-card">
+        <div class="event-top">
+          <span class="org-tag">${event.org}</span>
+          <span class="status-badge ${event.status === 'Próximo' ? 'live' : 'scheduled'}">${event.status}</span>
         </div>
-        <div class="team-row">
-          <div class="team-info">
-            <div class="flag-box">${team2.code}</div>
-            <span class="team-code">${team2.code}</span>
-            <span class="team-name">${team2.name}</span>
-          </div>
-          <span class="team-score">${team2.score ?? '-'}</span>
+        <h3 class="event-title">${event.title}</h3>
+        <div class="event-details">
+          <span>📅 ${event.date}</span>
+          <span>📍 ${event.location}</span>
         </div>
       </div>
-      <div class="match-footer">
-        <span>${match.datetime || 'Por confirmar'}</span>
-        <span>${match.group || match.round || 'Mundial'}</span>
-      </div>
-    </a>
-  `;
+    `).join('');
+
+  } catch (error) {
+    console.error('Error cargando eventos:', error);
+  }
 }
 
+/**
+ * Render Teams & Host Cities Preview Grids
+ */
+async function loadTeamsAndCitiesSection() {
+  const teamsContainer = document.getElementById('teams-container');
+  const citiesContainer = document.getElementById('cities-container');
+
+  if (teamsContainer) {
+    try {
+      const teams = await FIFA_API.getTeams();
+      teamsContainer.innerHTML = teams.map(team => `
+        <div class="team-tile">
+          <span class="team-tile-code">${team.code}</span>
+          <span class="team-tile-name">${team.name}</span>
+        </div>
+      `).join('');
+    } catch (e) { console.error('Error en equipos:', e); }
+  }
+
+  if (citiesContainer) {
+    try {
+      const cities = await FIFA_API.getCities();
+      citiesContainer.innerHTML = cities.map(city => `
+        <div class="city-tile">
+          <div class="city-icon">📍</div>
+          <span class="city-name">${city.name}</span>
+        </div>
+      `).join('');
+    } catch (e) { console.error('Error en ciudades:', e); }
+  }
+}
+
+/**
+ * Render ODS Section Cards
+ */
 async function loadODSSection() {
   const container = document.getElementById('ods-container');
   if (!container) return;
 
   try {
     const odsList = await FIFA_API.getODS();
-    if (!Array.isArray(odsList) || odsList.length === 0) return;
 
     container.innerHTML = odsList.map(ods => `
       <div class="ods-card">
@@ -124,10 +203,11 @@ async function loadODSSection() {
         <h3 class="ods-title">${ods.title}</h3>
         <p class="ods-desc">${ods.desc}</p>
         <div class="ods-stat">
-          <span>${ods.stat}</span>
+          <span>🌱 ${ods.stat}</span>
         </div>
       </div>
     `).join('');
+
   } catch (error) {
     console.error('Error cargando ODS:', error);
   }

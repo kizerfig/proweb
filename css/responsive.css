@@ -26,13 +26,13 @@
 
   .main-nav {
     position: fixed;
-    top: 72px;
+    top: 70px;
     left: 0;
     width: 100%;
-    height: calc(100vh - 72px);
+    height: calc(100vh - 70px);
     background-color: var(--bg-primary);
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
     padding: 1.5rem;
     gap: 0.75rem;
@@ -41,7 +41,6 @@
     transition: transform var(--transition-normal);
     z-index: 999;
     overflow-y: auto;
-    flex-wrap: nowrap;
   }
 
   .main-nav.active {
@@ -50,21 +49,15 @@
 
   .nav-link {
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 0.85rem 1.25rem;
     font-size: 1rem;
-    min-height: 48px;
+    min-height: 48px; /* Touch target >= 44px */
     border-radius: var(--radius-md);
-    text-align: center;
   }
 
   .header-bottom {
-    display: none;
-  }
-
-  .teams-full-grid,
-  .cities-full-grid {
-    grid-template-columns: repeat(2, 1fr);
+    display: none; /* Collapsed in mobile for clean navigation */
   }
 
   /* Hero Slider */
