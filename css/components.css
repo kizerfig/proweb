@@ -54,7 +54,7 @@
 
 .brand-info h1 {
   font-size: calc(1rem + 1px);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -234,9 +234,9 @@
 
 .hero-title {
   font-size: 3rem;
-  font-weight: 900;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.03em;
   margin-bottom: 0.75rem;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   background: linear-gradient(180deg, #FFFFFF 30%, #E6EDF3 100%);
@@ -1461,6 +1461,14 @@
   margin-top: 0.5rem;
 }
 
+.conf-label {
+  color: var(--accent-blue);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 /* ------------------------------------------
    11. DETALLE DE PARTIDO (MATCH DETAIL PAGE)
    ------------------------------------------ */
@@ -2107,9 +2115,9 @@
 
 .page-title {
   font-size: 2.2rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
   margin-bottom: 0.35rem;
 }
 

@@ -24,6 +24,7 @@ async function loadHomepageData() {
  loadNewsSection(),
  loadMatchesSection(),
  loadTeamsAndCitiesSection(),
+ loadRankingSection(),
  loadEventsSection(),
  loadODSSection()
  ]);
@@ -195,6 +196,52 @@ async function loadEventsSection() {
  } catch (error) {
  console.error('Error cargando eventos:', error);
  }
+}
+
+/**
+ * Render Ranking FIFA preview (top 8)
+ */
+async function loadRankingSection() {
+ const tableBody = document.getElementById('ranking-home-body');
+ if (!tableBody) return;
+
+ try {
+ const ranking = await FIFA_API.getRanking();
+ if (!ranking?.length) {
+ tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-secondary);">No hay datos de ranking disponibles.</td></tr>`;
+ return;
+ }
+
+ renderHomeRankingTable(tableBody, ranking.slice(0, 8));
+ } catch (error) {
+ console.error('Error cargando ranking:', error);
+ tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-secondary);">No se pudo cargar el ranking FIFA.</td></tr>`;
+ }
+}
+
+function renderHomeRankingTable(tbody, data) {
+ if (!tbody) return;
+
+ if (!data.length) {
+ tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: var(--text-secondary);">No hay datos registrados.</td></tr>`;
+ return;
+ }
+
+ tbody.innerHTML = data.map((team, idx) => `
+ <tr>
+ <td style="text-align: center; font-weight: 700;">${team.pos || idx + 1}</td>
+ <td>
+ <div class="team-name-cell">
+ <div class="flag-box">${team.code}</div>
+ <span class="team-full-name">${team.name}</span>
+ </div>
+ </td>
+ <td style="text-align: center;">
+ <span class="conf-label">${team.conf || 'FIFA'}</span>
+ </td>
+ <td style="text-align: center; font-weight: 700; color: var(--accent-mint);">${team.rank || idx + 1}</td>
+ </tr>
+ `).join('');
 }
 
 /**

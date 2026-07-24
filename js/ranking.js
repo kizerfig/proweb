@@ -91,7 +91,7 @@ function renderTable(tbody, data) {
  </div>
  </td>
  <td style="text-align: center;">
- <span class="badge-tag" style="background: rgba(31, 111, 235, 0.15); color: var(--accent-blue); border-color: rgba(31, 111, 235, 0.3);">${team.conf || 'FIFA'}</span>
+ <span class="conf-label">${team.conf || 'FIFA'}</span>
  </td>
  <td style="text-align: center; font-weight: 800; color: var(--accent-mint);">${team.rank || idx + 1}</td>
  <td style="text-align: center;"> ${team.titles || 0}</td>

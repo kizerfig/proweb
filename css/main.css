@@ -21,6 +21,7 @@
   --border-color: #30363D;
   --border-hover: #484F58;
   --font-main: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  --font-heading: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
   --max-width: 1280px;
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -84,10 +85,19 @@ body {
 }
 
 /* Typography Defaults */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
-  font-weight: 700;
   line-height: 1.2;
+}
+
+h4, h5, h6 {
+  font-weight: 700;
 }
 
 a {
@@ -131,8 +141,8 @@ img {
 
 .section-title {
   font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   display: flex;
   align-items: center;
   gap: 0.75rem;
