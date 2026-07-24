@@ -170,25 +170,28 @@ function buildKnockoutRounds(matches) {
 
   const rounds = [];
 
-  // Round 6 = Dieciseisavos de Final (R32) — 16 main bracket matches
+  // 1. Round 6 = Dieciseisavos de Final (R32) — 16 main bracket matches
   const r32 = (byRound[6] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (r32.length) rounds.push({ id: 'r32', label: 'Dieciseisavos de Final', matches: r32 });
+  if (r32.length) rounds.push({ id: 'r32', label: 'Dieciseisavos de Final', matches: r32, type: 'default' });
 
-  // Round 5 = Octavos de Final (R16) — 8 best-3rd-place qualifying matches
+  // 2. Round 5 = Octavos de Final (R16) — 8 best-3rd-place qualifying matches
   const r16 = (byRound[5] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (r16.length) rounds.push({ id: 'r16', label: 'Octavos de Final', matches: r16 });
+  if (r16.length) rounds.push({ id: 'r16', label: 'Octavos de Final', matches: r16, type: 'default' });
 
-  // Round 27 = Cuartos de Final (QF) — 4 matches
+  // 3. Round 27 = Cuartos de Final (QF) — 4 matches
   const qf = (byRound[27] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (qf.length) rounds.push({ id: 'qf', label: 'Cuartos de Final', matches: qf });
+  if (qf.length) rounds.push({ id: 'qf', label: 'Cuartos de Final', matches: qf, type: 'default' });
 
-  // Round 28 = Semifinales — 2 matches
+  // 4. Round 28 = Semifinales (SF) — 2 matches
   const sf = (byRound[28] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (sf.length) rounds.push({ id: 'sf', label: 'Semifinales', matches: sf });
+  if (sf.length) rounds.push({ id: 'sf', label: 'Semifinales', matches: sf, type: 'sf' });
 
-  // Round 29 = FINAL — España 1-0 Argentina
+  // 5. Round 29 = FINAL — España 1-0 Argentina
   const finalMatches = (byRound[29] || []).filter(m => m.status === 'Ended');
   const mainFinal = finalMatches[0] || null;
+  if (mainFinal) {
+    rounds.push({ id: 'final', label: 'Final', matches: [mainFinal], type: 'final' });
+  }
 
   // Round 50 = TERCER LUGAR — Francia 4-6 Inglaterra
   const place3Matches = (byRound[50] || []).filter(m => m.status === 'Ended');
@@ -410,29 +413,33 @@ function renderKnockoutStage(container) {
         🏆 LLAVES DE ELIMINATORIA DIRECTA
       </h2>
 
-      <!-- Main bracket (scrollable) -->
+      <!-- Main bracket (scrollable tree with vertical alignment) -->
       <div class="ko-bracket">
-        ${rounds.map(round => `
-          <div class="ko-round">
-            <div class="ko-round-title">${round.label}</div>
-            <div class="ko-round-matches">
-              ${round.matches.map(m => matchCard(m)).join('')}
+        ${rounds.map(round => {
+          const isFinalCol = round.type === 'final';
+          const titleClass = round.type === 'sf' ? 'ko-round-title--red' : round.type === 'final' ? 'ko-round-title--gold' : '';
+          return `
+            <div class="ko-round">
+              <div class="ko-round-title ${titleClass}">${round.label}</div>
+              <div class="ko-round-matches">
+                ${round.matches.map(m => matchCard(m, isFinalCol)).join('')}
+              </div>
             </div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
 
-      <!-- Tercer Lugar + Final side by side -->
-      <div style="margin-top:2rem;display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;align-items:flex-start;">
+      <!-- Bottom summary cards: Tercer Puesto & Gran Final side by side -->
+      <div style="margin-top:2.5rem;width:100%;border-top:1px dashed var(--border-color);padding-top:1.5rem;display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;align-items:flex-start;">
         ${place3 ? `
-          <div style="min-width:230px;">
-            <div class="ko-round-title" style="color:#CD7F32;text-align:center;margin-bottom:0.6rem;font-size:0.85rem;">🥉 TERCER LUGAR</div>
+          <div style="min-width:240px;">
+            <div class="ko-round-title ko-round-title--red" style="margin-bottom:0.6rem;font-size:0.82rem;">🥉 TERCER PUESTO</div>
             ${matchCard(place3, false)}
           </div>
         ` : ''}
         ${mainFinal ? `
-          <div style="min-width:230px;">
-            <div class="ko-round-title" style="color:#D29922;text-align:center;margin-bottom:0.6rem;font-size:0.85rem;">🏆 GRAN FINAL</div>
+          <div style="min-width:240px;">
+            <div class="ko-round-title ko-round-title--gold" style="margin-bottom:0.6rem;font-size:0.82rem;">🏆 GRAN FINAL</div>
             ${matchCard(mainFinal, true)}
           </div>
         ` : ''}
@@ -442,7 +449,7 @@ function renderKnockoutStage(container) {
       ${champion ? (() => {
         const winnerInfo = teamsMap[champion] || { name: champion, flagUri: `https://api.fifa.com/api/v3/picture/flags-sq-5/${champion}` };
         return `
-          <div style="margin-top:2.5rem;width:100%;text-align:center;padding:1.5rem 1rem;background:linear-gradient(135deg,rgba(210,153,34,0.15),rgba(210,153,34,0.05));border:1px solid rgba(210,153,34,0.3);border-radius:var(--radius-md);">
+          <div style="margin-top:2rem;width:100%;text-align:center;padding:1.5rem 1rem;background:linear-gradient(135deg,rgba(210,153,34,0.15),rgba(210,153,34,0.05));border:1px solid rgba(210,153,34,0.3);border-radius:var(--radius-md);">
             <div style="font-size:2.5rem;margin-bottom:0.4rem;">🏆</div>
             <div style="font-size:0.8rem;color:var(--text-secondary);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">Campeón Mundial FIFA 2026</div>
             <div style="display:flex;align-items:center;justify-content:center;gap:0.85rem;">
