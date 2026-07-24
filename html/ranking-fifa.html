@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Equipos Participantes - Copa Mundial de la FIFA 2026. Selección de países, grupos, ranking y estadísticas.">
-  <title>Equipos Participantes - Copa Mundial de la FIFA 2026</title>
+  <meta name="description" content="Ranking FIFA Mundial Oficial - Clasificación oficial de selecciones nacionales de fútbol.">
+  <title>Ranking FIFA Mundial - Copa Mundial de la FIFA 2026</title>
 
   <!-- Google Fonts for Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@
           <a href="noticias.html" class="nav-link">⚽ Noticias</a>
           <a href="partidos.html" class="nav-link">📅 Partidos</a>
           <a href="clasificacion.html" class="nav-link">📈 Clasificación</a>
-          <a href="equipos.html" class="nav-link active">👥 Equipos</a>
+          <a href="equipos.html" class="nav-link">👥 Equipos</a>
         </nav>
 
         <!-- Mobile Hamburger Toggle -->
@@ -53,7 +53,7 @@
       <!-- Secondary Sub-Navbar -->
       <div class="header-bottom">
         <a href="ciudades-anfitrionas.html" class="sub-link">📍 Ciudades Anfitrionas</a>
-        <a href="ranking-fifa.html" class="sub-link">⭐ Ranking FIFA</a>
+        <a href="ranking-fifa.html" class="sub-link active">⭐ Ranking FIFA</a>
         <a href="torneos.html" class="sub-link">🚩 Torneos</a>
         <a href="ods.html" class="sub-link">🌱 ODS</a>
         <a href="contacto.html" class="sub-link">💬 Contacto</a>
@@ -63,40 +63,64 @@
   </header>
 
   <!-- ==========================================
-       MAIN CONTENT - EQUIPOS PARTICIPANTES
+       MAIN CONTENT - RANKING FIFA DEDICADO
        ========================================== -->
   <main class="container section-padding" id="main-content">
     
-    <div class="section-header" style="margin-bottom: 1.5rem;">
-      <h1 class="section-title" style="font-size: 2.2rem;">👥 Equipos Participantes</h1>
+    <div style="margin-bottom: 2rem;">
+      <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.35rem;">Ranking FIFA Mundial</h1>
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Clasificación oficial de selecciones nacionales según el sistema de puntos FIFA</p>
     </div>
 
-    <!-- Interactive Filter Bar -->
-    <form class="filter-bar" id="teams-filter-form" onsubmit="event.preventDefault();">
-      
-      <!-- Filter by Group -->
-      <select id="filter-team-group" class="filter-select" aria-label="Filtrar por grupo">
-        <option value="all">Todos los grupos</option>
-        <option value="Grupo A">Grupo A</option>
-        <option value="Grupo B">Grupo B</option>
-        <option value="Grupo C">Grupo C</option>
-        <option value="Grupo D">Grupo D</option>
-      </select>
+    <!-- Filter Bar -->
+    <div class="filter-bar" style="margin-bottom: 2rem;">
+      <div class="tab-group" role="tablist">
+        <button class="tab-btn active" id="btn-by-rank">Por Posición</button>
+        <button class="tab-btn" id="btn-by-conf">Por Confederación</button>
+      </div>
 
-      <!-- Team Search Input -->
-      <input type="text" id="search-team-input" class="search-input" placeholder="Buscar equipo por nombre o código..." aria-label="Buscar equipo">
+      <div style="flex: 1 1 200px;">
+        <select id="conf-select" class="filter-select" aria-label="Filtrar por confederación">
+          <option value="all">Todas las confederaciones</option>
+          <option value="CONMEBOL">CONMEBOL</option>
+          <option value="UEFA">UEFA</option>
+          <option value="CONCACAF">CONCACAF</option>
+          <option value="CAF">CAF</option>
+          <option value="AFC">AFC</option>
+        </select>
+      </div>
+    </div>
 
-    </form>
+    <!-- Podium Top 3 Cards -->
+    <div class="podium-grid" id="podium-container">
+      <div class="skeleton" style="height: 140px;"></div>
+      <div class="skeleton" style="height: 170px;"></div>
+      <div class="skeleton" style="height: 140px;"></div>
+    </div>
 
-    <!-- Teams Grid Container -->
-    <div class="group-grid" id="teams-grid-container" style="margin-top: 1.5rem;">
-      <!-- Skeletons loaded initially -->
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
+    <!-- Ranking Table Container -->
+    <div class="group-card" style="padding: 0; overflow: hidden;">
+      <div class="group-card-header" style="background: linear-gradient(135deg, #161B22, #21262D); color: var(--text-primary); border-bottom: 1px solid var(--border-color);">
+        <span>📊 Tabla General de Posiciones FIFA</span>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="group-table" id="ranking-table">
+          <thead>
+            <tr>
+              <th style="width: 50px; text-align: center;">#</th>
+              <th>Selección</th>
+              <th style="text-align: center;">Confederación</th>
+              <th style="text-align: center;">Ranking FIFA</th>
+              <th style="text-align: center;">Mundiales</th>
+              <th>DT</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-table-body">
+            <!-- Table rows populated dynamically -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </main>
@@ -130,10 +154,12 @@
         <div class="footer-col">
           <h4>Explora el Mundial</h4>
           <ul class="footer-links">
-            <li><a href="index.html#ciudades">Ciudades Anfitrionas</a></li>
-            <li><a href="index.html#torneos">Próximos Torneos</a></li>
-            <li><a href="index.html#ods">Sostenibilidad ODS</a></li>
-            <li><a href="index.html#contacto">Contacto y Soporte</a></li>
+            <li><a href="ciudades-anfitrionas.html">Ciudades Anfitrionas</a></li>
+            <li><a href="ranking-fifa.html">Ranking FIFA</a></li>
+            <li><a href="torneos.html">Próximos Torneos</a></li>
+            <li><a href="ods.html">Sostenibilidad ODS</a></li>
+            <li><a href="contacto.html">Contacto y Soporte</a></li>
+            <li><a href="nosotros.html">Sobre el Proyecto</a></li>
           </ul>
         </div>
 
@@ -145,7 +171,7 @@
     </div>
   </footer>
 
-  <!-- Equipos Page Entry JavaScript Module -->
-  <script type="module" src="../js/equipos.js"></script>
+  <!-- Script module -->
+  <script type="module" src="../js/ranking.js"></script>
 </body>
 </html>

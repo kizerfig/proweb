@@ -7,6 +7,10 @@ export function initNavbar() {
   const menuToggle = document.querySelector('.menu-toggle');
   const mainNav = document.querySelector('.main-nav');
   const navLinks = document.querySelectorAll('.nav-link');
+  const subLinks = document.querySelectorAll('.sub-link');
+
+  // Highlight Active Sub-link based on current pathname
+  highlightActiveSubLink(subLinks);
 
   if (!menuToggle || !mainNav) return;
 
@@ -59,6 +63,26 @@ export function initNavbar() {
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 1024) {
       closeMenu();
+    }
+  });
+}
+
+/**
+ * Automatically sets '.active' class on sub-header links matching the current page
+ */
+function highlightActiveSubLink(subLinks) {
+  if (!subLinks || subLinks.length === 0) return;
+
+  const currentPath = window.location.pathname.toLowerCase();
+
+  subLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    const hrefClean = href.toLowerCase();
+
+    if (currentPath.endsWith(hrefClean) || (hrefClean !== '#' && currentPath.includes(hrefClean.replace('.html', '')))) {
+      link.classList.add('active');
     }
   });
 }

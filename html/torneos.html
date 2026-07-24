@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Equipos Participantes - Copa Mundial de la FIFA 2026. Selección de países, grupos, ranking y estadísticas.">
-  <title>Equipos Participantes - Copa Mundial de la FIFA 2026</title>
+  <meta name="description" content="Próximos Torneos y Eventos FIFA - Copa Mundial de la FIFA 2026 y Torneos Internacionales.">
+  <title>Próximos Torneos - Copa Mundial de la FIFA 2026</title>
 
   <!-- Google Fonts for Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@
           <a href="noticias.html" class="nav-link">⚽ Noticias</a>
           <a href="partidos.html" class="nav-link">📅 Partidos</a>
           <a href="clasificacion.html" class="nav-link">📈 Clasificación</a>
-          <a href="equipos.html" class="nav-link active">👥 Equipos</a>
+          <a href="equipos.html" class="nav-link">👥 Equipos</a>
         </nav>
 
         <!-- Mobile Hamburger Toggle -->
@@ -54,7 +54,7 @@
       <div class="header-bottom">
         <a href="ciudades-anfitrionas.html" class="sub-link">📍 Ciudades Anfitrionas</a>
         <a href="ranking-fifa.html" class="sub-link">⭐ Ranking FIFA</a>
-        <a href="torneos.html" class="sub-link">🚩 Torneos</a>
+        <a href="torneos.html" class="sub-link active">🚩 Torneos</a>
         <a href="ods.html" class="sub-link">🌱 ODS</a>
         <a href="contacto.html" class="sub-link">💬 Contacto</a>
         <a href="nosotros.html" class="sub-link">🤝 Nosotros</a>
@@ -63,40 +63,21 @@
   </header>
 
   <!-- ==========================================
-       MAIN CONTENT - EQUIPOS PARTICIPANTES
+       MAIN CONTENT - TORNEOS DEDICADO
        ========================================== -->
   <main class="container section-padding" id="main-content">
     
-    <div class="section-header" style="margin-bottom: 1.5rem;">
-      <h1 class="section-title" style="font-size: 2.2rem;">👥 Equipos Participantes</h1>
+    <div style="margin-bottom: 2rem;">
+      <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.35rem;">🚩 Próximos Torneos y Eventos FIFA</h1>
+      <p style="color: var(--text-secondary); font-size: 0.95rem;">Calendario oficial de competiciones internacionales y torneos de confederaciones</p>
     </div>
 
-    <!-- Interactive Filter Bar -->
-    <form class="filter-bar" id="teams-filter-form" onsubmit="event.preventDefault();">
-      
-      <!-- Filter by Group -->
-      <select id="filter-team-group" class="filter-select" aria-label="Filtrar por grupo">
-        <option value="all">Todos los grupos</option>
-        <option value="Grupo A">Grupo A</option>
-        <option value="Grupo B">Grupo B</option>
-        <option value="Grupo C">Grupo C</option>
-        <option value="Grupo D">Grupo D</option>
-      </select>
-
-      <!-- Team Search Input -->
-      <input type="text" id="search-team-input" class="search-input" placeholder="Buscar equipo por nombre o código..." aria-label="Buscar equipo">
-
-    </form>
-
-    <!-- Teams Grid Container -->
-    <div class="group-grid" id="teams-grid-container" style="margin-top: 1.5rem;">
-      <!-- Skeletons loaded initially -->
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
-      <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
+    <!-- Events Grid -->
+    <div class="events-grid" id="torneos-grid-container" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+      <div class="skeleton" style="height: 180px;"></div>
+      <div class="skeleton" style="height: 180px;"></div>
+      <div class="skeleton" style="height: 180px;"></div>
+      <div class="skeleton" style="height: 180px;"></div>
     </div>
 
   </main>
@@ -130,10 +111,12 @@
         <div class="footer-col">
           <h4>Explora el Mundial</h4>
           <ul class="footer-links">
-            <li><a href="index.html#ciudades">Ciudades Anfitrionas</a></li>
-            <li><a href="index.html#torneos">Próximos Torneos</a></li>
-            <li><a href="index.html#ods">Sostenibilidad ODS</a></li>
-            <li><a href="index.html#contacto">Contacto y Soporte</a></li>
+            <li><a href="ciudades-anfitrionas.html">Ciudades Anfitrionas</a></li>
+            <li><a href="ranking-fifa.html">Ranking FIFA</a></li>
+            <li><a href="torneos.html">Próximos Torneos</a></li>
+            <li><a href="ods.html">Sostenibilidad ODS</a></li>
+            <li><a href="contacto.html">Contacto y Soporte</a></li>
+            <li><a href="nosotros.html">Sobre el Proyecto</a></li>
           </ul>
         </div>
 
@@ -145,7 +128,7 @@
     </div>
   </footer>
 
-  <!-- Equipos Page Entry JavaScript Module -->
-  <script type="module" src="../js/equipos.js"></script>
+  <!-- Script module -->
+  <script type="module" src="../js/torneos.js"></script>
 </body>
 </html>

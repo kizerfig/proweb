@@ -122,6 +122,20 @@
   color: var(--accent-mint);
 }
 
+.sub-link.active {
+  background-color: var(--accent-blue);
+  color: #FFFFFF !important;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(31, 111, 235, 0.4);
+}
+
+.sub-link.active:hover {
+  color: #FFFFFF !important;
+  background-color: #3884f7;
+}
+
 /* Hamburger Toggle Button */
 .menu-toggle {
   display: none;
@@ -1295,3 +1309,142 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
+
+/* ------------------------------------------
+   10. PÁGINAS DEDICADAS (CIUDADES Y RANKING)
+   ------------------------------------------ */
+.cities-full-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.city-card-full {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.city-card-full:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.city-card-full.highlight {
+  border-color: var(--accent-red);
+}
+
+.city-card-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  background: var(--bg-card);
+}
+
+.city-card-body {
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+}
+
+.city-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.city-card-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.country-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.country-badge.mex { background: rgba(0, 230, 118, 0.15); color: var(--accent-mint); border: 1px solid rgba(0, 230, 118, 0.3); }
+.country-badge.usa { background: rgba(31, 111, 235, 0.15); color: var(--accent-blue); border: 1px solid rgba(31, 111, 235, 0.3); }
+.country-badge.can { background: rgba(255, 51, 102, 0.15); color: var(--accent-red); border: 1px solid rgba(255, 51, 102, 0.3); }
+
+.city-stadium-info {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.btn-detail {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  text-align: center;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-detail:hover {
+  background: var(--accent-blue);
+  color: #FFF;
+  border-color: var(--accent-blue);
+}
+
+.podium-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: flex-end;
+}
+
+.podium-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.podium-card.rank-1 {
+  background: linear-gradient(180deg, rgba(210, 153, 34, 0.15) 0%, var(--bg-surface) 100%);
+  border: 1px solid #D29922;
+  box-shadow: 0 0 20px rgba(210, 153, 34, 0.2);
+}
+
+.podium-card.rank-2 {
+  background: linear-gradient(180deg, rgba(139, 148, 158, 0.15) 0%, var(--bg-surface) 100%);
+  border: 1px solid #8B949E;
+}
+
+.podium-card.rank-3 {
+  background: linear-gradient(180deg, rgba(186, 116, 64, 0.15) 0%, var(--bg-surface) 100%);
+  border: 1px solid #BA7440;
+}
+
+.podium-medal {
+  font-size: 1.8rem;
+  margin-top: 0.5rem;
+}
+

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Portal Web Oficial de la Copa Mundial de la FIFA 2026 - Estados Unidos, México y Canadá. Noticia, Partidos, Equipos y Sostenibilidad.">
+  <meta name="description" content="Portal Web Oficial de la Copa Mundial de la FIFA 2026 - Estados Unidos, México y Canadá. Noticias, Partidos, Selecciones y Sostenibilidad.">
   <title>Copa Mundial de la FIFA 2026 - Portal Web Oficial</title>
 
   <!-- Google Fonts for Modern Typography -->
@@ -50,20 +50,20 @@
         </button>
       </div>
 
-      <!-- Secondary Sub-Navbar -->
+      <!-- Secondary Sub-Navbar (Páginas Independientes) -->
       <div class="header-bottom">
-        <a href="#ciudades" class="sub-link">📍 Ciudades Anfitrionas</a>
-        <a href="#ranking" class="sub-link">⭐ Ranking FIFA</a>
-        <a href="#torneos" class="sub-link">🚩 Torneos</a>
-        <a href="#ods" class="sub-link">🌱 ODS</a>
-        <a href="#contacto" class="sub-link">💬 Contacto</a>
-        <a href="#nosotros" class="sub-link">🤝 Nosotros</a>
+        <a href="ciudades-anfitrionas.html" class="sub-link">📍 Ciudades Anfitrionas</a>
+        <a href="ranking-fifa.html" class="sub-link">⭐ Ranking FIFA</a>
+        <a href="torneos.html" class="sub-link">🚩 Torneos</a>
+        <a href="ods.html" class="sub-link">🌱 ODS</a>
+        <a href="contacto.html" class="sub-link">💬 Contacto</a>
+        <a href="nosotros.html" class="sub-link">🤝 Nosotros</a>
       </div>
     </div>
   </header>
 
   <!-- ==========================================
-       MAIN CONTENT
+       MAIN CONTENT (HOMEPAGE CONGELADA)
        ========================================== -->
   <main id="main-content">
 
@@ -77,10 +77,10 @@
             <div class="hero-overlay"></div>
             <div class="hero-content">
               <h2 class="hero-title">FIFA WORLD CUP 2026</h2>
-              <p class="hero-subtitle">La Copa del Mundo más grande de la historia</p>
+              <p class="hero-subtitle">48 Equipos • 104 Partidos</p>
               <div class="hero-actions">
                 <a href="partidos.html" class="btn btn-secondary">Ver Calendario</a>
-                <a href="#entradas" class="btn btn-primary">Comprar Entradas</a>
+                <a href="partidos.html" class="btn btn-primary">Comprar Entradas</a>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
               <h2 class="hero-title">3 NACIONES, 16 CIUDADES, 48 SELECCIONES</h2>
               <p class="hero-subtitle">Una fiesta futbolística sin precedentes en Norteamérica</p>
               <div class="hero-actions">
-                <a href="#ciudades" class="btn btn-secondary">Explorar Sedes</a>
+                <a href="ciudades-anfitrionas.html" class="btn btn-secondary">Explorar Sedes</a>
                 <a href="partidos.html" class="btn btn-primary">Ver Calendario</a>
               </div>
             </div>
@@ -106,7 +106,7 @@
               <p class="hero-subtitle">Sigue la pasión y vive la emoción en directo</p>
               <div class="hero-actions">
                 <a href="noticias.html" class="btn btn-secondary">Ver Noticias</a>
-                <a href="#entradas" class="btn btn-primary">Comprar Entradas</a>
+                <a href="partidos.html" class="btn btn-primary">Comprar Entradas</a>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@
     </section>
 
     <!-- 2. ÚLTIMAS NOTICIAS SECTION -->
-    <section class="section-padding" id="noticias">
+    <section class="section-padding" id="noticias-sec">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">Últimas Noticias</h2>
@@ -143,7 +143,7 @@
     </section>
 
     <!-- 3. PRÓXIMOS PARTIDOS DESTACADOS -->
-    <section class="section-padding" style="background-color: var(--bg-surface);" id="partidos">
+    <section class="section-padding" style="background-color: var(--bg-surface);" id="partidos-sec">
       <div class="container">
         <div class="section-header">
           <h2 class="section-title">📅 Próximos Partidos</h2>
@@ -159,46 +159,12 @@
       </div>
     </section>
 
-    <!-- 4. CIUDADES ANFITRIONAS SECTION -->
-    <section class="section-padding" id="ciudades">
+    <!-- 4. PRÓXIMOS EVENTOS Y TORNEOS -->
+    <section class="section-padding" id="torneos-sec">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">📍 Ciudades Anfitrionas (16 Sedes)</h2>
-        </div>
-
-        <div class="cities-grid" id="cities-container">
-          <!-- Skeletons loaded initially -->
-          <div class="skeleton" style="height: 140px;"></div>
-          <div class="skeleton" style="height: 140px;"></div>
-          <div class="skeleton" style="height: 140px;"></div>
-          <div class="skeleton" style="height: 140px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. RANKING FIFA HIGHLIGHTS -->
-    <section class="section-padding" style="background-color: var(--bg-surface);" id="ranking">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">⭐ Ranking FIFA Destacado</h2>
-          <a href="equipos.html" class="section-link">Ver selecciones &rarr;</a>
-        </div>
-
-        <div class="ranking-grid" id="ranking-container">
-          <!-- Skeletons loaded initially -->
-          <div class="skeleton" style="height: 100px;"></div>
-          <div class="skeleton" style="height: 100px;"></div>
-          <div class="skeleton" style="height: 100px;"></div>
-          <div class="skeleton" style="height: 100px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. PRÓXIMOS TORNEOS DESTACADOS -->
-    <section class="section-padding" id="torneos">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">🚩 Próximos Torneos FIFA & Confederaciones</h2>
+          <h2 class="section-title">Próximos Eventos y Torneos</h2>
+          <a href="torneos.html" class="section-link">Ver todos &rarr;</a>
         </div>
 
         <div class="events-grid" id="events-container">
@@ -206,68 +172,131 @@
           <div class="skeleton" style="height: 160px;"></div>
           <div class="skeleton" style="height: 160px;"></div>
           <div class="skeleton" style="height: 160px;"></div>
+          <div class="skeleton" style="height: 160px;"></div>
         </div>
       </div>
     </section>
 
-    <!-- 7. SOSTENIBILIDAD ODS -->
-    <section class="section-padding" style="background-color: var(--bg-surface);" id="ods">
+    <!-- 5. GRID DUAL: EQUIPOS PARTICIPANTES / CIUDADES ANFITRIONAS (VISTA RÁPIDA) -->
+    <section class="section-padding" style="background-color: var(--bg-surface);" id="equipos-ciudades-sec">
+      <div class="container">
+        <div class="preview-split-grid">
+          
+          <!-- Column 1: Equipos Participantes -->
+          <div>
+            <div class="section-header">
+              <h2 class="section-title" style="font-size: 1.3rem;">Equipos Participantes</h2>
+              <a href="equipos.html" class="section-link">Ver todos &rarr;</a>
+            </div>
+            <div class="teams-mini-grid" id="teams-container">
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+            </div>
+          </div>
+
+          <!-- Column 2: Ciudades Anfitrionas (Vista rápida) -->
+          <div>
+            <div class="section-header">
+              <h2 class="section-title" style="font-size: 1.3rem;">Ciudades Anfitrionas</h2>
+              <a href="ciudades-anfitrionas.html" class="section-link">Ver todas &rarr;</a>
+            </div>
+            <div class="cities-mini-grid" id="cities-container">
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+              <div class="skeleton" style="height: 90px;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. EXPLORA EL MUNDIAL -->
+    <section class="section-padding" id="explora-sec">
       <div class="container">
         <div class="section-header">
-          <h2 class="section-title">🌱 Compromiso ODS - Sostenibilidad 2026</h2>
+          <h2 class="section-title">Explora el Mundial</h2>
         </div>
 
-        <div class="ods-grid" id="ods-container">
-          <!-- Skeletons loaded initially -->
-          <div class="skeleton" style="height: 150px;"></div>
-          <div class="skeleton" style="height: 150px;"></div>
-          <div class="skeleton" style="height: 150px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8. SOBRE NOSOTROS & CONTACTO -->
-    <section class="section-padding" id="contacto">
-      <div class="container">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <!-- Row 1: Featured Colored Footer Cards -->
+        <div class="explore-grid-featured">
           
-          <!-- Contacto Box -->
-          <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem;">
-            <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-mint);">💬 Contacto & Soporte</h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">
-              ¿Tienes alguna duda sobre entradas, sedes o voluntariado de la Copa Mundial 2026? Ponte en contacto con nuestro equipo oficial.
-            </p>
-            <form onsubmit="event.preventDefault(); alert('¡Gracias por tu mensaje! Te responderemos pronto.');" style="display: flex; flex-direction: column; gap: 0.85rem;">
-              <input type="text" placeholder="Tu Nombre Completo" required class="search-input">
-              <input type="email" placeholder="Correo Electrónico" required class="search-input">
-              <textarea placeholder="Escribe tu mensaje..." required class="search-input" style="height: 90px; resize: vertical;"></textarea>
-              <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Enviar Mensaje</button>
-            </form>
-          </div>
-
-          <!-- Nosotros Box -->
-          <div id="nosotros" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-mint);">🤝 Sobre Nosotros</h3>
-              <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                Plataforma oficial desarrollada para la materia de <strong>Programación Orientada a la Web</strong> de la <strong>UCAB Guayana</strong>.
-              </p>
-              <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;">
-                <strong>Integrantes del Equipo:</strong><br>
-                • Abreu, Sodyl<br>
-                • García, Bárbara<br>
-                • Gómez, Daniela<br>
-                • Kizer, Elliooth<br>
-                • Valerio, Jesús
-              </p>
+          <!-- Card 1: Balón Oficial -->
+          <article class="explore-card mint-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80" alt="Balón Oficial Mundial 2026" loading="lazy" />
             </div>
-
-            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-secondary);">
-              ⚡ Desarrollado con HTML5 Semántico, CSS3 Puro y JavaScript Vanilla ES6+.
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Balón Oficial</h3>
+                <p class="explore-banner-desc">Conoce la tecnología detrás del balón del Mundial 2026</p>
+              </div>
+              <a href="noticias.html" class="explore-btn-link">Ver más &rarr;</a>
             </div>
-          </div>
+          </article>
+
+          <!-- Card 2: Mascotas Oficiales -->
+          <article class="explore-card blue-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80" alt="Mascotas Oficiales Mundial 2026" loading="lazy" />
+            </div>
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Mascotas Oficiales</h3>
+                <p class="explore-banner-desc">Descubre las mascotas que representan el torneo</p>
+              </div>
+              <a href="noticias.html" class="explore-btn-link">Ver más &rarr;</a>
+            </div>
+          </article>
+
+          <!-- Card 3: Banda Sonora -->
+          <article class="explore-card red-card">
+            <div class="explore-img-wrap">
+              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=600&q=80" alt="Banda Sonora Mundial 2026" loading="lazy" />
+            </div>
+            <div class="explore-banner-footer">
+              <div>
+                <h3 class="explore-banner-title">Banda Sonora</h3>
+                <p class="explore-banner-desc">Escucha el himno oficial del Mundial 2026</p>
+              </div>
+              <a href="noticias.html" class="explore-btn-link">Ver más &rarr;</a>
+            </div>
+          </article>
 
         </div>
+
+        <!-- Row 2: Secondary Banner Cards -->
+        <div class="explore-grid-sub">
+          
+          <a href="ciudades-anfitrionas.html" class="explore-sub-card">
+            <div class="explore-sub-icon">📍</div>
+            <div class="explore-sub-content">
+              <h4>Ciudades Anfitrionas</h4>
+              <p>Descubre las 16 ciudades que recibirán el Mundial</p>
+            </div>
+          </a>
+
+          <a href="noticias.html" class="explore-sub-card">
+            <div class="explore-sub-icon">🎥</div>
+            <div class="explore-sub-content">
+              <h4>Archivo de Videos</h4>
+              <p>Revive los mejores momentos del fútbol mundial</p>
+            </div>
+          </a>
+
+          <a href="nosotros.html" class="explore-sub-card">
+            <div class="explore-sub-icon">🛡️</div>
+            <div class="explore-sub-content">
+              <h4>Identidad Oficial</h4>
+              <p>Conoce los activos de marca del Mundial 2026</p>
+            </div>
+          </a>
+
+        </div>
+
       </div>
     </section>
 
@@ -302,10 +331,12 @@
         <div class="footer-col">
           <h4>Explora el Mundial</h4>
           <ul class="footer-links">
-            <li><a href="index.html#ciudades">Ciudades Anfitrionas</a></li>
-            <li><a href="index.html#torneos">Próximos Torneos</a></li>
-            <li><a href="index.html#ods">Sostenibilidad ODS</a></li>
-            <li><a href="index.html#contacto">Contacto y Soporte</a></li>
+            <li><a href="ciudades-anfitrionas.html">Ciudades Anfitrionas</a></li>
+            <li><a href="ranking-fifa.html">Ranking FIFA</a></li>
+            <li><a href="torneos.html">Próximos Torneos</a></li>
+            <li><a href="ods.html">Sostenibilidad ODS</a></li>
+            <li><a href="contacto.html">Contacto y Soporte</a></li>
+            <li><a href="nosotros.html">Sobre el Proyecto</a></li>
           </ul>
         </div>
 

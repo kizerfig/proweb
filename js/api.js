@@ -228,14 +228,42 @@ const MOCK_DATA = {
   ],
 
   cities: [
-    { name: 'Ciudad de México', stadium: 'Estadio Azteca', country: 'México' },
-    { name: 'Guadalajara', stadium: 'Estadio Akron', country: 'México' },
-    { name: 'Monterrey', stadium: 'Estadio BBVA', country: 'México' },
-    { name: 'Toronto', stadium: 'BMO Field', country: 'Canadá' },
-    { name: 'Vancouver', stadium: 'BC Place', country: 'Canadá' },
-    { name: 'Nueva York', stadium: 'MetLife Stadium', country: 'EE.UU.' },
-    { name: 'Los Ángeles', stadium: 'SoFi Stadium', country: 'EE.UU.' },
-    { name: 'Dallas', stadium: 'AT&T Stadium', country: 'EE.UU.' }
+    { id: 'c1', name: 'Ciudad de México', stadium: 'Estadio Azteca', country: 'México', countryCode: 'MEX', capacity: '87,523 personas', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c2', name: 'Nueva York', stadium: 'MetLife Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '82,500 personas', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c3', name: 'Toronto', stadium: 'BMO Field', country: 'Canadá', countryCode: 'CAN', capacity: '45,500 personas', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c4', name: 'Los Ángeles', stadium: 'SoFi Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '70,240 personas', image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c5', name: 'Guadalajara', stadium: 'Estadio Akron', country: 'México', countryCode: 'MEX', capacity: '48,000 personas', image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c6', name: 'Monterrey', stadium: 'Estadio BBVA', country: 'México', countryCode: 'MEX', capacity: '53,500 personas', image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c7', name: 'Vancouver', stadium: 'BC Place', country: 'Canadá', countryCode: 'CAN', capacity: '54,500 personas', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c8', name: 'Dallas', stadium: 'AT&T Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '80,000 personas', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c9', name: 'Miami', stadium: 'Hard Rock Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '64,767 personas', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c10', name: 'Atlanta', stadium: 'Mercedes-Benz Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '71,000 personas', image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c11', name: 'Seattle', stadium: 'Lumen Field', country: 'Estados Unidos', countryCode: 'USA', capacity: '69,000 personas', image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c12', name: 'Houston', stadium: 'NRG Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '72,220 personas', image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c13', name: 'San Francisco', stadium: 'Levi\'s Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '68,500 personas', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c14', name: 'Filadelfia', stadium: 'Lincoln Financial Field', country: 'Estados Unidos', countryCode: 'USA', capacity: '67,594 personas', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c15', name: 'Boston', stadium: 'Gillette Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '65,878 personas', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80' },
+    { id: 'c16', name: 'Kansas City', stadium: 'Arrowhead Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '76,416 personas', image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80' }
+  ],
+
+  ranking: [
+    { pos: 1, code: 'AR', name: 'Argentina', conf: 'CONMEBOL', rank: 1, titles: 3, dt: 'Scaloni' },
+    { pos: 2, code: 'FR', name: 'Francia', conf: 'UEFA', rank: 2, titles: 2, dt: 'Deschamps' },
+    { pos: 3, code: 'BR', name: 'Brasil', conf: 'CONMEBOL', rank: 3, titles: 5, dt: 'Dorival Júnior' },
+    { pos: 4, code: 'GB', name: 'Inglaterra', conf: 'UEFA', rank: 4, titles: 1, dt: 'Southgate' },
+    { pos: 5, code: 'BE', name: 'Bélgica', conf: 'UEFA', rank: 5, titles: 0, dt: 'Tedesco' },
+    { pos: 6, code: 'PT', name: 'Portugal', conf: 'UEFA', rank: 6, titles: 0, dt: 'Martínez' },
+    { pos: 7, code: 'NL', name: 'Países Bajos', conf: 'UEFA', rank: 7, titles: 0, dt: 'Koeman' },
+    { pos: 8, code: 'ES', name: 'España', conf: 'UEFA', rank: 8, titles: 1, dt: 'Fuente' },
+    { pos: 9, code: 'IT', name: 'Italia', conf: 'UEFA', rank: 9, titles: 4, dt: 'Spalletti' },
+    { pos: 10, code: 'CO', name: 'Colombia', conf: 'CONMEBOL', rank: 10, titles: 0, dt: 'Lorenzo' },
+    { pos: 10, code: 'HR', name: 'Croacia', conf: 'UEFA', rank: 10, titles: 0, dt: 'Dalić' },
+    { pos: 11, code: 'DE', name: 'Alemania', conf: 'UEFA', rank: 11, titles: 4, dt: 'Nagelsmann' },
+    { pos: 12, code: 'MX', name: 'México', conf: 'CONCACAF', rank: 12, titles: 0, dt: 'Aguirre' },
+    { pos: 13, code: 'US', name: 'Estados Unidos', conf: 'CONCACAF', rank: 13, titles: 0, dt: 'Pochettino' },
+    { pos: 14, code: 'UY', name: 'Uruguay', conf: 'CONMEBOL', rank: 14, titles: 2, dt: 'Bielsa' },
+    { pos: 15, code: 'JP', name: 'Japón', conf: 'AFC', rank: 15, titles: 0, dt: 'Moriyasu' },
+    { pos: 16, code: 'MA', name: 'Marruecos', conf: 'CAF', rank: 16, titles: 0, dt: 'Regragui' }
   ],
 
   ods: [
@@ -243,22 +271,36 @@ const MOCK_DATA = {
       id: 'ods1',
       number: '13',
       title: 'Acción por el Clima',
-      desc: 'Compromiso de huella de carbono neutral con estadios operados 100% por energía renovable.',
+      desc: 'Compromiso de huella de carbono neutral con estadios operados 100% por energía renovable y redes de transporte electrificado.',
       stat: '-50% Emisiones CO₂'
     },
     {
       id: 'ods2',
       number: '08',
       title: 'Trabajo Decente y Crecimiento',
-      desc: 'Generación de más de 180,000 empleos directos e indirectos durante la organización.',
+      desc: 'Generación de más de 180,000 empleos directos e indirectos durante la preparación y desarrollo del torneo.',
       stat: '+180k Empleos'
     },
     {
       id: 'ods3',
       number: '12',
       title: 'Consumo Responsable',
-      desc: 'Programa de cero desperdicios plásticos y reciclaje integral en todas las sedes.',
+      desc: 'Programa de cero desperdicios plásticos de un solo uso y reciclaje integral de residuos en todas las sedes oficial de la FIFA.',
       stat: '100% Reciclaje'
+    },
+    {
+      id: 'ods4',
+      number: '10',
+      title: 'Reducción de Desigualdades',
+      desc: 'Garantía de accesibilidad total para personas con movilidad reducida y entradas subsidiadas para comunidades locales.',
+      stat: 'Acceso Inclusivo'
+    },
+    {
+      id: 'ods5',
+      number: '17',
+      title: 'Alianzas para los Objetivos',
+      desc: 'Cooperación trinacional inédita entre Canadá, Estados Unidos y México para infraestructura sostenible.',
+      stat: '3 Naciones Unidas'
     }
   ]
 };
@@ -320,6 +362,7 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
     if (fallbackKey === 'news') fallbackKey = 'news';
     if (fallbackKey === 'matches') fallbackKey = 'matches';
     if (fallbackKey === 'standings' || fallbackKey === 'clasificacion') fallbackKey = 'standings';
+    if (fallbackKey === 'ranking') fallbackKey = 'ranking';
     
     const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.standings || [];
     
@@ -338,8 +381,10 @@ export const FIFA_API = {
   getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
   getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
   getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', 'fifa_standings_data', forceRefresh),
+  getRanking: (forceRefresh = false) => fetchWithCache('ranking', 'fifa_ranking_data', forceRefresh),
   getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
   getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
   getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
   getODS: () => fetchWithCache('ods', 'fifa_2026_ods')
 };
+
