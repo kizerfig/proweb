@@ -32,6 +32,16 @@
  <!-- Interactive Filter Bar -->
  <form class="filter-bar" id="teams-filter-form" onsubmit="event.preventDefault();">
  
+ <!-- Filter by Confederation -->
+ <select id="filter-confederation" class="filter-select" aria-label="Filtrar por confederación">
+ <option value="all">Todas las confederaciones</option>
+ <option value="CONCACAF">CONCACAF</option>
+ <option value="CONMEBOL">CONMEBOL</option>
+ <option value="UEFA">UEFA</option>
+ <option value="AFC">AFC</option>
+ <option value="CAF">CAF</option>
+ </select>
+
  <!-- Filter by Group -->
  <select id="filter-team-group" class="filter-select" aria-label="Filtrar por grupo">
  <option value="all">Todos los grupos</option>
@@ -47,7 +57,7 @@
  </form>
 
  <!-- Teams Grid Container -->
- <div class="group-grid" id="teams-grid-container" style="margin-top: 1.5rem;">
+ <div class="group-grid teams-grid" id="teams-grid-container" style="margin-top: 1.5rem;">
  <!-- Skeletons loaded initially -->
  <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
  <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>

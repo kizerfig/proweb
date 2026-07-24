@@ -436,6 +436,145 @@ const MOCK_DATA = {
       officialUrl: 'https://www.conmebol.com/',
       icon: ''
     }
+  ],
+
+  teams: [
+    {
+      id: 'MX',
+      code: 'MX',
+      name: 'México',
+      confederation: 'CONCACAF',
+      group: 'Grupo A',
+      rank: 15,
+      appearances: 17,
+      coach: 'Javier Aguirre',
+      squad: [
+        { number: 13, name: 'Guillermo Ochoa', pos: 'POR', club: 'Salernitana' },
+        { number: 3, name: 'César Montes', pos: 'DEF', club: 'Al-Shabab' },
+        { number: 4, name: 'Edson Álvarez', pos: 'MED', club: 'West Ham United' },
+        { number: 9, name: 'Raúl Jiménez', pos: 'DEL', club: 'Fulham' },
+        { number: 10, name: 'Alexis Vega', pos: 'DEL', club: 'Toluca' }
+      ]
+    },
+    {
+      id: 'AR',
+      code: 'AR',
+      name: 'Argentina',
+      confederation: 'CONMEBOL',
+      group: 'Grupo A',
+      rank: 1,
+      appearances: 18,
+      coach: 'Lionel Scaloni',
+      squad: [
+        { number: 23, name: 'Emiliano Martínez', pos: 'POR', club: 'Aston Villa' },
+        { number: 13, name: 'Cristian Romero', pos: 'DEF', club: 'Tottenham Hotspur' },
+        { number: 7, name: 'Rodrigo De Paul', pos: 'MED', club: 'Atlético de Madrid' },
+        { number: 10, name: 'Lionel Messi', pos: 'DEL', club: 'Inter Miami' },
+        { number: 9, name: 'Julián Álvarez', pos: 'DEL', club: 'Atlético de Madrid' }
+      ]
+    },
+    {
+      id: 'BR',
+      code: 'BR',
+      name: 'Brasil',
+      confederation: 'CONMEBOL',
+      group: 'Grupo B',
+      rank: 5,
+      appearances: 22,
+      coach: 'Dorival Júnior',
+      squad: [
+        { number: 1, name: 'Alisson Becker', pos: 'POR', club: 'Liverpool' },
+        { number: 4, name: 'Marquinhos', pos: 'DEF', club: 'PSG' },
+        { number: 5, name: 'Casemiro', pos: 'MED', club: 'Manchester United' },
+        { number: 7, name: 'Vinícius Júnior', pos: 'DEL', club: 'Real Madrid' },
+        { number: 11, name: 'Rodrygo Goes', pos: 'DEL', club: 'Real Madrid' }
+      ]
+    },
+    {
+      id: 'ES',
+      code: 'ES',
+      name: 'España',
+      confederation: 'UEFA',
+      group: 'Grupo C',
+      rank: 3,
+      appearances: 16,
+      coach: 'Luis de la Fuente',
+      squad: [
+        { number: 1, name: 'Unai Simón', pos: 'POR', club: 'Athletic Club' },
+        { number: 14, name: 'Aymeric Laporte', pos: 'DEF', club: 'Al-Nassr' },
+        { number: 16, name: 'Rodri Hernández', pos: 'MED', club: 'Manchester City' },
+        { number: 19, name: 'Lamine Yamal', pos: 'DEL', club: 'FC Barcelona' },
+        { number: 7, name: 'Álvaro Morata', pos: 'DEL', club: 'AC Milan' }
+      ]
+    },
+    {
+      id: 'FR',
+      code: 'FR',
+      name: 'Francia',
+      confederation: 'UEFA',
+      group: 'Grupo C',
+      rank: 2,
+      appearances: 16,
+      coach: 'Didier Deschamps',
+      squad: [
+        { number: 16, name: 'Mike Maignan', pos: 'POR', club: 'AC Milan' },
+        { number: 4, name: 'Dayot Upamecano', pos: 'DEF', club: 'Bayern München' },
+        { number: 8, name: 'Aurelien Tchouaméni', pos: 'MED', club: 'Real Madrid' },
+        { number: 10, name: 'Kylian Mbappé', pos: 'DEL', club: 'Real Madrid' },
+        { number: 7, name: 'Antoine Griezmann', pos: 'DEL', club: 'Atlético de Madrid' }
+      ]
+    },
+    {
+      id: 'US',
+      code: 'US',
+      name: 'Estados Unidos',
+      confederation: 'CONCACAF',
+      group: 'Grupo D',
+      rank: 11,
+      appearances: 11,
+      coach: 'Mauricio Pochettino',
+      squad: [
+        { number: 1, name: 'Matt Turner', pos: 'POR', club: 'Crystal Palace' },
+        { number: 3, name: 'Chris Richards', pos: 'DEF', club: 'Crystal Palace' },
+        { number: 8, name: 'Weston McKennie', pos: 'MED', club: 'Juventus' },
+        { number: 10, name: 'Christian Pulisic', pos: 'DEL', club: 'AC Milan' },
+        { number: 21, name: 'Timothy Weah', pos: 'DEL', club: 'Juventus' }
+      ]
+    },
+    {
+      id: 'CA',
+      code: 'CA',
+      name: 'Canadá',
+      confederation: 'CONCACAF',
+      group: 'Grupo D',
+      rank: 48,
+      appearances: 2,
+      coach: 'Jesse Marsch',
+      squad: [
+        { number: 16, name: 'Maxime Crépeau', pos: 'POR', club: 'Portland Timbers' },
+        { number: 15, name: 'Moïse Bombito', pos: 'DEF', club: 'Nice' },
+        { number: 7, name: 'Stephen Eustaquio', pos: 'MED', club: 'Porto' },
+        { number: 19, name: 'Alphonso Davies', pos: 'DEL', club: 'Bayern München' },
+        { number: 9, name: 'Jonathan David', pos: 'DEL', club: 'Lille' }
+      ]
+    },
+    {
+      id: 'DE',
+      code: 'DE',
+      name: 'Alemania',
+      confederation: 'UEFA',
+      group: 'Grupo B',
+      rank: 9,
+      appearances: 20,
+      coach: 'Julian Nagelsmann',
+      squad: [
+        { number: 1, name: 'Manuel Neuer', pos: 'POR', club: 'Bayern München' },
+        { number: 2, name: 'Antonio Rüdiger', pos: 'DEF', club: 'Real Madrid' },
+        { number: 8, name: 'Toni Kroos', pos: 'MED', club: 'Real Madrid' },
+        { number: 10, name: 'Jamal Musiala', pos: 'DEL', club: 'Bayern München' },
+        { number: 17, name: 'Florian Wirtz', pos: 'DEL', club: 'Bayer Leverkusen' }
+      ]
+    }
   ]
 };
 
@@ -853,6 +992,69 @@ function normalizeMatchesList(rawData) {
 }
 
 /**
+ * Normaliza un equipo/selección individual desde la API (/v1/teams y /v1/teams/{id})
+ */
+function normalizeTeam(item) {
+  if (!item) return null;
+  const raw = item.data || item.team || item;
+  const code = raw.code || raw.isoCode || raw.id || 'MX';
+  const name = raw.name || raw.nombre || COUNTRY_NAMES[code] || code;
+  const conf = raw.confederation || raw.confederacion || raw.conf || (['MX', 'US', 'CA', 'PA', 'CR', 'JM', 'HT', 'CU'].includes(code) ? 'CONCACAF' : ['AR', 'BR', 'CO', 'UY', 'PY', 'BO', 'PE', 'VE', 'CL', 'EC'].includes(code) ? 'CONMEBOL' : ['ES', 'FR', 'DE', 'GB', 'IT', 'PT', 'NL', 'BE', 'HR', 'AT', 'DK', 'SE', 'PL', 'CH', 'RS'].includes(code) ? 'UEFA' : ['JP', 'QA', 'IR'].includes(code) ? 'AFC' : 'CAF');
+  const group = raw.group || raw.grupo || 'Grupo A';
+  const rank = raw.rank || raw.ranking || raw.pos || 10;
+  const appearances = raw.appearances || raw.participaciones || 10;
+  const coach = raw.coach || raw.entrenador || raw.dt || 'Director Técnico FIFA';
+
+  return {
+    id: String(raw.id || code),
+    code: code,
+    name: name,
+    confederation: conf,
+    group: typeof group === 'string' && group.length === 1 ? `Grupo ${group}` : group,
+    rank: rank,
+    appearances: appearances,
+    coach: coach,
+    squad: Array.isArray(raw.squad || raw.jugadores || raw.players) ? (raw.squad || raw.jugadores || raw.players) : [
+      { number: 1, name: 'Portero Titular', pos: 'POR', club: 'Club Oficial' },
+      { number: 4, name: 'Defensa Central', pos: 'DEF', club: 'Club Oficial' },
+      { number: 8, name: 'Mediocampista', pos: 'MED', club: 'Club Oficial' },
+      { number: 10, name: 'Delantero Estrella', pos: 'DEL', club: 'Club Oficial' }
+    ]
+  };
+}
+
+/**
+ * Obtiene el listado completo de equipos/selecciones (/v1/teams)
+ */
+export async function getTeams(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('teams', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.teams || data?.data || []);
+    return list.map(normalizeTeam).filter(Boolean);
+  } catch (error) {
+    console.warn('[getTeams] Fallback a MOCK_DATA.teams:', error);
+    return MOCK_DATA.teams.map(normalizeTeam);
+  }
+}
+
+/**
+ * Obtiene el detalle de un equipo por ID (/v1/teams/{id})
+ */
+export async function getTeamById(id, forceRefresh = false) {
+  try {
+    const data = await fetchWithCache(`teams/${id}`, forceRefresh);
+    if (data && (data.id || data.code || data.name)) {
+      return normalizeTeam(data);
+    }
+  } catch (error) {
+    console.warn(`[getTeamById] Fallback a MOCK_DATA para id ${id}:`, error);
+  }
+
+  const mockItem = MOCK_DATA.teams.find(t => String(t.id).toLowerCase() === String(id).toLowerCase() || String(t.code).toLowerCase() === String(id).toLowerCase()) || MOCK_DATA.teams[0];
+  return normalizeTeam(mockItem);
+}
+
+/**
  * Obtiene el listado completo de noticias (/v1/news)
  */
 export async function getNews(forceRefresh = false) {
@@ -912,12 +1114,14 @@ export const FIFA_API = {
   getNewsById,
   getMatches,
   getMatchById: (id, forceRefresh = false) => getMatchById(id, forceRefresh),
+  getTeams: (forceRefresh = false) => getTeams(forceRefresh),
+  getTeamsList: (forceRefresh = false) => getTeams(forceRefresh),
+  getTeamById: (id, forceRefresh = false) => getTeamById(id, forceRefresh),
   getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', forceRefresh),
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
   getRanking: (forceRefresh = false) => fetchWithCache('ranking', forceRefresh),
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
-  getTeams: () => fetchWithCache('teams'),
   getCities: () => fetchWithCache('cities'),
   getODS: () => fetchWithCache('ods'),
   clearCache: () => {
