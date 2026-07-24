@@ -100,6 +100,76 @@
   background-color: #33eb91;
 }
 
+/* Nav dropdown — sección "Más" */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-toggle {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-dropdown-caret {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 0.5rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  z-index: 120;
+}
+
+.nav-dropdown.open .nav-dropdown-menu {
+  display: flex;
+}
+
+.nav-dropdown-link {
+  display: block;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.nav-dropdown-link:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-dropdown-link.active {
+  background: rgba(0, 245, 140, 0.15);
+  color: var(--accent-mint);
+}
+
+.nav-dropdown.open .nav-dropdown-toggle,
+.nav-dropdown.is-active .nav-dropdown-toggle {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.identity-feature-block + .identity-feature-block {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 /* Secondary Sub-Navbar */
 .header-bottom {
   display: flex;
@@ -1075,6 +1145,14 @@
   background: var(--bg-card);
   border-color: var(--accent-blue);
   transform: translateY(-3px);
+}
+
+.team-tile-flag {
+  width: 48px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
 }
 
 .team-tile-code {
@@ -2682,6 +2760,8 @@
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all var(--transition-fast);
+  display: inline-block;
+  text-decoration: none;
 }
 
 .btn-listen-album:hover {
