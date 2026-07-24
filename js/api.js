@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '11';
+const CACHE_VERSION = '12';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -1482,22 +1482,39 @@ export async function getMatches(filters = {}, forceRefresh = false) {
  */
 function normalizeRankingItem(item, idx) {
   if (!item) return null;
-  const code = item.code || item.isoCode || item.id || 'MX';
-  const name = item.name || item.nombre || COUNTRY_NAMES[code] || code;
-  const conf = item.conf || item.confederation || item.confederacion || 'FIFA';
-  const pos = item.pos || item.position || item.rank || (idx + 1);
-  const rank = item.rank || item.points || item.puntos || pos;
-  const titles = item.titles ?? item.titulos ?? 0;
-  const dt = item.dt || item.coach || item.entrenador || 'Director Técnico';
+  
+  // Soporte para estructura anidada de la API (`{ team: {...}, rank, points, previous_rank }`) o plana (mock)
+  const rawTeam = item.team || item;
+
+  const code = rawTeam.id || rawTeam.code || rawTeam.isoCode || 'FIFA';
+  const name = rawTeam.name || rawTeam.nombre || COUNTRY_NAMES[code] || code;
+  const conf = rawTeam.confederation || rawTeam.confederacion || rawTeam.conf || 'FIFA';
+  const flagUri = rawTeam.flag_uri || rawTeam.flag || rawTeam.bandera || (code && code !== 'FIFA' ? `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}` : '');
+
+  const pos = item.rank !== undefined && item.rank !== null ? Number(item.rank) : (item.pos || idx + 1);
+  const previousRank = item.previous_rank !== undefined && item.previous_rank !== null ? Number(item.previous_rank) : (item.previousRank ?? pos);
+  
+  const pointsVal = item.points !== undefined && item.points !== null ? Number(item.points) : (pos ? Math.max(1200, 2000 - pos * 15) : 0);
+  const previousPointsVal = item.previous_points !== undefined && item.previous_points !== null ? Number(item.previous_points) : pointsVal;
+  
+  const worldRank = rawTeam.world_ranking || item.world_ranking || pos;
+  const appearances = rawTeam.appearances || rawTeam.participaciones || item.appearances || item.titles || 0;
+  const titles = item.titles ?? rawTeam.titles ?? rawTeam.titulos ?? 0;
+  const dt = item.dt || rawTeam.coach || rawTeam.entrenador || item.coach || 'Director Técnico';
 
   return {
     pos: Number(pos),
-    code: code,
-    name: name,
-    conf: conf,
-    rank: Number(rank),
+    code: String(code),
+    name: String(name),
+    conf: String(conf),
+    flagUri: String(flagUri),
+    rank: Number(worldRank),
+    previousRank: Number(previousRank),
+    points: Number(pointsVal),
+    previousPoints: Number(previousPointsVal),
+    appearances: Number(appearances),
     titles: Number(titles),
-    dt: dt
+    dt: String(dt)
   };
 }
 
@@ -1509,10 +1526,10 @@ export async function getRanking(forceRefresh = false) {
     const data = await fetchWithCache('ranking', forceRefresh);
     const list = Array.isArray(data) ? data : (data?.ranking || data?.data || []);
     const normalized = list.map(normalizeRankingItem).filter(Boolean);
-    return normalized.length > 0 ? normalized : MOCK_DATA.ranking;
+    return normalized.length > 0 ? normalized : MOCK_DATA.ranking.map(normalizeRankingItem);
   } catch (error) {
     console.warn('[getRanking] Fallback a MOCK_DATA.ranking:', error);
-    return MOCK_DATA.ranking;
+    return MOCK_DATA.ranking.map(normalizeRankingItem);
   }
 }
 
