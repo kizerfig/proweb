@@ -98,6 +98,29 @@ function setupFilterListeners() {
 }
 
 /**
+ * Escapa atributos HTML dinámicos
+ */
+function escapeHtmlAttr(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Renderiza bandera del equipo o fallback con código ISO
+ */
+function renderTeamFlag(team, width, height, fontSize = '0.9rem') {
+  if (team.flagUri) {
+    return `<img src="${escapeHtmlAttr(team.flagUri)}" alt="${escapeHtmlAttr(team.name)}" class="team-flag-img" style="width: ${width}; height: ${height}; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); flex-shrink: 0;" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;flag-box&quot; style=&quot;width:${width};height:${height};font-weight:800;font-size:${fontSize};border-radius:4px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid var(--border-color);flex-shrink:0;&quot;>${escapeHtmlAttr(team.code)}</div>'" />`;
+  }
+
+  return `<div class="flag-box" style="width: ${width}; height: ${height}; font-weight: 800; font-size: ${fontSize}; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); flex-shrink: 0;">${team.code}</div>`;
+}
+
+/**
  * Renderiza las tarjetas de equipo en la grilla
  */
 function renderTeams(container, teams) {
@@ -114,7 +137,7 @@ function renderTeams(container, teams) {
     <a href="detalle-equipo.html?id=${team.id}" class="group-card team-card-item" style="text-decoration: none; color: inherit; display: block; padding: 1.25rem; cursor: pointer;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
-          <div class="flag-box" style="width: 40px; height: 28px; font-weight: 800; font-size: 0.9rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color);">${team.code}</div>
+          ${renderTeamFlag(team, '40px', '28px')}
           <div>
             <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0;">${team.name}</h3>
             <span style="font-size: 0.8rem; color: var(--text-secondary);">${team.group}</span>
@@ -182,7 +205,7 @@ function renderTeamDetailHTML(container, team) {
     <!-- Team Hero Header -->
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1.5rem;">
-        <div class="flag-box" style="width: 72px; height: 50px; font-size: 1.5rem; font-weight: 800; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border: 2px solid var(--accent-mint);">${team.code}</div>
+        ${renderTeamFlag(team, '72px', '50px', '1.5rem')}
         <div>
           <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
             <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-primary); margin: 0; font-family: 'Rajdhani', sans-serif;">${team.name}</h1>

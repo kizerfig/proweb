@@ -1361,6 +1361,23 @@ function isValidApiMatch(match) {
 }
 
 /**
+ * Resuelve URL de bandera desde la API de equipos
+ */
+function resolveTeamFlagUri(raw, code) {
+  const rawFlag = raw.flag_url || raw.flag_uri || raw.flag || raw.bandera || '';
+  let flagUri = typeof rawFlag === 'string' ? rawFlag.trim() : '';
+
+  if (flagUri.startsWith('//')) flagUri = `https:${flagUri}`;
+  if (flagUri.startsWith('/')) flagUri = `https://wc-api-u378.onrender.com${flagUri}`;
+
+  if (!flagUri && code && String(code) !== 'FIFA') {
+    flagUri = `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}`;
+  }
+
+  return flagUri;
+}
+
+/**
  * Normaliza un equipo/selección individual desde la API (/v1/teams y /v1/teams/{id})
  */
 function normalizeTeam(item) {
@@ -1370,9 +1387,10 @@ function normalizeTeam(item) {
   const name = raw.name || raw.nombre || COUNTRY_NAMES[code] || code;
   const conf = raw.confederation || raw.confederacion || raw.conf || (['MX', 'US', 'CA', 'PA', 'CR', 'JM', 'HT', 'CU'].includes(code) ? 'CONCACAF' : ['AR', 'BR', 'CO', 'UY', 'PY', 'BO', 'PE', 'VE', 'CL', 'EC'].includes(code) ? 'CONMEBOL' : ['ES', 'FR', 'DE', 'GB', 'IT', 'PT', 'NL', 'BE', 'HR', 'AT', 'DK', 'SE', 'PL', 'CH', 'RS'].includes(code) ? 'UEFA' : ['JP', 'QA', 'IR'].includes(code) ? 'AFC' : 'CAF');
   const group = raw.group || raw.grupo || 'Grupo A';
-  const rank = raw.rank || raw.ranking || raw.pos || 10;
+  const rank = raw.rank || raw.ranking || raw.world_ranking || raw.pos || 10;
   const appearances = raw.appearances || raw.participaciones || 10;
   const coach = raw.coach || raw.entrenador || raw.dt || 'Director Técnico FIFA';
+  const flagUri = resolveTeamFlagUri(raw, code);
 
   return {
     id: String(raw.id || code),
@@ -1383,6 +1401,7 @@ function normalizeTeam(item) {
     rank: rank,
     appearances: appearances,
     coach: coach,
+    flagUri: flagUri,
     squad: Array.isArray(raw.squad || raw.jugadores || raw.players) ? (raw.squad || raw.jugadores || raw.players) : [
       { number: 1, name: 'Portero Titular', pos: 'POR', club: 'Club Oficial' },
       { number: 4, name: 'Defensa Central', pos: 'DEF', club: 'Club Oficial' },

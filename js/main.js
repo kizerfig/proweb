@@ -216,9 +216,22 @@ function getHomeTeamsPreview(teams) {
   .slice(0, TEAMS_PREVIEW_MAX);
 }
 
+function escapeHtmlAttr(value) {
+ return String(value || '')
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
+}
+
 function renderTeamTile(team) {
+ const flagHtml = team.flagUri
+  ? `<img src="${escapeHtmlAttr(team.flagUri)}" alt="${escapeHtmlAttr(team.name)}" class="team-tile-flag" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.outerHTML='<span class=&quot;team-tile-code&quot;>${escapeHtmlAttr(team.code)}</span>'" />`
+  : `<span class="team-tile-code">${team.code}</span>`;
+
  return `<a href="equipos.html" class="team-tile" style="text-decoration: none; color: inherit; cursor: pointer;">
-  <span class="team-tile-code">${team.code}</span>
+  ${flagHtml}
   <span class="team-tile-name">${team.name}</span>
  </a>`;
 }
