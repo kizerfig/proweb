@@ -6,12 +6,12 @@
  <meta name="description" content="Sobre Nosotros - Información académica del proyecto web oficial de la Copa Mundial de la FIFA 2026. UCAB Guayana.">
  <title>Sobre Nosotros - Copa Mundial de la FIFA 2026</title>
 
- <!-- Google Fonts for Modern Typography -->
+ <!-- Google Fonts -->
  <link rel="preconnect" href="https://fonts.googleapis.com">
  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 
- <!-- Native Stylesheets -->
+ <!-- Stylesheets -->
  <link rel="stylesheet" href="../css/main.css">
  <link rel="stylesheet" href="../css/components.css">
  <link rel="stylesheet" href="../css/responsive.css">
@@ -20,45 +20,48 @@
 
  <header id="site-header" class="site-header"></header>
 
- <!-- ==========================================
- MAIN CONTENT - SOBRE NOSOTROS DEDICADO
- ========================================== -->
+ <!-- SOBRE NOSOTROS -->
  <main class="container section-padding" id="main-content">
  
- <div style="margin-bottom: 2rem;">
- <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.35rem;"> Sobre El Proyecto y El Equipo</h1>
+ <div style="margin-bottom: 1.5rem;">
+ <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 0.35rem;"> Información del Proyecto y Equipo</h1>
  <p style="color: var(--text-secondary); font-size: 0.95rem;">Plataforma web oficial desarrollada en el ámbito académico para la Copa Mundial de la FIFA 2026™.</p>
  </div>
 
- <!-- Project Information Cards -->
+ <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+ <div>
+ <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; font-size: 1.1rem;"> Universidad Católica Andrés Bello (UCAB Guayana)</p>
+ <p style="font-size: 0.9rem; color: var(--text-secondary);"><strong>Cátedra:</strong> Programación Orientada a la Web</p>
+ </div>
+ </div>
+
+ <!-- Tarjetas de Información del Proyecto -->
  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem;">
  
  <div class="group-card" style="padding: 2rem;">
- <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-mint);"> Contexto Académico</h2>
- <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; margin-bottom: 1.25rem;">
- Esta aplicación ha sido desarrollada cumpliendo estrictamente con los estándares <strong>W3C</strong>, <strong>HTML5 Semántico</strong>, <strong>CSS3 Puro</strong> y <strong>JavaScript ES6+ Vanilla</strong>, como proyecto integral para la materia:
+ <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-mint);"> Tecnologías y Estrategia de Optimización</h2>
+ <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+ Este proyecto fue construido utilizando <strong>HTML5, CSS3 y JavaScript Vanilla</strong>.
+ Para optimizar el rendimiento y la velocidad de carga de la información consumida desde nuestra API,
+ implementamos una <strong>estrategia de Caché Local (LocalStorage)</strong> que almacena temporalmente las respuestas,
+ reduciendo drásticamente las peticiones redundantes y mejorando la fluidez del sitio.
  </p>
- <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
- <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;"> Universidad Católica Andrés Bello (UCAB Guayana)</p>
- <p style="font-size: 0.85rem; color: var(--text-secondary);"><strong>Cátedra:</strong> Programación Orientada a la Web</p>
- </div>
  </div>
 
  <div class="group-card" style="padding: 2rem;">
- <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-blue);"> Stack Técnico & Restricciones</h2>
- <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; color: var(--text-secondary); font-size: 0.9rem;">
- <li> <strong>HTML5 Semántico:</strong> Accesibilidad a11y y estructura clara.</li>
- <li> <strong>CSS3 Puro:</strong> Variables en <code>:root</code>, modo oscuro y media queries nativas.</li>
- <li> <strong>JavaScript ES6+ Vanilla:</strong> Programación modular con 0 dependencias externas.</li>
- <li> <strong>Persistencia Local:</strong> Sistema de caché inteligente con LocalStorage (15 min TTL).</li>
- </ul>
+ <h2 style="font-size: 1.3rem; margin-bottom: 1rem; color: var(--accent-blue);"> Diseño Responsivo</h2>
+ <p style="color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem;">
+ Nuestra plataforma cuenta con un <strong>Diseño Web Adaptativo (Responsive Design)</strong> implementado completamente desde cero utilizando <strong>CSS Grid y Flexbox</strong>. 
+ Mediante el uso de <strong>Media Queries</strong>, garantizamos que todos los componentes, desde la navegación hasta las tablas de clasificación,
+ se adapten fluidamente a cualquier tamaño de pantalla, ofreciendo una experiencia óptima tanto en dispositivos móviles como en monitores de escritorio.
+ </p>
  </div>
 
  </div>
 
- <!-- Team Members Grid -->
+ <!-- Tarjetas del Equipo de Desarrollo -->
  <div class="section-header" style="margin-bottom: 1.5rem;">
- <h2 class="section-title"> Integrantes del Equipo de Desarrollo</h2>
+ <h2 class="section-title"> Equipo de Desarrollo</h2>
  </div>
 
  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
@@ -66,31 +69,26 @@
  <div class="group-card" style="padding: 1.5rem; text-align: center;">
  <img src="../imagenes/sodyl-barajita.png" alt="Abreu, Sodyl" style="width: 100%; border-radius: var(--radius-md); margin-bottom: 1rem;">
  <h3 style="font-size: 1.1rem; font-weight: 800;">Abreu, Sodyl</h3>
- <span style="font-size: 0.8rem; color: var(--text-secondary);">Desarrollador Web / UCAB</span>
  </div>
 
  <div class="group-card" style="padding: 1.5rem; text-align: center;">
  <img src="../imagenes/barbara-barajita.png" alt="García, Bárbara" style="width: 100%; border-radius: var(--radius-md); margin-bottom: 1rem;">
  <h3 style="font-size: 1.1rem; font-weight: 800;">García, Bárbara</h3>
- <span style="font-size: 0.8rem; color: var(--text-secondary);">Desarrolladora Web / UCAB</span>
  </div>
 
  <div class="group-card" style="padding: 1.5rem; text-align: center;">
  <img src="../imagenes/daniela-barajita.png" alt="Gómez, Daniela" style="width: 100%; border-radius: var(--radius-md); margin-bottom: 1rem;">
  <h3 style="font-size: 1.1rem; font-weight: 800;">Gómez, Daniela</h3>
- <span style="font-size: 0.8rem; color: var(--text-secondary);">Desarrolladora Web / UCAB</span>
  </div>
 
  <div class="group-card" style="padding: 1.5rem; text-align: center;">
  <img src="../imagenes/elliooth-barajita.png" alt="Kizer, Elliooth" style="width: 100%; border-radius: var(--radius-md); margin-bottom: 1rem;">
  <h3 style="font-size: 1.1rem; font-weight: 800;">Kizer, Elliooth</h3>
- <span style="font-size: 0.8rem; color: var(--text-secondary);">Desarrollador Web / UCAB</span>
  </div>
 
  <div class="group-card" style="padding: 1.5rem; text-align: center;">
  <img src="../imagenes/valerio-barajita.png" alt="Valerio, Jesús" style="width: 100%; border-radius: var(--radius-md); margin-bottom: 1rem;">
  <h3 style="font-size: 1.1rem; font-weight: 800;">Valerio, Jesús</h3>
- <span style="font-size: 0.8rem; color: var(--text-secondary);">Desarrollador Web / UCAB</span>
  </div>
 
  </div>
