@@ -9,6 +9,12 @@ export function initNavbar() {
   const navLinks = document.querySelectorAll('.nav-link');
   const subLinks = document.querySelectorAll('.sub-link');
 
+  // Enforce Brand Logo click redirecting to index.html
+  const brandLogos = document.querySelectorAll('.brand-logo, .navbar-brand');
+  brandLogos.forEach(logo => {
+    logo.setAttribute('href', 'index.html');
+  });
+
   // Highlight Active Sub-link based on current pathname
   highlightActiveSubLink(subLinks);
 

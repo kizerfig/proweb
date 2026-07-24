@@ -136,7 +136,7 @@ function renderMatchCards(container, matchesList) {
     if (match.status === 'Finalizado') statusClass = 'finished';
 
     return `
-      <div class="match-card">
+      <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
         <div class="match-header">
           <span class="match-venue">📍 ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
           <span class="status-badge ${statusClass}">${match.status}</span>
@@ -166,7 +166,7 @@ function renderMatchCards(container, matchesList) {
           <span>📅 ${match.datetime}</span>
           <span>🏆 ${match.group || match.round || 'Mundial'}</span>
         </div>
-      </div>
+      </a>
     `;
   }).join('');
 }

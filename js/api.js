@@ -376,10 +376,162 @@ export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
   }
 }
 
+// Curated high-fidelity mock detailed matches data
+const MATCH_DETAILS_MOCK = {
+  'm1': {
+    id: 'm1',
+    group: 'Grupo A',
+    round: 'Fase de Grupos',
+    datetime: 'Lunes, 15 de junio de 2026 • 18:00',
+    stadium: 'Estadio Azteca',
+    city: 'Ciudad de México',
+    referee: 'Pierluigi Collina',
+    status: 'En vivo',
+    team1: { code: 'MX', name: 'México', score: 2 },
+    team2: { code: 'AR', name: 'Argentina', score: 1 },
+    timeline: [
+      { minute: "12'", type: "goal", title: "¡GOL! México", desc: "Jiménez anota tras gran jugada colectiva", team: "MX" },
+      { minute: "28'", type: "card-yellow", title: "Tarjeta Amarilla", desc: "Guardado por falta táctica", team: "MX" },
+      { minute: "45'+2", type: "goal", title: "¡GOL! México", desc: "Vega de tiro libre espectacular", team: "MX" },
+      { minute: "67'", type: "goal", title: "¡GOL! Argentina", desc: "Descuento tras córner", team: "AR" }
+    ],
+    stats: {
+      possession: [58, 42],
+      shotsOnTarget: [8, 5],
+      corners: [6, 4],
+      fouls: [12, 15],
+      yellowCards: [2, 3],
+      redCards: [0, 0]
+    },
+    lineups: {
+      team1: {
+        formation: "4-3-3",
+        starting: [
+          { number: 13, name: "Ochoa", pos: "GK", row: 1, col: 50 },
+          { number: 2, name: "Sánchez", pos: "RB", row: 2, col: 15 },
+          { number: 3, name: "Montes", pos: "CB", row: 2, col: 38 },
+          { number: 5, name: "Vásquez", pos: "CB", row: 2, col: 62 },
+          { number: 23, name: "Gallardo", pos: "LB", row: 2, col: 85 },
+          { number: 4, name: "Edson", pos: "DM", row: 3, col: 50 },
+          { number: 18, name: "Chávez", pos: "CM", row: 3, col: 25 },
+          { number: 17, name: "Guardado", pos: "CM", row: 3, col: 75 },
+          { number: 22, name: "Lozano", pos: "RW", row: 4, col: 20 },
+          { number: 9, name: "Jiménez", pos: "ST", row: 4, col: 50 },
+          { number: 10, name: "Vega", pos: "LW", row: 4, col: 80 }
+        ],
+        substitutes: ["Talavera (POR)", "Montes (DEF)", "Arteaga (DEF)", "Antuna (DEL)", "Martín (DEL)"],
+        coach: "Javier Aguirre"
+      },
+      team2: {
+        formation: "4-3-3",
+        starting: [
+          { number: 23, name: "D. Martínez", pos: "GK", row: 4, col: 50 },
+          { number: 26, name: "Molina", pos: "RB", row: 3, col: 15 },
+          { number: 13, name: "Romero", pos: "CB", row: 3, col: 38 },
+          { number: 19, name: "Otamendi", pos: "CB", row: 3, col: 62 },
+          { number: 8, name: "Acuña", pos: "LB", row: 3, col: 85 },
+          { number: 7, name: "De Paul", pos: "CM", row: 2, col: 25 },
+          { number: 24, name: "Enzo", pos: "DM", row: 2, col: 50 },
+          { number: 20, name: "Mac Allister", pos: "CM", row: 2, col: 75 },
+          { number: 10, name: "Messi", pos: "RW", row: 1, col: 20 },
+          { number: 9, name: "Julián", pos: "ST", row: 1, col: 50 },
+          { number: 11, name: "Di María", pos: "LW", row: 1, col: 80 }
+        ],
+        substitutes: ["Armani (POR)", "Pezzella (DEF)", "Paredes (MED)", "Lautaro (DEL)", "Dybala (DEL)"],
+        coach: "Lionel Scaloni"
+      }
+    },
+    highlights: {
+      main: {
+        title: "Resumen del partido | México vs Argentina | Momentos Destacados",
+        poster: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      },
+      gallery: [
+        { title: "¡Golazo de Jiménez! (12')", duration: "01:15", image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80" },
+        { title: "Tiro libre magistral de Vega (45'+2)", duration: "01:45", image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=400&q=80" },
+        { title: "Atajada clave de Memo Ochoa", duration: "00:58", image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=400&q=80" },
+        { title: "Descuento argentino tras córner (67')", duration: "01:20", image: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80" }
+      ]
+    }
+  }
+};
+
+/**
+ * Fetch detailed match by ID using LocalStorage strategy with 15 minutes TTL check
+ * @param {string} id - Match ID
+ * @param {boolean} forceRefresh - If true, bypasses valid cache to force network request
+ */
+export async function getMatchById(id = 'm1', forceRefresh = false) {
+  const cacheKey = `fifa_match_detail_${id}`;
+  const cachedItem = localStorage.getItem(cacheKey);
+
+  if (cachedItem && !forceRefresh) {
+    try {
+      const parsed = JSON.parse(cachedItem);
+      const now = Date.now();
+      const age = now - parsed.timestamp;
+
+      if (age < CACHE_TTL_MS) {
+        console.log(`[Cache HIT] Cargando '${cacheKey}' desde localStorage (Edad: ${Math.round(age / 1000)}s)`);
+        return parsed.data;
+      }
+    } catch (e) {
+      console.warn(`[Cache Error] Error al leer localStorage para '${cacheKey}':`, e);
+      localStorage.removeItem(cacheKey);
+    }
+  }
+
+  // Network Fetch attempt
+  try {
+    const response = await fetch(`${API_BASE_URL}partidos/${id}`, {
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const cacheObject = { timestamp: Date.now(), data };
+      localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+      console.log(`[Cache STORED] Guardado en localStorage para '${cacheKey}'`);
+      return data;
+    }
+  } catch (error) {
+    console.warn(`[Fetch API Fallback] No se pudo obtener detalle del partido ${id} de API:`, error.message);
+  }
+
+  // Fallback match details
+  let detail = MATCH_DETAILS_MOCK[id];
+  if (!detail) {
+    const matchesList = await FIFA_API.getMatches();
+    const basicMatch = matchesList.find(m => m.id === id) || matchesList[0];
+    detail = {
+      ...MATCH_DETAILS_MOCK['m1'],
+      id: basicMatch.id || id,
+      city: basicMatch.city,
+      stadium: basicMatch.stadium || 'Estadio FIFA',
+      status: basicMatch.status,
+      round: basicMatch.round || 'Fase de Grupos',
+      group: basicMatch.group || 'Grupo A',
+      team1: basicMatch.team1,
+      team2: basicMatch.team2,
+      datetime: basicMatch.datetime
+    };
+    if (basicMatch.status === 'Programado') {
+      detail.timeline = [];
+      detail.stats = null;
+      detail.lineups = null; // Triggers unavailable message
+    }
+  }
+
+  localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: detail }));
+  return detail;
+}
+
 // Public API Methods
 export const FIFA_API = {
   getNews: (forceRefresh = false) => fetchWithCache('news', 'fifa_news_data', forceRefresh),
   getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
+  getMatchById: (id, forceRefresh = false) => getMatchById(id, forceRefresh),
   getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', 'fifa_standings_data', forceRefresh),
   getRanking: (forceRefresh = false) => fetchWithCache('ranking', 'fifa_ranking_data', forceRefresh),
   getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
@@ -387,4 +539,5 @@ export const FIFA_API = {
   getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
   getODS: () => fetchWithCache('ods', 'fifa_2026_ods')
 };
+
 

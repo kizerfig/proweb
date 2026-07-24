@@ -85,7 +85,7 @@ async function loadMatchesSection() {
       if (match.status === 'Finalizado') statusClass = 'finished';
 
       return `
-        <div class="match-card">
+        <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
           <div class="match-header">
             <span class="match-venue">${match.city}</span>
             <span class="status-badge ${statusClass}">${match.status}</span>
@@ -115,7 +115,7 @@ async function loadMatchesSection() {
             <span>${match.datetime}</span>
             <span>${match.group}</span>
           </div>
-        </div>
+        </a>
       `;
     }).join('');
 

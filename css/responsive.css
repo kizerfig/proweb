@@ -183,6 +183,40 @@
     grid-template-columns: 1fr;
     gap: 2rem;
   }
+
+  /* Match Detail Responsive */
+  .hero-scoreboard {
+    gap: 1.25rem;
+  }
+
+  .hero-code {
+    font-size: 2rem;
+  }
+
+  .hero-team-name {
+    font-size: 0.95rem;
+  }
+
+  .hero-score {
+    font-size: 2.4rem;
+  }
+
+  .lineup-extras-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .highlights-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .soccer-pitch {
+    min-height: 480px;
+    padding: 1rem 0.5rem;
+  }
+
+  .player-name {
+    font-size: 0.65rem;
+  }
 }
 
 /* ------------------------------------------
