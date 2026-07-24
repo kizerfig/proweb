@@ -3348,3 +3348,135 @@
 .news-read-more:hover {
   text-decoration: none;
 }
+
+/* ------------------------------------------
+   22. CUADRÍCULA Y TARJETAS DE ARCHIVOS (records-grid)
+   ------------------------------------------ */
+.records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.record-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.record-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 255, 135, 0.4);
+  box-shadow: 0 14px 30px -10px rgba(0, 255, 135, 0.2);
+}
+
+.record-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.record-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.record-card:hover .record-thumb-wrap img {
+  transform: scale(1.06);
+}
+
+.record-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease;
+}
+
+.record-card:hover .record-play-overlay {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.play-icon-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(0, 255, 135, 0.9);
+  color: #0b0f19;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding-left: 3px;
+  box-shadow: 0 4px 20px rgba(0, 255, 135, 0.4);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.record-card:hover .play-icon-btn {
+  transform: scale(1.12);
+  background: #00ff87;
+}
+
+.record-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(15, 23, 42, 0.85);
+  color: #00ff87;
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.record-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.record-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.35;
+}
+
+.record-card-subtitle {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+  flex-grow: 1;
+}
+
+.record-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #00ff87;
+  font-weight: 600;
+}
+

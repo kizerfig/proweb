@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Archivos del Torneo - Copa Mundial de la FIFA 2026. Videos, momentos históricos y material oficial.">
+  <meta name="description" content="Archivos del Torneo - Copa Mundial de la FIFA 2026. Resúmenes oficiales, mejores goles, entrevistas y jugadas destacadas.">
   <title>Archivos del Torneo - Copa Mundial de la FIFA 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,24 +16,64 @@
   <header id="site-header" class="site-header"></header>
 
   <main class="container section-padding content-page" id="main-content">
-    <h1 class="section-title" style="font-size: 2.2rem; margin-bottom: 1.5rem;">Archivos del Torneo</h1>
-    <p>Revive los mejores momentos, resúmenes oficiales y material audiovisual del Mundial 2026.</p>
-
-    <div class="video-list" style="margin-top: 2rem;">
-      <article class="video-item">
-        <h3>Mejores goles del torneo</h3>
-        <p>Compilación de las jugadas más destacadas de la fase de grupos y eliminatorias.</p>
-      </article>
-      <article class="video-item">
-        <h3>Resúmenes oficiales por jornada</h3>
-        <p>Cobertura semanal con los partidos más importantes de cada sede.</p>
-      </article>
-      <article class="video-item">
-        <h3>Entrevistas y conferencias</h3>
-        <p>Declaraciones de selecciones, DTs y figuras del torneo.</p>
-      </article>
+    
+    <!-- Encabezado de la página -->
+    <div class="page-title-section" style="margin-bottom: 2rem;">
+      <h1 class="page-title" style="font-size: 2.4rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(135deg, #ffffff 0%, #00ff87 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Archivos del Torneo</h1>
+      <p class="page-subtitle" style="font-size: 1.1rem; color: var(--text-secondary, #94a3b8); max-width: 750px; line-height: 1.6;">
+        Revive los mejores momentos, resúmenes oficiales y material audiovisual exclusivo de la Copa Mundial de la FIFA 2026.
+      </p>
     </div>
+
+    <!-- Barra de Filtros y Búsqueda -->
+    <div class="records-filter-bar" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2rem; background: rgba(15, 23, 42, 0.6); padding: 1rem 1.2rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px);">
+      <nav class="video-tabs" aria-label="Filtrar archivos por categoría" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="tab-btn active" data-category="all">Todos</button>
+        <button class="tab-btn" data-category="Goles">⚽ Goles</button>
+        <button class="tab-btn" data-category="Resúmenes">📹 Resúmenes</button>
+        <button class="tab-btn" data-category="Entrevistas">🎙️ Entrevistas</button>
+        <button class="tab-btn" data-category="Atajadas">🧤 Atajadas</button>
+        <button class="tab-btn" data-category="Oficial">⭐ Oficial</button>
+      </nav>
+
+      <div class="search-box-wrap" style="position: relative; min-width: 260px; flex-grow: 0.3;">
+        <input type="text" id="records-search-input" class="search-input" placeholder="🔍 Buscar por título o jugada..." aria-label="Buscar en archivos" style="width: 100%; padding: 0.6rem 1rem; border-radius: 20px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.12); color: #fff; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+      </div>
+    </div>
+
+    <!-- Cuadrícula Dinámica de Archivos -->
+    <section class="records-grid" id="records-grid-container" aria-label="Listado de archivos del torneo">
+      <!-- Skeletons de carga iniciales -->
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+      <div class="skeleton" style="height: 280px; border-radius: 12px;"></div>
+    </section>
   </main>
+
+  <!-- Modal Reproductor de Video -->
+  <div id="records-video-modal" class="modal-overlay" aria-hidden="true" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div class="modal-content modal-video-box" style="background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; max-width: 850px; width: 100%; padding: 1.5rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);">
+      <button id="modal-close-btn" class="modal-close-btn" aria-label="Cerrar modal" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255, 255, 255, 0.1); border: none; color: #fff; font-size: 1.5rem; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">&times;</button>
+      
+      <div class="modal-header" style="margin-bottom: 1rem; padding-right: 2.5rem;">
+        <span id="modal-video-category" class="category-badge-mint" style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; background: rgba(0, 255, 135, 0.15); color: #00ff87; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem;">Highlights</span>
+        <h3 id="modal-video-title" class="modal-video-title" style="font-size: 1.4rem; color: #fff; margin: 0; font-weight: 600;">Título del Video</h3>
+      </div>
+
+      <div class="modal-video-player-container" style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 1rem;">
+        <video id="modal-video-element" controls autoplay playsinline style="width: 100%; max-height: 480px; display: block; border-radius: 12px;"></video>
+        <iframe id="modal-iframe-element" style="width: 100%; height: 450px; border: none; border-radius: 12px; display: none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <p id="modal-video-subtitle" class="modal-video-subtitle" style="color: #94a3b8; font-size: 0.95rem; margin: 0; flex: 1; min-width: 250px;"></p>
+        <a id="modal-video-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; text-decoration: none; font-size: 0.85rem; transition: background 0.2s;">Abrir enlace ↗</a>
+      </div>
+    </div>
+  </div>
 
   <footer id="site-footer" class="site-footer"></footer>
   <script type="module" src="../js/archivos.js"></script>

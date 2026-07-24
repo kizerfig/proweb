@@ -778,6 +778,57 @@ const MOCK_DATA = {
         { id: 'm8', round: 'Tercer Lugar', teams: 'Perdedor SF1 vs Perdedor SF2', datetime: '18 Jul 2026 • 17:00' }
       ]
     }
+  ],
+
+  records: [
+    {
+      id: 1,
+      title: 'Mejores goles de la Fase de Grupos',
+      subtitle: 'Compilación de las jugadas espectaculares y anotaciones más destacadas del torneo.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+      category: 'Goles'
+    },
+    {
+      id: 2,
+      title: 'Resúmenes oficiales por jornada',
+      subtitle: 'Cobertura semanal completa con los partidos más importantes de cada sede en Norteamérica.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
+      category: 'Resúmenes'
+    },
+    {
+      id: 3,
+      title: 'Entrevistas y conferencias exclusivas',
+      subtitle: 'Declaraciones de seleccionadores, directores técnicos y figuras principales del torneo.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=800&q=80',
+      category: 'Entrevistas'
+    },
+    {
+      id: 4,
+      title: 'Las mejores atajadas de la jornada',
+      subtitle: 'Paradas memorables de los guardametas en los estadios de México, Estados Unidos y Canadá.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80',
+      category: 'Atajadas'
+    },
+    {
+      id: 5,
+      title: 'Inauguración Histórica en el Estadio Azteca',
+      subtitle: 'Revive el ambiente festivo y el espectáculo de apertura de la Copa Mundial 2026.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=800&q=80',
+      category: 'Oficial'
+    },
+    {
+      id: 6,
+      title: 'Highlights de la Fase Eliminatoria',
+      subtitle: 'Los momentos más intensos de los partidos de vida o muerte rumbo a la Gran Final.',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+      thumbnail_url: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+      category: 'Resúmenes'
+    }
   ]
 };
 
@@ -2041,6 +2092,54 @@ export async function getStandingsByGroup(groupLetter, forceRefresh = false) {
   return found ? found.teams : [];
 }
 
+/**
+ * Normaliza un ítem individual de récords/archivos del torneo (/v1/records)
+ */
+function normalizeRecordItem(item, idx) {
+  if (!item) return null;
+  const raw = item.data || item;
+  const id = raw.id ?? raw._id ?? (idx + 1);
+  const title = raw.title || raw.titulo || 'Resumen del Partido';
+  const subtitle = raw.subtitle || raw.subtitulo || raw.description || raw.descripcion || 'Momentos destacados y jugadas del Mundial 2026.';
+  const rawUrl = raw.url || raw.video_url || raw.link || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  const rawThumb = raw.thumbnail_url || raw.thumbnail || raw.image || raw.imagen || '';
+  const thumbnail = resolveFifaImageUrl(rawThumb) || 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80';
+
+  let category = 'Highlights';
+  const titleLower = String(title).toLowerCase();
+  const subLower = String(subtitle).toLowerCase();
+  if (titleLower.includes('gol') || subLower.includes('gol')) category = 'Goles';
+  else if (titleLower.includes('resumen') || subLower.includes('resumen')) category = 'Resúmenes';
+  else if (titleLower.includes('entrevista') || subLower.includes('conferencia')) category = 'Entrevistas';
+  else if (titleLower.includes('atajada') || subLower.includes('portero')) category = 'Atajadas';
+  else if (titleLower.includes('inaugur') || subLower.includes('oficial')) category = 'Oficial';
+
+  return {
+    id: id,
+    title: String(title),
+    subtitle: String(subtitle),
+    url: String(rawUrl),
+    thumbnail_url: thumbnail,
+    image: thumbnail,
+    category: category
+  };
+}
+
+/**
+ * Obtiene el listado completo de récords/archivos del torneo (/v1/records)
+ */
+export async function getRecords(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('records', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.records || data?.data || []);
+    const normalized = list.map(normalizeRecordItem).filter(Boolean);
+    if (normalized.length > 0) return normalized;
+  } catch (error) {
+    console.warn('[getRecords] Fallback a MOCK_DATA.records:', error);
+  }
+  return MOCK_DATA.records.map(normalizeRecordItem);
+}
+
 // Public API Methods
 export const FIFA_API = {
   getNews,
@@ -2057,6 +2156,8 @@ export const FIFA_API = {
   getCityById: (id, forceRefresh = false) => getCityById(id, forceRefresh),
   getStandings: (forceRefresh = false) => getStandings(forceRefresh),
   getStandingsByGroup: (group, forceRefresh = false) => getStandingsByGroup(group, forceRefresh),
+  getRecords: (forceRefresh = false) => getRecords(forceRefresh),
+  getRecordsList: (forceRefresh = false) => getRecords(forceRefresh),
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
@@ -2080,7 +2181,7 @@ export function prefetchEssentialData() {
     : (fn) => setTimeout(fn, 200);
 
   scheduler(() => {
-    const endpoints = ['news', 'matches', 'standings', 'teams', 'ranking', 'cities', 'ball', 'mascots', 'sound'];
+    const endpoints = ['records', 'news', 'matches', 'standings', 'teams', 'ranking', 'cities', 'ball', 'mascots', 'sound'];
     endpoints.forEach(endpoint => {
       fetchWithCache(endpoint).catch(() => {});
     });
