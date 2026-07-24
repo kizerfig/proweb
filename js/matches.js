@@ -46,6 +46,7 @@ async function loadMatches() {
  if (byDate !== 0) return byDate;
  return String(a.time || '').localeCompare(String(b.time || ''));
  });
+ populateTeamFilter(allMatches);
  filterAndRenderMatches();
 
  } catch (error) {
@@ -70,51 +71,72 @@ async function loadMatches() {
  * Attach event listeners to all filter controls
  */
 function setupFilterListeners() {
- const filterCity = document.getElementById('filter-city');
- const filterRound = document.getElementById('filter-round');
- const filterStatus = document.getElementById('filter-status');
- const filterGroup = document.getElementById('filter-group');
- const searchTeam = document.getElementById('search-team');
+  const filterCity = document.getElementById('filter-city');
+  const filterRound = document.getElementById('filter-round');
+  const filterStatus = document.getElementById('filter-status');
+  const filterGroup = document.getElementById('filter-group');
+  const filterTeam = document.getElementById('filter-team');
 
- const controls = [filterCity, filterRound, filterStatus, filterGroup];
- controls.forEach(control => {
- if (control) {
- control.addEventListener('change', () => filterAndRenderMatches());
- }
- });
+  const controls = [filterCity, filterRound, filterStatus, filterGroup, filterTeam];
+  controls.forEach(control => {
+    if (control) {
+      control.addEventListener('change', () => filterAndRenderMatches());
+    }
+  });
+}
 
- if (searchTeam) {
- searchTeam.addEventListener('input', () => filterAndRenderMatches());
- }
+/**
+ * Populates the team filter select with unique teams extracted from match data
+ */
+function populateTeamFilter(matches) {
+  const filterTeam = document.getElementById('filter-team');
+  if (!filterTeam) return;
+
+  const teamsMap = new Map();
+  matches.forEach(match => {
+    if (match.team1?.name && match.team1?.code) {
+      teamsMap.set(match.team1.code, match.team1.name);
+    }
+    if (match.team2?.name && match.team2?.code) {
+      teamsMap.set(match.team2.code, match.team2.name);
+    }
+  });
+
+  const sortedTeams = [...teamsMap.entries()].sort((a, b) =>
+    a[1].localeCompare(b[1])
+  );
+
+  filterTeam.innerHTML = `<option value="all">Todos los equipos</option>` +
+    sortedTeams.map(([code, name]) =>
+      `<option value="${code}">${name}</option>`
+    ).join('');
 }
 
 /**
  * Filters the matches array based on current inputs and renders output
  */
 function filterAndRenderMatches() {
- const container = document.getElementById('matches-grid-container');
- if (!container) return;
+  const container = document.getElementById('matches-grid-container');
+  if (!container) return;
 
- const city = document.getElementById('filter-city')?.value || 'all';
- const round = document.getElementById('filter-round')?.value || 'all';
- const status = document.getElementById('filter-status')?.value || 'all';
- const group = document.getElementById('filter-group')?.value || 'all';
- const search = (document.getElementById('search-team')?.value || '').trim().toLowerCase();
+  const city = document.getElementById('filter-city')?.value || 'all';
+  const round = document.getElementById('filter-round')?.value || 'all';
+  const status = document.getElementById('filter-status')?.value || 'all';
+  const group = document.getElementById('filter-group')?.value || 'all';
+  const team = document.getElementById('filter-team')?.value || 'all';
 
- const filtered = allMatches.filter(match => {
- const cityMatch = city === 'all' || match.city === city;
- const roundMatch = round === 'all' || match.round === round;
- const statusMatch = status === 'all' || match.status === status;
- const groupMatch = group === 'all' || match.group === group;
+  const filtered = allMatches.filter(match => {
+    const cityMatch = city === 'all' || match.city === city;
+    const roundMatch = round === 'all' || match.round === round;
+    const statusMatch = status === 'all' || match.status === status;
+    const groupMatch = group === 'all' || match.group === group;
 
- const teamMatch = !search ||
- (match.team1.name && match.team1.name.toLowerCase().includes(search)) ||
- (match.team1.code && match.team1.code.toLowerCase().includes(search)) ||
- (match.team2.name && match.team2.name.toLowerCase().includes(search)) ||
- (match.team2.code && match.team2.code.toLowerCase().includes(search));
+    const teamMatch = team === 'all' ||
+      match.team1?.code === team ||
+      match.team2?.code === team;
 
- return cityMatch && roundMatch && statusMatch && groupMatch && teamMatch;
- });
+    return cityMatch && roundMatch && statusMatch && groupMatch && teamMatch;
+  });
 
  if (filtered.length === 0) {
  renderNoMatchesState(container);
