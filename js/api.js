@@ -1335,6 +1335,10 @@ function mapMatchStatus(rawStatus) {
     return { status: 'Finalizado', statusLabel: 'Finalizado', statusClass: 'finished' };
   }
 
+  if (['not started', 'scheduled', 'fixture', 'ns', 'programado'].includes(value)) {
+    return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
+  }
+
   return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
 }
 
@@ -1455,13 +1459,14 @@ function normalizeMatchesList(rawData) {
 }
 
 /**
- * Descarta partidos basura/placeholder de la API (ej. final falsa id 11111111)
+ * Descarta partidos fuera del calendario de grupos (jun–jul), excepto fases finales
  */
 function isValidApiMatch(match) {
   if (!match) return false;
-  const id = String(match.id ?? '');
-  if (id === '11111111') return false;
-  // Fuera del rango oficial del Mundial 2026 (jun–jul)
+
+  const round = Number(match.round);
+  if (round >= 27 || round === 50) return true;
+
   if (match.date && (match.date < '2026-06-01' || match.date > '2026-07-31')) return false;
   return true;
 }

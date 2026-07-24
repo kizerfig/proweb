@@ -186,8 +186,8 @@ function buildKnockoutRounds(matches) {
   const sf = (byRound[28] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
   if (sf.length) rounds.push({ id: 'sf', label: 'Semifinales', matches: sf, type: 'sf' });
 
-  // 5. Round 29 = FINAL — España 1-0 Argentina
-  const finalMatches = (byRound[29] || []).filter(m => m.status === 'Ended');
+  // 5. Round 29 = FINAL — incluye final programada (ESP vs ARG)
+  const finalMatches = (byRound[29] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
   const mainFinal = finalMatches[0] || null;
   if (mainFinal) {
     rounds.push({ id: 'final', label: 'Final', matches: [mainFinal], type: 'final' });
