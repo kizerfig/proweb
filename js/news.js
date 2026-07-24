@@ -6,6 +6,8 @@
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
+const NEWS_IMAGE_FALLBACK = '../imagenes/banner1.jpg';
+
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Noticias Destacadas Initialized');
  
@@ -59,7 +61,7 @@ function renderNewsCards(container, newsList) {
   container.innerHTML = newsList.map(news => `
     <article class="news-card" data-id="${news.id}" style="cursor: pointer;">
       <div class="news-image-wrap">
-        <img src="${news.image || '../imagenes/banner1.jpg'}" alt="${news.title}" loading="lazy" />
+        <img src="${news.image || NEWS_IMAGE_FALLBACK}" alt="${news.title}" loading="lazy" onerror="this.onerror=null;this.src='${NEWS_IMAGE_FALLBACK}'" />
       </div>
       <div class="news-body">
         <div class="news-meta">
@@ -118,7 +120,7 @@ async function openNewsModal(id) {
     modalOverlay.innerHTML = `
       <div style="background: var(--bg-card, #161B22); border: 1px solid var(--border-color, #30363D); border-radius: 12px; max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; color: var(--text-primary, #F0F6FC); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
         <button id="close-news-modal" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">&times;</button>
-        ${detail.image ? `<img src="${detail.image}" alt="${detail.title}" style="width: 100%; height: 260px; object-fit: cover; border-radius: 8px; margin-bottom: 1.2rem;" />` : ''}
+        ${detail.image ? `<img src="${detail.image}" alt="${detail.title}" style="width: 100%; height: 260px; object-fit: cover; border-radius: 8px; margin-bottom: 1.2rem;" onerror="this.onerror=null;this.src='${NEWS_IMAGE_FALLBACK}'" />` : ''}
         <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
           <span style="background: var(--accent-mint, #00F58C); color: #000; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem;">${detail.category}</span>
           <span style="color: var(--text-secondary, #8B949E); font-size: 0.8rem;">${detail.time} • Por ${detail.author}</span>

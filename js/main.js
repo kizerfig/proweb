@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
  loadHomepageData();
 });
 
+const NEWS_IMAGE_FALLBACK = '../imagenes/banner1.jpg';
+
 async function loadHomepageData() {
  // Load Sections in parallel
  await Promise.all([
@@ -48,7 +50,7 @@ async function loadNewsSection() {
  container.innerHTML = latestNews.map(news => `
  <article class="news-card">
  <div class="news-image-wrap">
- <img src="${news.image || '../imagenes/banner1.jpg'}" alt="${news.title}" loading="lazy" />
+ <img src="${news.image || NEWS_IMAGE_FALLBACK}" alt="${news.title}" loading="lazy" onerror="this.onerror=null;this.src='${NEWS_IMAGE_FALLBACK}'" />
  </div>
  <div class="news-body">
  <div class="news-meta">

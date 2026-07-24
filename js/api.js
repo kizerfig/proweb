@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '5';
+const CACHE_VERSION = '6';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -810,6 +810,30 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
 }
 
 /**
+ * Resuelve URL de imagen de noticia desde la API v1 u otros formatos
+ */
+function resolveNewsImage(item) {
+  const raw = item.image_url ?? item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? '';
+  if (!raw || typeof raw !== 'string') return '';
+
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('//')) return `https:${trimmed}`;
+  if (trimmed.startsWith('/')) return `https://wc-api-u378.onrender.com${trimmed}`;
+
+  return trimmed;
+}
+
+function formatNewsDate(value) {
+  if (!value) return 'Reciente';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return String(value);
+  return parsed.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/**
  * Normaliza noticias desde distintos formatos de la API
  */
 function normalizeNewsList(raw) {
@@ -825,10 +849,10 @@ function normalizeNewsList(raw) {
     id: item.id ?? item._id ?? String(index + 1),
     title: item.title ?? item.titulo ?? 'Sin título',
     category: item.category ?? item.categoria ?? 'Mundial',
-    time: item.time ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
-    image: item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? '',
-    summary: item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
-    content: item.content ?? item.contenido ?? item.body ?? ''
+    time: item.time ?? formatNewsDate(item.published_date) ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
+    image: resolveNewsImage(item),
+    summary: item.preview_text ?? item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
+    content: item.content ?? item.contenido ?? item.body ?? item.preview_text ?? ''
   }));
 }
 
@@ -842,10 +866,10 @@ function normalizeNewsDetail(raw, requestedId) {
     id: item.id ?? item._id ?? String(requestedId),
     title: item.title ?? item.titulo ?? 'Sin título',
     category: item.category ?? item.categoria ?? 'Mundial',
-    time: item.time ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
-    image: item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? '',
-    summary: item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
-    content: item.content ?? item.contenido ?? item.body ?? 'Detalles de la noticia oficial de la FIFA Copa Mundial 2026.',
+    time: item.time ?? formatNewsDate(item.published_date) ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
+    image: resolveNewsImage(item),
+    summary: item.preview_text ?? item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
+    content: item.content ?? item.contenido ?? item.body ?? item.preview_text ?? 'Detalles de la noticia oficial de la FIFA Copa Mundial 2026.',
     author: item.author ?? item.autor ?? 'FIFA Media'
   };
 }
