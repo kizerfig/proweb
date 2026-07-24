@@ -110,9 +110,17 @@ function normalizeGroupLabel(group) {
   return value;
 }
 
+function getGroupLetter(groupName) {
+  const normalized = normalizeGroupLabel(groupName);
+  const groupMatch = normalized.match(/^Grupo\s+([A-Z])$/i);
+  if (groupMatch) return groupMatch[1].toUpperCase();
+  if (/^[A-Z]$/.test(normalized)) return normalized;
+  return '';
+}
+
 function getGroupSortKey(groupName) {
-  const match = String(groupName).match(/([A-L])/i);
-  return match ? match[1].toUpperCase().charCodeAt(0) : 999;
+  const letter = getGroupLetter(groupName);
+  return letter ? letter.charCodeAt(0) : 999;
 }
 
 /**

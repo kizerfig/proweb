@@ -5,15 +5,20 @@
 
 import { initNavbar } from './navbar.js';
 
+const MORE_NAV_ITEMS = [
+  { id: 'clasificacion', label: 'Clasificación', href: 'clasificacion.html' },
+  { id: 'ranking', label: 'Ranking FIFA', href: 'ranking-fifa.html' },
+  { id: 'balon', label: 'Balón Oficial', href: 'balon-oficial.html' },
+  { id: 'mascotas', label: 'Mascotas Oficiales', href: 'mascotas-oficiales.html' },
+  { id: 'banda', label: 'Banda Sonora', href: 'banda-sonora.html' }
+];
+
 const MAIN_NAV = [
   { id: 'inicio', label: 'Inicio', href: 'index.html' },
   { id: 'noticias', label: 'Noticias', href: 'noticias.html' },
   { id: 'partidos', label: 'Partidos', href: 'partidos.html' },
-  { id: 'clasificacion', label: 'Clasificación', href: 'clasificacion.html' },
   { id: 'equipos', label: 'Equipos', href: 'equipos.html' },
-  { id: 'ranking', label: 'Ranking', href: 'ranking-fifa.html' },
   { id: 'sedes', label: 'Ciudades Anfitrionas', href: 'ciudades-anfitrionas.html' },
-  { id: 'identidad', label: 'Identidad', href: 'identidad.html' },
   { id: 'eventos', label: 'Próximos Eventos', href: 'torneos.html' },
   { id: 'archivos', label: 'Archivos', href: 'archivos.html' }
 ];
@@ -28,13 +33,15 @@ const MAIN_ACTIVE_BY_FILE = {
   'index.html': 'inicio',
   'noticias.html': 'noticias',
   'partidos.html': 'partidos',
-  'clasificacion.html': 'clasificacion',
   'equipos.html': 'equipos',
+  'clasificacion.html': 'clasificacion',
   'ranking-fifa.html': 'ranking',
   'ciudades-anfitrionas.html': 'sedes',
-  'identidad.html': 'identidad',
   'torneos.html': 'eventos',
-  'archivos.html': 'archivos'
+  'archivos.html': 'archivos',
+  'balon-oficial.html': 'balon',
+  'mascotas-oficiales.html': 'mascotas',
+  'banda-sonora.html': 'banda'
 };
 
 function getCurrentFile() {
@@ -42,13 +49,38 @@ function getCurrentFile() {
   return path.substring(path.lastIndexOf('/') + 1) || 'index.html';
 }
 
+function isMoreNavActive(activeId) {
+  return MORE_NAV_ITEMS.some(item => item.id === activeId);
+}
+
+function renderMainNavLinks(activeMain) {
+  const standardLinks = MAIN_NAV.map(item => `
+    <a href="${item.href}" class="nav-link${activeMain === item.id ? ' active' : ''}">${item.label}</a>
+  `).join('');
+
+  const moreActive = isMoreNavActive(activeMain);
+  const dropdownLinks = MORE_NAV_ITEMS.map(item => `
+    <a href="${item.href}" class="nav-dropdown-link${activeMain === item.id ? ' active' : ''}">${item.label}</a>
+  `).join('');
+
+  const moreDropdown = `
+    <div class="nav-dropdown${moreActive ? ' is-active' : ''}">
+      <button type="button" class="nav-link nav-dropdown-toggle${moreActive ? ' active' : ''}" aria-expanded="false" aria-haspopup="true">
+        Más
+        <span class="nav-dropdown-caret" aria-hidden="true">▾</span>
+      </button>
+      <div class="nav-dropdown-menu" hidden>
+        ${dropdownLinks}
+      </div>
+    </div>
+  `;
+
+  return standardLinks + moreDropdown;
+}
+
 function renderHeader(activeMain) {
   const header = document.getElementById('site-header');
   if (!header) return;
-
-  const mainLinks = MAIN_NAV.map(item => `
-    <a href="${item.href}" class="nav-link${activeMain === item.id ? ' active' : ''}">${item.label}</a>
-  `).join('');
 
   header.innerHTML = `
     <div class="container">
@@ -60,7 +92,7 @@ function renderHeader(activeMain) {
           </div>
         </a>
         <nav class="main-nav" aria-label="Navegación principal">
-          ${mainLinks}
+          ${renderMainNavLinks(activeMain)}
         </nav>
         <button class="menu-toggle" aria-label="Abrir menú de navegación" aria-expanded="false">
           <span></span>

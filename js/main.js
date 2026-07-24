@@ -6,6 +6,7 @@
 import { FIFA_API } from './api.js';
 import { initHeroSlider } from './slider.js';
 import { initLayout } from './layout.js';
+import { renderHomeIdentitySection } from './identity.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 Portal Initialized');
@@ -27,6 +28,7 @@ async function loadHomepageData() {
  loadMatchesSection(),
  loadTeamsAndCitiesSection(),
  loadEventsSection(),
+ loadIdentitySection(),
  loadODSSection()
  ]);
 }
@@ -299,6 +301,15 @@ async function loadTeamsAndCitiesSection() {
       initCitiesToggle();
     } catch (e) { console.error('Error en ciudades:', e); }
   }
+}
+
+/**
+ * Render Identity Cards from API
+ */
+async function loadIdentitySection() {
+ const container = document.getElementById('identity-container');
+ if (!container) return;
+ await renderHomeIdentitySection(container);
 }
 
 /**

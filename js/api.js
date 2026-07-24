@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '12';
+const CACHE_VERSION = '13';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -1625,6 +1625,124 @@ export async function getCityById(id, forceRefresh = false) {
   return normalizeCity(mockItem);
 }
 
+/**
+ * Normaliza URLs de imágenes FIFA / API
+ */
+function resolveFifaImageUrl(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  let url = raw.trim();
+  if (!url) return '';
+
+  if (url.startsWith('//')) url = `https:${url}`;
+  if (url.startsWith('/')) url = `https://wc-api-u378.onrender.com${url}`;
+
+  if (/digitalhub\.fifa\.com/i.test(url) && !/[?&]io=transform/i.test(url)) {
+    const separator = url.includes('?') ? '&' : '?';
+    url = `${url}${separator}io=transform:fill,width:800,height:450`;
+  }
+
+  return url;
+}
+
+function normalizeBall(raw) {
+  const item = raw?.data || raw || {};
+  const images = (item.images_url || item.images || [])
+    .map(resolveFifaImageUrl)
+    .filter(Boolean);
+  const features = Array.isArray(item.features)
+    ? item.features.map(feature => ({
+        title: feature.title || '',
+        paragraphs: Array.isArray(feature.description)
+          ? feature.description.filter(Boolean)
+          : feature.description ? [String(feature.description)] : []
+      }))
+    : [];
+
+  return {
+    name: item.name || 'Trionda',
+    image: images[0] || '../imagenes/banner1.jpg',
+    images,
+    features
+  };
+}
+
+function normalizeMascotItem(item) {
+  if (!item) return null;
+  const country = item.country || '';
+  const countryLower = String(country).toLowerCase();
+  let countryCode = 'fifa';
+  if (countryLower.includes('mex')) countryCode = 'mx';
+  else if (countryLower.includes('usa') || countryLower.includes('estados')) countryCode = 'us';
+  else if (countryLower.includes('canad')) countryCode = 'ca';
+
+  return {
+    id: item.id,
+    name: item.name || 'Mascota Oficial',
+    country,
+    countryCode,
+    image: resolveFifaImageUrl(item.image_url || item.image) || '../imagenes/banner2.jpg',
+    description: Array.isArray(item.description)
+      ? item.description.join(' ')
+      : String(item.description || '')
+  };
+}
+
+function normalizeMascots(raw) {
+  const list = Array.isArray(raw) ? raw : (raw?.mascots || raw?.data || []);
+  return list.map(normalizeMascotItem).filter(Boolean);
+}
+
+function normalizeSound(raw) {
+  const item = raw?.data || raw || {};
+  const features = Array.isArray(item.features)
+    ? item.features.map(feature => ({
+        title: feature.title || '',
+        paragraphs: Array.isArray(feature.description)
+          ? feature.description.filter(Boolean)
+          : feature.description ? [String(feature.description)] : []
+      }))
+    : [];
+
+  return {
+    title: item.title || 'Álbum Oficial FIFA 2026',
+    resume: item.resume || item.description || '',
+    image: resolveFifaImageUrl(item.image_url || item.image) || '../imagenes/banner3.jpg',
+    url: item.url || 'https://www.fifa.com/',
+    features
+  };
+}
+
+export async function getBall(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('ball', forceRefresh);
+    return normalizeBall(data);
+  } catch (error) {
+    console.warn('[getBall] Fallback:', error);
+    return normalizeBall(null);
+  }
+}
+
+export async function getMascots(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('mascots', forceRefresh);
+    const normalized = normalizeMascots(data);
+    return normalized.length > 0 ? normalized : normalizeMascots([]);
+  } catch (error) {
+    console.warn('[getMascots] Fallback:', error);
+    return normalizeMascots([]);
+  }
+}
+
+export async function getSound(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('sound', forceRefresh);
+    return normalizeSound(data);
+  } catch (error) {
+    console.warn('[getSound] Fallback:', error);
+    return normalizeSound(null);
+  }
+}
+
 // Public API Methods
 export const FIFA_API = {
   getNews,
@@ -1644,6 +1762,9 @@ export const FIFA_API = {
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
   getODS: () => fetchWithCache('ods'),
+  getBall: (forceRefresh = false) => getBall(forceRefresh),
+  getMascots: (forceRefresh = false) => getMascots(forceRefresh),
+  getSound: (forceRefresh = false) => getSound(forceRefresh),
   clearCache: () => {
     clearFifaCache();
     localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
