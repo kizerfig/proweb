@@ -3,13 +3,13 @@
    js/identity.js
    ========================================== */
 
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('FIFA World Cup 2026 - Identidad y Marca Initialized');
 
   // 1. Initialize Navbar logic
-  initNavbar();
+  initLayout();
 
   // 2. Smooth Scroll handling for hash navigation
   handleHashScroll();

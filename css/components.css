@@ -44,8 +44,16 @@
   box-shadow: var(--shadow-sm);
 }
 
+.brand-logo-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
 .brand-info h1 {
-  font-size: 1rem;
+  font-size: calc(1rem + 1px);
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -65,7 +73,7 @@
 
 .nav-link {
   padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  font-size: calc(0.9rem + 1px);
   font-weight: 600;
   color: var(--text-secondary);
   border-radius: var(--radius-pill);
@@ -1258,9 +1266,14 @@
 
 .footer-columns {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 3rem;
   margin-bottom: 3rem;
+}
+
+.footer-col-info {
+  min-width: 180px;
 }
 
 .footer-brand h3 {

@@ -84,6 +84,25 @@ Para garantizar la velocidad de carga y mitigar la latencia producida por el *co
 
 ---
 
+## Layout compartido (nav y footer)
+
+El header y footer se generan desde `js/layout.js` en las páginas de `html/`:
+
+```html
+<header id="site-header" class="site-header"></header>
+<!-- contenido -->
+<footer id="site-footer" class="site-footer"></footer>
+```
+
+Cada módulo JS llama a `initLayout()` al cargar.
+
+**Topbar:** Inicio | Noticias | Partidos | Equipos | Ciudades Anfitrionas | Identidad | Próximos Eventos | Archivos  
+**Footer (Información):** ODS | Contacto | Sobre Nosotros
+
+Páginas adicionales del proyecto: `detalle-partido.html`, `identidad.html`, `videos.html`, `archivos.html`.
+
+---
+
 ## 🚀 Cómo Ejecutar Localmente
 1. Clona o descarga este repositorio en tu equipo local.
 2. Abre cualquiera de los archivos `index.html`, `noticias.html`, `partidos.html` o `clasificacion.html` directamente en tu navegador web.
@@ -91,4 +110,4 @@ Para garantizar la velocidad de carga y mitigar la latencia producida por el *co
    ```bash
    python -m http.server 8000
    ```
-4. Navega a `http://localhost:8000` en tu navegador.
+4. Navega a `http://localhost:8000/html/index.html` en tu navegador.

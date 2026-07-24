@@ -4,13 +4,13 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Torneos y Eventos Initialized');
 
  // 1. Initialize mobile menu and navbar brand redirection
- initNavbar();
+ initLayout();
 
  // 2. Fetch and render tournaments list with 15-min LocalStorage cache
  loadTournaments();

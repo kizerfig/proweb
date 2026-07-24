@@ -4,7 +4,7 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 let allStandings = [];
 let currentTab = 'all';
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Clasificación y Fases Initialized');
 
  // 1. Initialize mobile navbar
- initNavbar();
+ initLayout();
 
  // 2. Setup tabs listeners
  setupTabsListeners();

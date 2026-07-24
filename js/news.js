@@ -4,13 +4,13 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Noticias Destacadas Initialized');
  
  // 1. Initialize mobile navbar logic
- initNavbar();
+ initLayout();
 
  // 2. Load news with 15-min LocalStorage cache strategy
  loadNews();
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * @param {boolean} forceRefresh - If true, bypasses valid cache to force network request
  */
 async function loadNews(forceRefresh = false) {
- const container = document.getElementById('news-grid-container');
+ const container = document.getElementById('news-grid-container') || document.getElementById('news-grid-full');
  if (!container) return;
 
  // Show Skeleton Loaders during fetch

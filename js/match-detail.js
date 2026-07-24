@@ -4,13 +4,13 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Detalle de Partido Initialized');
 
  // 1. Initialize global header/navbar logic
- initNavbar();
+ initLayout();
 
  // 2. Setup interactive tab switcher
  setupTabSwitcher();

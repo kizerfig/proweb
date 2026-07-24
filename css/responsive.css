@@ -51,7 +51,7 @@
     width: 100%;
     justify-content: flex-start;
     padding: 0.85rem 1.25rem;
-    font-size: 1rem;
+    font-size: calc(1rem + 1px);
     min-height: 48px; /* Touch target >= 44px */
     border-radius: var(--radius-md);
   }
@@ -337,6 +337,14 @@
 @media screen and (min-width: 1024px) {
   .main-nav {
     display: flex !important;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-link {
+    padding: 0.45rem 0.7rem;
+    font-size: calc(0.82rem + 1px);
   }
 
   .menu-toggle {

@@ -3,7 +3,7 @@
    js/videos.js
    ========================================== */
 
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 const CACHE_KEY = 'fifa_videos_data';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('FIFA World Cup 2026 - Videos Históricos Initialized');
 
   // 1. Initialize Navbar
-  initNavbar();
+  initLayout();
 
   // 2. Setup Category Tabs Switcher
   setupCategoryTabs();

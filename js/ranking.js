@@ -4,7 +4,7 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 let rankingData = [];
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
  console.log('⭐ FIFA World Cup 2026 - Ranking FIFA Initialized');
 
  // 1. Initialize Navbar
- initNavbar();
+ initLayout();
 
  // 2. Setup Filter Listeners
  setupFilterListeners();

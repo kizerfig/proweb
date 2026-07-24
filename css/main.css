@@ -153,6 +153,18 @@ img {
   transform: translateX(4px);
 }
 
+.section-link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+
+.section-link-btn[hidden] {
+  display: none;
+}
+
 /* Skeleton Loading Helpers */
 .skeleton {
   background: linear-gradient(90deg, #21262d 25%, #30363d 50%, #21262d 75%);

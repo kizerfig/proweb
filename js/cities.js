@@ -4,7 +4,7 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 let allCities = [];
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Ciudades Anfitrionas Initialized');
 
  // 1. Initialize Navbar
- initNavbar();
+ initLayout();
 
  // 2. Setup Filter Listener
  setupCountryFilter();

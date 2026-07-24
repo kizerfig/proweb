@@ -5,13 +5,13 @@
 
 import { FIFA_API } from './api.js';
 import { initHeroSlider } from './slider.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 Portal Initialized');
  
  // 1. Initialize UI Controls
- initNavbar();
+ initLayout();
  initHeroSlider();
 
  // 2. Load Dynamic Content from API/Cache
@@ -23,8 +23,8 @@ async function loadHomepageData() {
  await Promise.all([
  loadNewsSection(),
  loadMatchesSection(),
- loadEventsSection(),
  loadTeamsAndCitiesSection(),
+ loadEventsSection(),
  loadODSSection()
  ]);
 }
@@ -142,8 +142,8 @@ async function loadEventsSection() {
  </div>
  <h3 class="event-title">${event.title}</h3>
  <div class="event-details">
- <span> ${event.date}</span>
- <span> ${event.location}</span>
+ <span>${event.date}</span>
+ <span>${event.location}</span>
  </div>
  </a>
  `).join('');
@@ -156,6 +156,49 @@ async function loadEventsSection() {
 /**
  * Render Teams & Host Cities Preview Grids
  */
+const CITIES_PREVIEW_LIMIT = 8;
+let homepageCities = [];
+
+function renderCityTile(city) {
+ return `<a href="ciudades-anfitrionas.html" class="city-tile" style="text-decoration: none; color: inherit; cursor: pointer;"><span class="city-name">${city.name}</span></a>`;
+}
+
+function renderCitiesPreview(expanded) {
+ const citiesContainer = document.getElementById('cities-container');
+ const toggle = document.getElementById('cities-toggle');
+ if (!citiesContainer || !homepageCities.length) return;
+
+ const visibleCities = expanded
+  ? homepageCities
+  : homepageCities.slice(0, CITIES_PREVIEW_LIMIT);
+
+ citiesContainer.innerHTML = visibleCities.map(renderCityTile).join('');
+
+ if (!toggle) return;
+
+ if (homepageCities.length <= CITIES_PREVIEW_LIMIT) {
+  toggle.hidden = true;
+  return;
+ }
+
+ toggle.hidden = false;
+ toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+ toggle.textContent = expanded ? 'Ver menos' : 'Ver más →';
+}
+
+function initCitiesToggle() {
+ const toggle = document.getElementById('cities-toggle');
+ if (!toggle || toggle.dataset.bound === 'true') return;
+
+ toggle.dataset.bound = 'true';
+ let expanded = false;
+
+ toggle.addEventListener('click', () => {
+  expanded = !expanded;
+  renderCitiesPreview(expanded);
+ });
+}
+
 async function loadTeamsAndCitiesSection() {
   const teamsContainer = document.getElementById('teams-container');
   const citiesContainer = document.getElementById('cities-container');
@@ -174,12 +217,9 @@ async function loadTeamsAndCitiesSection() {
 
   if (citiesContainer) {
     try {
-      const cities = await FIFA_API.getCities();
-      citiesContainer.innerHTML = cities.map(city => `
-        <a href="ciudades-anfitrionas.html" class="city-tile" style="text-decoration: none; color: inherit; cursor: pointer;">
-          <span class="city-name">${city.name}</span>
-        </a>
-      `).join('');
+      homepageCities = await FIFA_API.getCities();
+      renderCitiesPreview(false);
+      initCitiesToggle();
     } catch (e) { console.error('Error en ciudades:', e); }
   }
 }

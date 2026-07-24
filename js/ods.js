@@ -4,12 +4,12 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - ODS Initialized');
 
- initNavbar();
+ initLayout();
  loadODSData();
 });
 

@@ -4,7 +4,7 @@
  ========================================== */
 
 import { FIFA_API } from './api.js';
-import { initNavbar } from './navbar.js';
+import { initLayout } from './layout.js';
 
 let allTeams = [];
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Equipos Initialized');
 
  // 1. Initialize Mobile Navbar
- initNavbar();
+ initLayout();
 
  // 2. Setup Filter Listeners
  setupFilterListeners();
