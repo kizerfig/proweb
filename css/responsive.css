@@ -133,14 +133,26 @@
 
   .tab-group {
     width: 100%;
-    justify-content: space-around;
+    justify-content: stretch;
   }
 
-  .tab-btn {
-    flex: 1;
+  .tab-group .tab-btn {
+    flex: 1 1 0;
     text-align: center;
-    padding: 0.4rem 0.5rem;
-    font-size: 0.78rem;
+    padding: 0.55rem 0.45rem;
+    font-size: 0.82rem;
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  .knockout-bracket {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .knockout-round-col {
+    min-width: 100%;
   }
 
   /* Events Grid */

@@ -7,24 +7,17 @@ import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 let allStandings = [];
+let knockoutRounds = [];
 let currentTab = 'all';
 
 document.addEventListener('DOMContentLoaded', () => {
  console.log(' FIFA World Cup 2026 - Clasificación y Fases Initialized');
 
- // 1. Initialize mobile navbar
  initLayout();
-
- // 2. Setup tabs listeners
  setupTabsListeners();
-
- // 3. Load standings with 15-min LocalStorage cache strategy
  loadStandings();
 });
 
-/**
- * Loads standings data from API / LocalStorage
- */
 async function loadStandings() {
  const container = document.getElementById('group-grid-container');
  if (!container) return;
@@ -32,7 +25,10 @@ async function loadStandings() {
  renderSkeletons(container, 6);
 
  try {
- const standingsData = await FIFA_API.getStandings();
+ const [standingsData, knockoutData] = await Promise.all([
+ FIFA_API.getStandings(),
+ FIFA_API.getKnockout()
+ ]);
 
  if (!standingsData || !Array.isArray(standingsData) || standingsData.length === 0) {
  renderErrorState(container, 'No se encontraron datos de clasificación disponibles.');
@@ -40,17 +36,25 @@ async function loadStandings() {
  }
 
  allStandings = standingsData;
+ knockoutRounds = Array.isArray(knockoutData) ? knockoutData : [];
+ populateGroupSelector(allStandings);
  renderCurrentTab();
 
  } catch (error) {
  console.error('Error al cargar clasificaciones:', error);
- renderErrorState(container, 'Ocurrió un error al obtener la clasificación de la API. Verifica tu conexión.');
+ renderErrorState(container, 'Ocurrió un error al obtener la clasificación. Verifica tu conexión.');
  }
 }
 
-/**
- * Setup Tabs Switcher
- */
+function populateGroupSelector(groups) {
+ const select = document.getElementById('single-group-select');
+ if (!select) return;
+
+ select.innerHTML = groups.map(group => `
+ <option value="${group.groupId}">${group.groupName}</option>
+ `).join('');
+}
+
 function setupTabsListeners() {
  const tabButtons = document.querySelectorAll('.tab-btn');
  const groupSelectWrap = document.getElementById('group-selector-wrap');
@@ -63,34 +67,31 @@ function setupTabsListeners() {
  b.setAttribute('aria-selected', 'false');
  });
 
- e.target.classList.add('active');
- e.target.setAttribute('aria-selected', 'true');
+ e.currentTarget.classList.add('active');
+ e.currentTarget.setAttribute('aria-selected', 'true');
 
- currentTab = e.target.getAttribute('data-tab');
+ currentTab = e.currentTarget.getAttribute('data-tab');
 
  if (groupSelectWrap) {
- groupSelectWrap.style.display = currentTab === 'by-group' ? 'block' : 'none';
+ groupSelectWrap.hidden = currentTab !== 'by-group';
  }
 
  renderCurrentTab();
  });
  });
 
- if (singleGroupSelect) {
- singleGroupSelect.addEventListener('change', () => {
+ singleGroupSelect?.addEventListener('change', () => {
  if (currentTab === 'by-group') {
  renderCurrentTab();
  }
  });
- }
 }
 
-/**
- * Render according to currently selected tab
- */
 function renderCurrentTab() {
  const container = document.getElementById('group-grid-container');
  if (!container) return;
+
+ container.className = 'group-grid';
 
  if (currentTab === 'all') {
  renderAllGroups(container, allStandings);
@@ -103,18 +104,12 @@ function renderCurrentTab() {
  }
 }
 
-/**
- * Render Skeleton Loading Cards
- */
 function renderSkeletons(container, count = 6) {
  container.innerHTML = Array(count).fill(0).map(() => `
  <div class="skeleton" style="height: 240px; border-radius: var(--radius-md);"></div>
  `).join('');
 }
 
-/**
- * Render All Groups Cards into DOM
- */
 function renderAllGroups(container, groups) {
  container.innerHTML = groups.map(group => `
  <div class="group-card">
@@ -150,71 +145,63 @@ function renderAllGroups(container, groups) {
  `).join('');
 }
 
-/**
- * Render Knockout Stage Eliminatorias Bracket
- */
-function renderKnockoutStage(container) {
- container.innerHTML = `
- <div class="knockout-container">
- <h3 class="knockout-title"> Cuadro de Eliminatorias Directas</h3>
- <div class="knockout-rounds">
- 
- <div class="knockout-round-col">
- <h4>Dieciseisavos (32 Equipos)</h4>
- <div class="match-card" style="padding: 0.85rem;">
- <div class="match-teams">
- <div class="team-row"><span>1A México</span><span>-</span></div>
- <div class="team-row"><span>2B Argentina</span><span>-</span></div>
+function renderKnockoutMatch(match, highlight = false) {
+ return `
+ <div class="knockout-match-card${highlight ? ' knockout-match-card--highlight' : ''}">
+ <div class="knockout-team">
+ <span>${match.team1}</span>
+ <span class="knockout-score">${match.score1 ?? '-'}</span>
  </div>
- </div>
- <div class="match-card" style="padding: 0.85rem;">
- <div class="match-teams">
- <div class="team-row"><span>1C España</span><span>-</span></div>
- <div class="team-row"><span>2D Brasil</span><span>-</span></div>
- </div>
- </div>
- </div>
-
- <div class="knockout-round-col">
- <h4>Octavos de Final</h4>
- <div class="match-card" style="padding: 0.85rem;">
- <div class="match-teams">
- <div class="team-row"><span>Ganador M1</span><span>-</span></div>
- <div class="team-row"><span>Ganador M2</span><span>-</span></div>
- </div>
- </div>
- </div>
-
- <div class="knockout-round-col">
- <h4>Gran Final </h4>
- <div class="match-card" style="border-color: var(--accent-gold); padding: 1.1rem;">
- <div class="match-teams">
- <div class="team-row"><span style="font-weight: 800; color: var(--accent-gold);">Finalista 1</span><span>-</span></div>
- <div class="team-row"><span style="font-weight: 800; color: var(--accent-gold);">Finalista 2</span><span>-</span></div>
- </div>
- </div>
- </div>
-
+ <div class="knockout-team">
+ <span>${match.team2}</span>
+ <span class="knockout-score">${match.score2 ?? '-'}</span>
  </div>
  </div>
  `;
 }
 
-/**
- * Render Error State Box
- */
+function renderKnockoutStage(container) {
+ container.className = 'group-grid knockout-grid';
+
+ if (!knockoutRounds.length) {
+ container.innerHTML = `
+ <div class="knockout-container">
+ <p style="color: var(--text-secondary); text-align: center;">No hay datos de eliminatorias disponibles.</p>
+ </div>
+ `;
+ return;
+ }
+
+ container.innerHTML = `
+ <div class="knockout-container">
+ <h3 class="knockout-title">Llaves de Eliminatoria Directa</h3>
+ <div class="knockout-bracket">
+ ${knockoutRounds.map(round => {
+ const isFinal = round.id === 'final';
+ const isThird = round.id === 'third';
+ const highlight = isFinal || isThird;
+
+ return `
+ <div class="knockout-round-col${highlight ? ' knockout-round-col--highlight' : ''}">
+ <h4>${round.name}</h4>
+ ${round.matches.map(match => renderKnockoutMatch(match, isFinal)).join('')}
+ </div>
+ `;
+ }).join('')}
+ </div>
+ </div>
+ `;
+}
+
 function renderErrorState(container, message) {
  container.innerHTML = `
  <div class="error-box">
- <div class="error-icon">️</div>
+ <div class="error-icon">⚠️</div>
  <h3 class="error-title">No se pudo cargar la clasificación</h3>
  <p class="error-desc">${message}</p>
- <button class="btn-retry" id="btn-retry-standings"> Reintentar</button>
+ <button class="btn-retry" id="btn-retry-standings">Reintentar</button>
  </div>
  `;
 
- const retryBtn = document.getElementById('btn-retry-standings');
- if (retryBtn) {
- retryBtn.addEventListener('click', () => loadStandings());
- }
+ document.getElementById('btn-retry-standings')?.addEventListener('click', () => loadStandings());
 }

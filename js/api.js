@@ -1,11 +1,11 @@
 /* ==========================================
- FIFA WORLD CUP 2026 - API CLIENT & LOCALSTORAGE CACHE
- js/api.js
- ========================================== */
+   FIFA WORLD CUP 2026 - API CLIENT & LOCALSTORAGE CACHE
+   js/api.js
+   ========================================== */
 
 const API_BASE_URL = 'https://wc-api-u378.onrender.com/wc-api/api/';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutos en milisegundos
-const CACHE_VERSION = '2';
+const CACHE_VERSION = '3';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 function clearFifaCache() {
@@ -36,153 +36,153 @@ ensureCacheVersion();
 
 // Curated high-fidelity mock fallback data to handle network failures or Render latency seamlessly
 const MOCK_DATA = {
- news: [
- {
- id: '1',
- category: 'Equipos',
- time: 'Hace 2 horas',
- title: 'México presenta nueva convocatoria para Copa del Mundo 2026',
- image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'
- },
- {
- id: '2',
- category: 'Estadios',
- time: 'Hace 5 horas',
- title: 'Estadio Azteca listo para el torneo más grande de la historia',
- image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80'
- },
- {
- id: '3',
- category: 'Oficial',
- time: 'Hace 1 día',
- title: 'FIFA confirma calendario oficial del Mundial 2026',
- image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80'
- },
- {
- id: '4',
- category: 'Cultura',
- time: 'Hace 2 días',
- title: 'Revelada la mascota oficial del Mundial 2026',
- image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80'
- },
- {
- id: '5',
- category: 'Equipos',
- time: 'Hace 3 días',
- title: 'Argentina busca defender el título en suelo norteamericano',
- image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80'
- },
- {
- id: '6',
- category: 'Historia',
- time: 'Hace 4 días',
- title: 'Los mejores momentos de la historia del Mundial',
- image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80'
- }
- ],
+  news: [
+    {
+      id: '1',
+      category: 'Equipos',
+      time: 'Hace 2 horas',
+      title: 'México presenta nueva convocatoria para Copa del Mundo 2026',
+      image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: '2',
+      category: 'Estadios',
+      time: 'Hace 5 horas',
+      title: 'Estadio Azteca listo para el torneo más grande de la historia',
+      image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: '3',
+      category: 'Oficial',
+      time: 'Hace 1 día',
+      title: 'FIFA confirma calendario oficial del Mundial 2026',
+      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: '4',
+      category: 'Cultura',
+      time: 'Hace 2 días',
+      title: 'Revelada la mascota oficial del Mundial 2026',
+      image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: '5',
+      category: 'Equipos',
+      time: 'Hace 3 días',
+      title: 'Argentina busca defender el título en suelo norteamericano',
+      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80'
+    },
+    {
+      id: '6',
+      category: 'Historia',
+      time: 'Hace 4 días',
+      title: 'Los mejores momentos de la historia del Mundial',
+      image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80'
+    }
+  ],
 
- matches: [
- {
- id: 'm1',
- city: 'Ciudad de México',
- stadium: 'Estadio Azteca',
- status: 'En vivo',
- round: 'Fase de Grupos',
- team1: { code: 'MX', name: 'México', score: 2 },
- team2: { code: 'AR', name: 'Argentina', score: 1 },
- datetime: '15 jun • 18:00',
- group: 'Grupo A'
- },
- {
- id: 'm2',
- city: 'Nueva York',
- stadium: 'MetLife Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
- team1: { code: 'BR', name: 'Brasil', score: '-' },
- team2: { code: 'DE', name: 'Alemania', score: '-' },
- datetime: '16 jun • 20:00',
- group: 'Grupo B'
- },
- {
- id: 'm3',
- city: 'Toronto',
- stadium: 'BMO Field',
- status: 'Finalizado',
- round: 'Fase de Grupos',
- team1: { code: 'ES', name: 'España', score: 1 },
- team2: { code: 'FR', name: 'Francia', score: 1 },
- datetime: '14 jun • 16:00',
- group: 'Grupo C'
- },
- {
- id: 'm4',
- city: 'Los Ángeles',
- stadium: 'SoFi Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
- team1: { code: 'US', name: 'Estados Unidos', score: '-' },
- team2: { code: 'CA', name: 'Canadá', score: '-' },
- datetime: '17 jun • 19:00',
- group: 'Grupo D'
- },
- {
- id: 'm5',
- city: 'Dallas',
- stadium: 'AT&T Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
- team1: { code: 'GB', name: 'Inglaterra', score: '-' },
- team2: { code: 'IT', name: 'Italia', score: '-' },
- datetime: '18 jun • 21:00',
- group: 'Grupo E'
- },
- {
- id: 'm6',
- city: 'Kansas City',
- stadium: 'Arrowhead Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
- team1: { code: 'PT', name: 'Portugal', score: '-' },
- team2: { code: 'NL', name: 'Países Bajos', score: '-' },
- datetime: '19 jun • 17:00',
- group: 'Grupo F'
- },
- {
- id: 'm7',
+  matches: [
+    {
+      id: 'm1',
+      city: 'Ciudad de México',
+      stadium: 'Estadio Azteca',
+      status: 'En vivo',
+      round: 'Fase de Grupos',
+      team1: { code: 'MX', name: 'México', score: 2 },
+      team2: { code: 'AR', name: 'Argentina', score: 1 },
+      datetime: '15 jun • 18:00',
+      group: 'Grupo A'
+    },
+    {
+      id: 'm2',
+      city: 'Nueva York',
+      stadium: 'MetLife Stadium',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'BR', name: 'Brasil', score: '-' },
+      team2: { code: 'DE', name: 'Alemania', score: '-' },
+      datetime: '16 jun • 20:00',
+      group: 'Grupo B'
+    },
+    {
+      id: 'm3',
+      city: 'Toronto',
+      stadium: 'BMO Field',
+      status: 'Finalizado',
+      round: 'Fase de Grupos',
+      team1: { code: 'ES', name: 'España', score: 1 },
+      team2: { code: 'FR', name: 'Francia', score: 1 },
+      datetime: '14 jun • 16:00',
+      group: 'Grupo C'
+    },
+    {
+      id: 'm4',
+      city: 'Los Ángeles',
+      stadium: 'SoFi Stadium',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'US', name: 'Estados Unidos', score: '-' },
+      team2: { code: 'CA', name: 'Canadá', score: '-' },
+      datetime: '17 jun • 19:00',
+      group: 'Grupo D'
+    },
+    {
+      id: 'm5',
+      city: 'Dallas',
+      stadium: 'AT&T Stadium',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'GB', name: 'Inglaterra', score: '-' },
+      team2: { code: 'IT', name: 'Italia', score: '-' },
+      datetime: '18 jun • 21:00',
+      group: 'Grupo E'
+    },
+    {
+      id: 'm6',
+      city: 'Kansas City',
+      stadium: 'Arrowhead Stadium',
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'PT', name: 'Portugal', score: '-' },
+      team2: { code: 'NL', name: 'Países Bajos', score: '-' },
+      datetime: '19 jun • 17:00',
+      group: 'Grupo F'
+    },
+    {
+      id: 'm7',
  city: 'Miami',
  stadium: 'Hard Rock Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
+      status: 'Programado',
+      round: 'Fase de Grupos',
  team1: { code: 'CO', name: 'Colombia', score: '-' },
  team2: { code: 'UY', name: 'Uruguay', score: '-' },
  datetime: '20 jun • 16:00',
- group: 'Grupo G'
- },
- {
- id: 'm8',
+      group: 'Grupo G'
+    },
+    {
+      id: 'm8',
  city: 'Atlanta',
  stadium: 'Mercedes-Benz Stadium',
- status: 'Programado',
- round: 'Fase de Grupos',
- team1: { code: 'BE', name: 'Bélgica', score: '-' },
- team2: { code: 'HR', name: 'Croacia', score: '-' },
+      status: 'Programado',
+      round: 'Fase de Grupos',
+      team1: { code: 'BE', name: 'Bélgica', score: '-' },
+      team2: { code: 'HR', name: 'Croacia', score: '-' },
  datetime: '20 jun • 19:00',
- group: 'Grupo H'
- },
- {
- id: 'm9',
+      group: 'Grupo H'
+    },
+    {
+      id: 'm9',
  city: 'Seattle',
  stadium: 'Lumen Field',
  status: 'Programado',
- round: 'Fase de Grupos',
+      round: 'Fase de Grupos',
  team1: { code: 'JP', name: 'Japón', score: '-' },
  team2: { code: 'MA', name: 'Marruecos', score: '-' },
  datetime: '21 jun • 14:00',
  group: 'Grupo I'
- },
- {
- id: 'm10',
+    },
+    {
+      id: 'm10',
  city: 'Houston',
  stadium: 'NRG Stadium',
  status: 'Programado',
@@ -217,111 +217,182 @@ const MOCK_DATA = {
  ],
 
  standings: [
- {
- groupId: 'A',
- groupName: 'Grupo A',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- },
- {
- groupId: 'B',
- groupName: 'Grupo B',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- },
- {
- groupId: 'C',
- groupName: 'Grupo C',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- },
- {
- groupId: 'D',
- groupName: 'Grupo D',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- },
- {
- groupId: 'E',
- groupName: 'Grupo E',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- },
- {
- groupId: 'F',
- groupName: 'Grupo F',
- teams: [
- { rank: 1, code: 'MX', name: 'México', pj: 2, pts: 6 },
- { rank: 2, code: 'AR', name: 'Argentina', pj: 2, pts: 4 },
- { rank: 3, code: 'PL', name: 'Polonia', pj: 2, pts: 1 },
- { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 2, pts: 0 }
- ]
- }
+ { groupId: 'A', groupName: 'Grupo A', teams: [
+ { rank: 1, code: 'MX', name: 'México', pj: 3, pts: 7 },
+ { rank: 2, code: 'AR', name: 'Argentina', pj: 3, pts: 6 },
+ { rank: 3, code: 'PL', name: 'Polonia', pj: 3, pts: 3 },
+ { rank: 4, code: 'SA', name: 'Arabia Saudita', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'B', groupName: 'Grupo B', teams: [
+ { rank: 1, code: 'BR', name: 'Brasil', pj: 3, pts: 9 },
+ { rank: 2, code: 'DE', name: 'Alemania', pj: 3, pts: 4 },
+ { rank: 3, code: 'JP', name: 'Japón', pj: 3, pts: 3 },
+ { rank: 4, code: 'CM', name: 'Camerún', pj: 3, pts: 0 }
+ ]},
+ { groupId: 'C', groupName: 'Grupo C', teams: [
+ { rank: 1, code: 'ES', name: 'España', pj: 3, pts: 7 },
+ { rank: 2, code: 'FR', name: 'Francia', pj: 3, pts: 5 },
+ { rank: 3, code: 'CR', name: 'Costa Rica', pj: 3, pts: 3 },
+ { rank: 4, code: 'AU', name: 'Australia', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'D', groupName: 'Grupo D', teams: [
+ { rank: 1, code: 'US', name: 'Estados Unidos', pj: 3, pts: 6 },
+ { rank: 2, code: 'CA', name: 'Canadá', pj: 3, pts: 4 },
+ { rank: 3, code: 'UY', name: 'Uruguay', pj: 3, pts: 3 },
+ { rank: 4, code: 'GH', name: 'Ghana', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'E', groupName: 'Grupo E', teams: [
+ { rank: 1, code: 'GB', name: 'Inglaterra', pj: 3, pts: 7 },
+ { rank: 2, code: 'IT', name: 'Italia', pj: 3, pts: 5 },
+ { rank: 3, code: 'SN', name: 'Senegal', pj: 3, pts: 3 },
+ { rank: 4, code: 'EC', name: 'Ecuador', pj: 3, pts: 0 }
+ ]},
+ { groupId: 'F', groupName: 'Grupo F', teams: [
+ { rank: 1, code: 'PT', name: 'Portugal', pj: 3, pts: 8 },
+ { rank: 2, code: 'NL', name: 'Países Bajos', pj: 3, pts: 5 },
+ { rank: 3, code: 'KR', name: 'Corea del Sur', pj: 3, pts: 3 },
+ { rank: 4, code: 'IR', name: 'Irán', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'G', groupName: 'Grupo G', teams: [
+ { rank: 1, code: 'CO', name: 'Colombia', pj: 3, pts: 7 },
+ { rank: 2, code: 'BE', name: 'Bélgica', pj: 3, pts: 6 },
+ { rank: 3, code: 'HR', name: 'Croacia', pj: 3, pts: 2 },
+ { rank: 4, code: 'TN', name: 'Túnez', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'H', groupName: 'Grupo H', teams: [
+ { rank: 1, code: 'MA', name: 'Marruecos', pj: 3, pts: 6 },
+ { rank: 2, code: 'CH', name: 'Suiza', pj: 3, pts: 5 },
+ { rank: 3, code: 'RS', name: 'Serbia', pj: 3, pts: 3 },
+ { rank: 4, code: 'QA', name: 'Qatar', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'I', groupName: 'Grupo I', teams: [
+ { rank: 1, code: 'AT', name: 'Austria', pj: 3, pts: 7 },
+ { rank: 2, code: 'DK', name: 'Dinamarca', pj: 3, pts: 4 },
+ { rank: 3, code: 'SE', name: 'Suecia', pj: 3, pts: 3 },
+ { rank: 4, code: 'NG', name: 'Nigeria', pj: 3, pts: 1 }
+ ]},
+ { groupId: 'J', groupName: 'Grupo J', teams: [
+ { rank: 1, code: 'PY', name: 'Paraguay', pj: 3, pts: 6 },
+ { rank: 2, code: 'BO', name: 'Bolivia', pj: 3, pts: 4 },
+ { rank: 3, code: 'PE', name: 'Perú', pj: 3, pts: 3 },
+ { rank: 4, code: 'VE', name: 'Venezuela', pj: 3, pts: 0 }
+ ]},
+ { groupId: 'K', groupName: 'Grupo K', teams: [
+ { rank: 1, code: 'EG', name: 'Egipto', pj: 3, pts: 5 },
+ { rank: 2, code: 'DZ', name: 'Argelia', pj: 3, pts: 4 },
+ { rank: 3, code: 'CI', name: 'Costa de Marfil', pj: 3, pts: 3 },
+ { rank: 4, code: 'ZA', name: 'Sudáfrica', pj: 3, pts: 2 }
+ ]},
+ { groupId: 'L', groupName: 'Grupo L', teams: [
+ { rank: 1, code: 'HT', name: 'Haití', pj: 3, pts: 6 },
+ { rank: 2, code: 'JM', name: 'Jamaica', pj: 3, pts: 5 },
+ { rank: 3, code: 'PA', name: 'Panamá', pj: 3, pts: 3 },
+ { rank: 4, code: 'CU', name: 'Cuba', pj: 3, pts: 1 }
+ ]}
  ],
 
- events: [
+ knockout: [
  {
- org: 'FIFA',
- status: 'Próximo',
- title: 'FIFA Club World Cup 2025',
- date: '15 Jun — 13 Jul 2025',
- location: 'Estados Unidos'
+ id: 'r32',
+ name: 'Dieciseisavos de Final',
+ matches: [
+ { team1: '1A México', team2: '2B Alemania', score1: '-', score2: '-' },
+ { team1: '1B Brasil', team2: '2A Argentina', score1: '-', score2: '-' },
+ { team1: '1C España', team2: '2D Canadá', score1: '-', score2: '-' },
+ { team1: '1D Estados Unidos', team2: '2C Francia', score1: '-', score2: '-' },
+ { team1: '1E Inglaterra', team2: '2F Países Bajos', score1: '-', score2: '-' },
+ { team1: '1F Portugal', team2: '2E Italia', score1: '-', score2: '-' },
+ { team1: '1G Colombia', team2: '2H Suiza', score1: '-', score2: '-' },
+ { team1: '1H Marruecos', team2: '2G Bélgica', score1: '-', score2: '-' }
+ ]
  },
  {
- org: 'CONCACAF',
- status: 'Próximo',
- title: 'CONCACAF Nations League',
- date: 'Mar — Jun 2025',
- location: 'EE.UU. y México'
+ id: 'r16',
+ name: 'Octavos de Final',
+ matches: [
+ { team1: 'Ganador R32-1', team2: 'Ganador R32-2', score1: '-', score2: '-' },
+ { team1: 'Ganador R32-3', team2: 'Ganador R32-4', score1: '-', score2: '-' },
+ { team1: 'Ganador R32-5', team2: 'Ganador R32-6', score1: '-', score2: '-' },
+ { team1: 'Ganador R32-7', team2: 'Ganador R32-8', score1: '-', score2: '-' }
+ ]
  },
  {
- org: 'FIFA',
- status: 'Próximo',
- title: 'Copa Mundial FIFA 2026',
- date: '11 Jun — 19 Jul 2026',
- location: 'EE.UU., México y Canadá'
+ id: 'qf',
+ name: 'Cuartos de Final',
+ matches: [
+ { team1: 'Ganador R16-1', team2: 'Ganador R16-2', score1: '-', score2: '-' },
+ { team1: 'Ganador R16-3', team2: 'Ganador R16-4', score1: '-', score2: '-' },
+ { team1: '1I Austria', team2: '2J Bolivia', score1: '-', score2: '-' },
+ { team1: '1K Egipto', team2: '2L Jamaica', score1: '-', score2: '-' }
+ ]
  },
  {
- org: 'UEFA',
- status: 'Futuro',
- title: 'UEFA Euro 2028',
- date: 'Jun — Jul 2028',
- location: 'Reino Unido e Irlanda'
- }
- ],
+ id: 'sf',
+ name: 'Semifinales',
+ matches: [
+ { team1: 'Ganador QF-1', team2: 'Ganador QF-2', score1: '-', score2: '-' },
+ { team1: 'Ganador QF-3', team2: 'Ganador QF-4', score1: '-', score2: '-' }
+ ]
+ },
+ {
+ id: 'third',
+ name: 'Tercer Lugar',
+ matches: [
+ { team1: 'Perdedor SF-1', team2: 'Perdedor SF-2', score1: '-', score2: '-' }
+ ]
+ },
+ {
+ id: 'final',
+ name: 'Final',
+ matches: [
+ { team1: 'Ganador SF-1', team2: 'Ganador SF-2', score1: '-', score2: '-' }
+ ]
+    }
+  ],
 
- teams: [
- { code: 'AR', name: 'Argentina', group: 'Grupo A', rank: 1, appearances: 18 },
- { code: 'BR', name: 'Brasil', group: 'Grupo B', rank: 5, appearances: 22 },
- { code: 'MX', name: 'México', group: 'Grupo A', rank: 15, appearances: 17 },
- { code: 'ES', name: 'España', group: 'Grupo C', rank: 3, appearances: 16 },
- { code: 'FR', name: 'Francia', group: 'Grupo C', rank: 2, appearances: 16 },
- { code: 'DE', name: 'Alemania', group: 'Grupo B', rank: 9, appearances: 20 },
- { code: 'US', name: 'Estados Unidos', group: 'Grupo D', rank: 11, appearances: 11 },
- { code: 'CA', name: 'Canadá', group: 'Grupo D', rank: 48, appearances: 2 }
- ],
+  events: [
+    {
+      org: 'FIFA',
+      status: 'Próximo',
+      title: 'FIFA Club World Cup 2025',
+      date: '15 Jun — 13 Jul 2025',
+      location: 'Estados Unidos'
+    },
+    {
+      org: 'CONCACAF',
+      status: 'Próximo',
+      title: 'CONCACAF Nations League',
+      date: 'Mar — Jun 2025',
+      location: 'EE.UU. y México'
+    },
+    {
+      org: 'FIFA',
+      status: 'Próximo',
+      title: 'Copa Mundial FIFA 2026',
+      date: '11 Jun — 19 Jul 2026',
+      location: 'EE.UU., México y Canadá'
+    },
+    {
+      org: 'UEFA',
+      status: 'Futuro',
+      title: 'UEFA Euro 2028',
+      date: 'Jun — Jul 2028',
+      location: 'Reino Unido e Irlanda'
+    }
+  ],
 
- cities: [
+  teams: [
+    { code: 'AR', name: 'Argentina', group: 'Grupo A', rank: 1, appearances: 18 },
+    { code: 'BR', name: 'Brasil', group: 'Grupo B', rank: 5, appearances: 22 },
+    { code: 'MX', name: 'México', group: 'Grupo A', rank: 15, appearances: 17 },
+    { code: 'ES', name: 'España', group: 'Grupo C', rank: 3, appearances: 16 },
+    { code: 'FR', name: 'Francia', group: 'Grupo C', rank: 2, appearances: 16 },
+    { code: 'DE', name: 'Alemania', group: 'Grupo B', rank: 9, appearances: 20 },
+    { code: 'US', name: 'Estados Unidos', group: 'Grupo D', rank: 11, appearances: 11 },
+    { code: 'CA', name: 'Canadá', group: 'Grupo D', rank: 48, appearances: 2 }
+  ],
+
+  cities: [
  { id: 'c1', name: 'Ciudad de México', stadium: 'Estadio Azteca', country: 'México', countryCode: 'MEX', capacity: '87,523 personas', image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80' },
  { id: 'c2', name: 'Nueva York', stadium: 'MetLife Stadium', country: 'Estados Unidos', countryCode: 'USA', capacity: '82,500 personas', image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80' },
  { id: 'c3', name: 'Toronto', stadium: 'BMO Field', country: 'Canadá', countryCode: 'CAN', capacity: '45,500 personas', image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80' },
@@ -358,29 +429,29 @@ const MOCK_DATA = {
  { pos: 14, code: 'UY', name: 'Uruguay', conf: 'CONMEBOL', rank: 14, titles: 2, dt: 'Bielsa' },
  { pos: 15, code: 'JP', name: 'Japón', conf: 'AFC', rank: 15, titles: 0, dt: 'Moriyasu' },
  { pos: 16, code: 'MA', name: 'Marruecos', conf: 'CAF', rank: 16, titles: 0, dt: 'Regragui' }
- ],
+  ],
 
- ods: [
- {
- id: 'ods1',
- number: '13',
- title: 'Acción por el Clima',
+  ods: [
+    {
+      id: 'ods1',
+      number: '13',
+      title: 'Acción por el Clima',
  desc: 'Compromiso de huella de carbono neutral con estadios operados 100% por energía renovable y redes de transporte electrificado.',
- stat: '-50% Emisiones CO₂'
- },
- {
- id: 'ods2',
- number: '08',
- title: 'Trabajo Decente y Crecimiento',
+      stat: '-50% Emisiones CO₂'
+    },
+    {
+      id: 'ods2',
+      number: '08',
+      title: 'Trabajo Decente y Crecimiento',
  desc: 'Generación de más de 180,000 empleos directos e indirectos durante la preparación y desarrollo del torneo.',
- stat: '+180k Empleos'
- },
- {
- id: 'ods3',
- number: '12',
- title: 'Consumo Responsable',
+      stat: '+180k Empleos'
+    },
+    {
+      id: 'ods3',
+      number: '12',
+      title: 'Consumo Responsable',
  desc: 'Programa de cero desperdicios plásticos de un solo uso y reciclaje integral de residuos en todas las sedes oficial de la FIFA.',
- stat: '100% Reciclaje'
+      stat: '100% Reciclaje'
  },
  {
  id: 'ods4',
@@ -470,8 +541,8 @@ const MOCK_DATA = {
  desc: 'La próxima edición de la Copa América volverá al continente sudamericano en 2028, reafirmando la tradición del fútbol continental.',
  officialUrl: 'https://www.conmebol.com/',
  icon: ''
- }
- ]
+    }
+  ]
 };
 
 /**
@@ -481,69 +552,70 @@ const MOCK_DATA = {
  * @param {boolean} forceRefresh - If true, bypasses valid cache to force network request
  */
 export async function fetchWithCache(endpoint, cacheKey, forceRefresh = false) {
- const cachedItem = localStorage.getItem(cacheKey);
+  const cachedItem = localStorage.getItem(cacheKey);
 
- if (cachedItem && !forceRefresh) {
- try {
- const parsed = JSON.parse(cachedItem);
- const now = Date.now();
- const age = now - parsed.timestamp;
+  if (cachedItem && !forceRefresh) {
+    try {
+      const parsed = JSON.parse(cachedItem);
+      const now = Date.now();
+      const age = now - parsed.timestamp;
 
- if (age < CACHE_TTL_MS) {
- console.log(`[Cache HIT] Cargando '${cacheKey}' desde localStorage (Edad: ${Math.round(age / 1000)}s)`);
- return parsed.data;
- } else {
- console.log(`[Cache EXPIRED] Expiró la caché para '${cacheKey}'. Consultando servidor...`);
- }
- } catch (e) {
- console.warn(`[Cache Error] Error al leer localStorage para '${cacheKey}':`, e);
- localStorage.removeItem(cacheKey);
- }
- }
+      if (age < CACHE_TTL_MS) {
+        console.log(`[Cache HIT] Cargando '${cacheKey}' desde localStorage (Edad: ${Math.round(age / 1000)}s)`);
+        return parsed.data;
+      } else {
+        console.log(`[Cache EXPIRED] Expiró la caché para '${cacheKey}'. Consultando servidor...`);
+      }
+    } catch (e) {
+      console.warn(`[Cache Error] Error al leer localStorage para '${cacheKey}':`, e);
+      localStorage.removeItem(cacheKey);
+    }
+  }
 
- // Network Fetch attempt
- try {
- const response = await fetch(`${API_BASE_URL}${endpoint}`, {
- headers: { 'Accept': 'application/json' }
- });
+  // Network Fetch attempt
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: { 'Accept': 'application/json' }
+    });
 
- if (!response.ok) {
- throw new Error(`HTTP error! Status: ${response.status}`);
- }
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
- const data = await response.json();
+    const data = await response.json();
 
- // Store in LocalStorage with timestamp
- const cacheObject = {
- timestamp: Date.now(),
- data: data
- };
- localStorage.setItem(cacheKey, JSON.stringify(cacheObject));
- console.log(`[Cache STORED] Guardado en localStorage para '${cacheKey}'`);
+    // Store in LocalStorage with timestamp
+    const cacheObject = {
+      timestamp: Date.now(),
+      data: data
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cacheObject));
+    console.log(`[Cache STORED] Guardado en localStorage para '${cacheKey}'`);
 
- return data;
+    return data;
 
- } catch (error) {
- console.warn(`[Fetch API Fallback] No se pudo conectar a Render API (${endpoint}). Usando mock data estructurado:`, error.message);
- 
- // Map mock fallback
- let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
- if (fallbackKey === 'news') fallbackKey = 'news';
- if (fallbackKey === 'matches') fallbackKey = 'matches';
+  } catch (error) {
+    console.warn(`[Fetch API Fallback] No se pudo conectar a Render API (${endpoint}). Usando mock data estructurado:`, error.message);
+    
+    // Map mock fallback
+    let fallbackKey = cacheKey.replace('fifa_2026_', '').replace('fifa_', '').replace('_data', '');
+    if (fallbackKey === 'news') fallbackKey = 'news';
+    if (fallbackKey === 'matches') fallbackKey = 'matches';
  if (fallbackKey === 'standings' || fallbackKey === 'clasificacion') fallbackKey = 'standings';
  if (fallbackKey === 'ranking') fallbackKey = 'ranking';
+ if (fallbackKey === 'eliminatorias') fallbackKey = 'knockout';
  if (fallbackKey === 'tournaments' || fallbackKey === 'torneos') fallbackKey = 'tournaments';
- 
+    
  const fallbackData = MOCK_DATA[fallbackKey] || MOCK_DATA.tournaments || [];
- 
- // Save fallback to cache temporarily
- localStorage.setItem(cacheKey, JSON.stringify({
- timestamp: Date.now(),
- data: fallbackData
- }));
+    
+    // Save fallback to cache temporarily
+    localStorage.setItem(cacheKey, JSON.stringify({
+      timestamp: Date.now(),
+      data: fallbackData
+    }));
 
- return fallbackData;
- }
+    return fallbackData;
+  }
 }
 
 // Curated high-fidelity mock detailed matches data
@@ -777,14 +849,15 @@ async function getNews(forceRefresh = false) {
 // Public API Methods
 export const FIFA_API = {
  getNews,
- getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
+  getMatches: (forceRefresh = false) => fetchWithCache('partidos', 'fifa_matches_data', forceRefresh),
  getMatchById: (id, forceRefresh = false) => getMatchById(id, forceRefresh),
  getStandings: (forceRefresh = false) => fetchWithCache('clasificacion', 'fifa_standings_data', forceRefresh),
+ getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', 'fifa_knockout_data', forceRefresh),
  getRanking: (forceRefresh = false) => fetchWithCache('ranking', 'fifa_ranking_data', forceRefresh),
- getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
+  getEvents: () => fetchWithCache('events', 'fifa_2026_events'),
  getTournaments: (forceRefresh = false) => fetchWithCache('torneos', 'fifa_tournaments_data', forceRefresh),
- getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
- getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
+  getTeams: () => fetchWithCache('teams', 'fifa_2026_teams'),
+  getCities: () => fetchWithCache('cities', 'fifa_2026_cities'),
  getODS: () => fetchWithCache('ods', 'fifa_2026_ods'),
  clearCache: () => {
  clearFifaCache();
