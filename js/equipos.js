@@ -55,6 +55,7 @@ async function loadTeams() {
     }
 
     allTeams = teamsData;
+    populateGroupFilter(allTeams);
     renderTeams(container, allTeams);
 
   } catch (error) {
@@ -78,7 +79,7 @@ function setupFilterListeners() {
 
     const filtered = allTeams.filter(team => {
       const matchConf = confVal === 'all' || team.confederation === confVal;
-      const matchGroup = groupVal === 'all' || team.group === groupVal;
+      const matchGroup = groupVal === 'all' || normalizeGroupLabel(team.group) === normalizeGroupLabel(groupVal);
       const matchSearch = !searchVal || 
         team.name.toLowerCase().includes(searchVal) || 
         team.code.toLowerCase().includes(searchVal);
@@ -95,6 +96,49 @@ function setupFilterListeners() {
   confSelect?.addEventListener('change', handleFilter);
   groupSelect?.addEventListener('change', handleFilter);
   searchInput?.addEventListener('input', handleFilter);
+}
+
+const DEFAULT_GROUPS = Array.from({ length: 12 }, (_, i) => `Grupo ${String.fromCharCode(65 + i)}`);
+
+function normalizeGroupLabel(group) {
+  if (!group) return '';
+  const value = String(group).trim();
+  if (value.length === 1) return `Grupo ${value.toUpperCase()}`;
+  if (/^grupo\s+[a-l]$/i.test(value)) {
+    return `Grupo ${value.slice(-1).toUpperCase()}`;
+  }
+  return value;
+}
+
+function getGroupSortKey(groupName) {
+  const match = String(groupName).match(/([A-L])/i);
+  return match ? match[1].toUpperCase().charCodeAt(0) : 999;
+}
+
+/**
+ * Rellena el selector de grupos con todos los grupos disponibles (A–L)
+ */
+function populateGroupFilter(teams) {
+  const groupSelect = document.getElementById('filter-team-group');
+  if (!groupSelect) return;
+
+  const groupsFromTeams = [...new Set(
+    (teams || []).map(team => normalizeGroupLabel(team.group)).filter(Boolean)
+  )];
+
+  const groups = (groupsFromTeams.length > 0 ? groupsFromTeams : DEFAULT_GROUPS)
+    .sort((a, b) => getGroupSortKey(a) - getGroupSortKey(b));
+
+  const currentValue = groupSelect.value;
+
+  groupSelect.innerHTML = `
+    <option value="all">Todos los grupos</option>
+    ${groups.map(group => `<option value="${escapeHtmlAttr(group)}">${group}</option>`).join('')}
+  `;
+
+  if (currentValue && [...groupSelect.options].some(option => option.value === currentValue)) {
+    groupSelect.value = currentValue;
+  }
 }
 
 /**
