@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '9';
+const CACHE_VERSION = '12';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -771,7 +771,7 @@ const MOCK_DATA = {
 /**
  * Petición con Timeout utilizando AbortController para prevenir bloqueos infinitos (1.5s max)
  */
-async function fetchWithTimeout(url, timeoutMs = 8000) {
+async function fetchWithTimeout(url, timeoutMs = 25000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -814,9 +814,9 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   let data = null;
   let fetchSuccess = false;
 
-  // Intento 1: Fetch directo (Render cold start puede tardar varios segundos)
+  // Intento 1: Fetch directo (Render cold start puede tardar)
   try {
-    const response = await fetchWithTimeout(directUrl, 8000);
+    const response = await fetchWithTimeout(directUrl, 25000);
     if (response.ok) {
       data = await response.json();
       if (data && (Array.isArray(data) ? data.length > 0 : true)) {
@@ -831,7 +831,7 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   if (!fetchSuccess && isLocalEnvironment()) {
     try {
       const proxyUrl = `${API_CONFIG.CORS_PROXY}${encodeURIComponent(directUrl)}`;
-      const response = await fetchWithTimeout(proxyUrl, 8000);
+      const response = await fetchWithTimeout(proxyUrl, 25000);
       if (response.ok) {
         data = await response.json();
         if (data && (Array.isArray(data) ? data.length > 0 : true)) {
@@ -966,7 +966,7 @@ const MATCH_DETAILS_MOCK = {
 export async function getMatchById(id = 'm1', forceRefresh = false) {
   try {
     const data = await fetchWithCache(`matches/${id}`, forceRefresh);
-    if (data && (data.id || data.home_id)) {
+    if (data && (data.id || data.home_id || data.date)) {
       return normalizeMatchDetail(data, id);
     }
   } catch (error) {
@@ -982,16 +982,42 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
       id: basicMatch?.id || id,
       city: basicMatch?.city || 'Ciudad de México',
       stadium: basicMatch?.stadium || 'Estadio Azteca',
-      status: basicMatch?.statusLabel || 'Programado',
+      status: basicMatch?.status || 'Programado',
+      statusLabel: basicMatch?.statusLabel || basicMatch?.status || 'Programado',
+      statusClass: basicMatch?.statusClass || 'scheduled',
       round: basicMatch?.round || 'Fase de Grupos',
       group: basicMatch?.group || 'Grupo A',
-      team1: basicMatch?.team1 || { code: 'MX', name: 'México', score: '-' },
-      team2: basicMatch?.team2 || { code: 'AR', name: 'Argentina', score: '-' },
-      datetime: basicMatch?.datetime || '15 jun • 18:00'
+      team1: basicMatch?.team1 || { code: 'MEX', name: 'México', score: '-' },
+      team2: basicMatch?.team2 || { code: 'ARG', name: 'Argentina', score: '-' },
+      datetime: basicMatch?.datetime || '15 jun • 18:00',
+      referee: basicMatch?.referee || ''
     };
   }
 
   return detail;
+}
+
+/**
+ * Normaliza detalle de partido (/v1/matches/{id}) reutilizando el listado
+ */
+function normalizeMatchDetail(raw, requestedId) {
+  const item = raw?.data || raw?.match || raw;
+  const base = normalizeMatch(item);
+  if (!base) return null;
+
+  return {
+    ...MATCH_DETAILS_MOCK['m1'],
+    ...base,
+    id: base.id || requestedId,
+    status: base.status,
+    statusLabel: base.statusLabel,
+    statusClass: base.statusClass,
+    timeline: Array.isArray(item.timeline) ? item.timeline : (MATCH_DETAILS_MOCK['m1']?.timeline || []),
+    stats: item.stats || MATCH_DETAILS_MOCK['m1']?.stats || null,
+    lineups: item.lineups || MATCH_DETAILS_MOCK['m1']?.lineups || null,
+    media: item.media || MATCH_DETAILS_MOCK['m1']?.media || null,
+    gallery: item.gallery || MATCH_DETAILS_MOCK['m1']?.gallery || []
+  };
 }
 
 /**
@@ -1087,26 +1113,138 @@ function normalizeNewsDetail(raw, requestedId) {
 }
 
 /**
- * Mapeo de códigos de países y nombres de ciudades para normalizar partidos API
+ * Mapeo de códigos de países (ISO-2 y FIFA ISO-3) para normalizar partidos API
  */
 const COUNTRY_NAMES = {
-  MX: 'México', AR: 'Argentina', BR: 'Brasil', DE: 'Alemania', ES: 'España',
-  FR: 'Francia', US: 'Estados Unidos', CA: 'Canadá', GB: 'Inglaterra', IT: 'Italia',
-  PT: 'Portugal', NL: 'Países Bajos', CO: 'Colombia', UY: 'Uruguay', BE: 'Bélgica',
-  HR: 'Croacia', JP: 'Japón', MA: 'Marruecos', CL: 'Chile', PE: 'Perú',
-  EC: 'Ecuador', AT: 'Austria', DK: 'Dinamarca', SE: 'Suecia', NG: 'Nigeria',
-  PY: 'Paraguay', BO: 'Bolivia', VE: 'Venezuela', EG: 'Egipto', DZ: 'Argelia',
-  CI: 'Costa de Marfil', ZA: 'Sudáfrica', HT: 'Haití', JM: 'Jamaica', PA: 'Panamá',
-  CU: 'Cuba', PL: 'Polonia', SA: 'Arabia Saudita', CR: 'Costa Rica', AU: 'Australia',
-  GH: 'Ghana', SN: 'Senegal', IR: 'Irán', TN: 'Túnez', CH: 'Suiza', RS: 'Serbia', QA: 'Qatar'
+  MX: 'México', MEX: 'México',
+  AR: 'Argentina', ARG: 'Argentina',
+  BR: 'Brasil', BRA: 'Brasil',
+  DE: 'Alemania', GER: 'Alemania',
+  ES: 'España', ESP: 'España',
+  FR: 'Francia', FRA: 'Francia',
+  US: 'Estados Unidos', USA: 'Estados Unidos',
+  CA: 'Canadá', CAN: 'Canadá',
+  GB: 'Inglaterra', ENG: 'Inglaterra',
+  IT: 'Italia', ITA: 'Italia',
+  PT: 'Portugal', POR: 'Portugal',
+  NL: 'Países Bajos', NED: 'Países Bajos',
+  CO: 'Colombia', COL: 'Colombia',
+  UY: 'Uruguay', URU: 'Uruguay',
+  BE: 'Bélgica', BEL: 'Bélgica',
+  HR: 'Croacia', CRO: 'Croacia',
+  JP: 'Japón', JPN: 'Japón',
+  MA: 'Marruecos', MAR: 'Marruecos',
+  CL: 'Chile', CHI: 'Chile',
+  PE: 'Perú', PER: 'Perú',
+  EC: 'Ecuador', ECU: 'Ecuador',
+  AT: 'Austria', AUT: 'Austria',
+  DK: 'Dinamarca', DEN: 'Dinamarca',
+  SE: 'Suecia', SWE: 'Suecia',
+  NG: 'Nigeria', NGA: 'Nigeria',
+  PY: 'Paraguay', PAR: 'Paraguay',
+  BO: 'Bolivia', BOL: 'Bolivia',
+  VE: 'Venezuela', VEN: 'Venezuela',
+  EG: 'Egipto', EGY: 'Egipto',
+  DZ: 'Argelia', ALG: 'Argelia',
+  CI: 'Costa de Marfil', CIV: 'Costa de Marfil',
+  ZA: 'Sudáfrica', RSA: 'Sudáfrica',
+  HT: 'Haití', HAI: 'Haití',
+  JM: 'Jamaica', JAM: 'Jamaica',
+  PA: 'Panamá', PAN: 'Panamá',
+  CU: 'Cuba', CUB: 'Cuba',
+  PL: 'Polonia', POL: 'Polonia',
+  SA: 'Arabia Saudita', KSA: 'Arabia Saudita',
+  CR: 'Costa Rica', CRC: 'Costa Rica',
+  AU: 'Australia', AUS: 'Australia',
+  GH: 'Ghana', GHA: 'Ghana',
+  SN: 'Senegal', SEN: 'Senegal',
+  IR: 'Irán', IRN: 'Irán',
+  TN: 'Túnez', TUN: 'Túnez',
+  CH: 'Suiza', SUI: 'Suiza',
+  RS: 'Serbia', SRB: 'Serbia',
+  QA: 'Catar', QAT: 'Catar',
+  NO: 'Noruega', NOR: 'Noruega',
+  NZ: 'Nueva Zelanda', NZL: 'Nueva Zelanda',
+  KR: 'Corea del Sur', KOR: 'Corea del Sur',
+  IQ: 'Irak', IRQ: 'Irak',
+  JO: 'Jordania', JOR: 'Jordania',
+  CZ: 'Chequia', CZE: 'Chequia',
+  BA: 'Bosnia y Herzegovina', BIH: 'Bosnia y Herzegovina',
+  CW: 'Curazao', CUW: 'Curazao',
+  CV: 'Cabo Verde', CPV: 'Cabo Verde',
+  CD: 'RD Congo', COD: 'RD Congo',
+  TR: 'Turquía', TUR: 'Turquía',
+  UZ: 'Uzbekistán', UZB: 'Uzbekistán',
+  SCO: 'Escocia', SCT: 'Escocia'
 };
 
-const CITY_NAMES = {
-  1: 'Ciudad de México', 2: 'Nueva York', 3: 'Toronto', 4: 'Los Ángeles',
-  5: 'Guadalajara', 6: 'Monterrey', 7: 'Vancouver', 8: 'Dallas',
-  9: 'Miami', 10: 'Atlanta', 11: 'Seattle', 12: 'Houston',
-  13: 'San Francisco', 14: 'Filadelfia', 15: 'Boston', 16: 'Kansas City'
+/** Ciudades anfitrionas según /v1/cities (id API) */
+const CITY_META = {
+  1: { name: 'Ciudad de México', stadium: 'Estadio Azteca' },
+  2: { name: 'Nueva York / Nueva Jersey', stadium: 'MetLife Stadium' },
+  3: { name: 'Los Ángeles', stadium: 'SoFi Stadium' },
+  4: { name: 'Toronto', stadium: 'BMO Field' },
+  5: { name: 'Guadalajara', stadium: 'Estadio Akron' },
+  6: { name: 'Monterrey', stadium: 'Estadio BBVA' },
+  7: { name: 'Vancouver', stadium: 'BC Place' },
+  8: { name: 'Miami', stadium: 'Hard Rock Stadium' },
+  9: { name: 'Dallas', stadium: 'AT&T Stadium' },
+  10: { name: 'Atlanta', stadium: 'Mercedes-Benz Stadium' },
+  11: { name: 'Kansas City', stadium: 'Arrowhead Stadium' },
+  12: { name: 'Houston', stadium: 'NRG Stadium' },
+  13: { name: 'Seattle', stadium: 'Lumen Field' },
+  14: { name: 'San Francisco', stadium: "Levi's Stadium" },
+  15: { name: 'Boston', stadium: 'Gillette Stadium' },
+  16: { name: 'Filadelfia', stadium: 'Lincoln Financial Field' }
 };
+
+const CITY_NAMES = Object.fromEntries(
+  Object.entries(CITY_META).map(([id, meta]) => [Number(id), meta.name])
+);
+
+/** Rondas numéricas de la API FIFA WC 2026 */
+const ROUND_NAMES = {
+  1: 'Fase de Grupos',
+  2: 'Fase de Grupos',
+  3: 'Fase de Grupos',
+  6: 'Dieciseisavos',
+  5: 'Octavos',
+  27: 'Cuartos',
+  28: 'Semifinal',
+  50: 'Tercer Lugar',
+  29: 'Final'
+};
+
+function formatMatchDatetime(dateStr, timeStr) {
+  if (!dateStr && !timeStr) return 'Por definir';
+  let datePart = dateStr || '';
+  if (dateStr) {
+    const parsed = new Date(`${dateStr}T12:00:00`);
+    if (!Number.isNaN(parsed.getTime())) {
+      datePart = parsed.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+  }
+  let timePart = '';
+  if (timeStr) {
+    timePart = String(timeStr).slice(0, 5);
+  }
+  if (datePart && timePart) return `${datePart} • ${timePart}`;
+  return datePart || timePart || 'Por definir';
+}
+
+function mapMatchStatus(rawStatus) {
+  const value = String(rawStatus || '').trim().toLowerCase();
+
+  if (['live', 'in progress', 'inplay', 'playing', 'en vivo', 'en directo'].includes(value)) {
+    return { status: 'En vivo', statusLabel: '● En vivo', statusClass: 'live' };
+  }
+
+  if (['ended', 'finished', 'ft', 'aet', 'pen', 'finalizado', 'completed', 'complete'].includes(value)) {
+    return { status: 'Finalizado', statusLabel: 'Finalizado', statusClass: 'finished' };
+  }
+
+  return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
+}
 
 /**
  * Normaliza un partido individual desde el JSON exacto de la API (/v1/matches)
@@ -1114,93 +1252,73 @@ const CITY_NAMES = {
 function normalizeMatch(match) {
   if (!match) return null;
 
-  const isApiFormat = match.home_id !== undefined || match.home_score !== undefined;
+  const isApiFormat = match.home_id !== undefined || match.home_score !== undefined || match.city_id !== undefined;
 
-  const homeCode = isApiFormat ? (match.home_id || 'MX') : (match.team1?.code || match.homeCode || 'MX');
-  const awayCode = isApiFormat ? (match.away_id || 'AR') : (match.team2?.code || match.awayCode || 'AR');
+  const homeCode = String(isApiFormat ? (match.home_id || 'MEX') : (match.team1?.code || match.homeCode || 'MEX')).toUpperCase();
+  const awayCode = String(isApiFormat ? (match.away_id || 'ARG') : (match.team2?.code || match.awayCode || 'ARG')).toUpperCase();
 
-  const homeName = match.team1?.name || COUNTRY_NAMES[homeCode] || homeCode;
-  const awayName = match.team2?.name || COUNTRY_NAMES[awayCode] || awayCode;
+  const homeName = match.team1?.name || match.home_name || COUNTRY_NAMES[homeCode] || homeCode;
+  const awayName = match.team2?.name || match.away_name || COUNTRY_NAMES[awayCode] || awayCode;
 
-  // Status mapping: scheduled | live | finished
-  let status = match.status || 'scheduled';
-  let statusLabel = 'Programado';
-  let statusClass = 'scheduled';
+  const { status, statusLabel, statusClass } = mapMatchStatus(match.status);
 
-  if (status === 'live' || status === 'En vivo') {
-    status = 'live';
-    statusLabel = '● En vivo';
-    statusClass = 'live';
-  } else if (status === 'finished' || status === 'Finalizado') {
-    status = 'finished';
-    statusLabel = 'Finalizado';
-    statusClass = 'finished';
-  } else {
-    status = 'scheduled';
-    statusLabel = 'Programado';
-    statusClass = 'scheduled';
-  }
-
-  // Scores
   let homeScoreVal = '-';
   let awayScoreVal = '-';
 
-  if (status !== 'scheduled') {
+  if (status !== 'Programado') {
     if (typeof match.home_score === 'object' && match.home_score !== null) {
-      homeScoreVal = match.home_score.total ?? '-';
-    } else if (match.home_score !== undefined) {
+      homeScoreVal = match.home_score.total ?? match.home_score.fulltime ?? '-';
+    } else if (match.home_score !== undefined && match.home_score !== null) {
       homeScoreVal = match.home_score;
     } else if (match.team1?.score !== undefined) {
       homeScoreVal = match.team1.score;
     }
 
     if (typeof match.away_score === 'object' && match.away_score !== null) {
-      awayScoreVal = match.away_score.total ?? '-';
-    } else if (match.away_score !== undefined) {
+      awayScoreVal = match.away_score.total ?? match.away_score.fulltime ?? '-';
+    } else if (match.away_score !== undefined && match.away_score !== null) {
       awayScoreVal = match.away_score;
     } else if (match.team2?.score !== undefined) {
       awayScoreVal = match.team2.score;
     }
   }
 
-  // City mapping
-  let cityName = match.city;
-  if (typeof match.city === 'number') {
-    cityName = CITY_NAMES[match.city] || `Ciudad ${match.city}`;
-  } else if (!cityName) {
-    cityName = 'Sede Oficial';
-  }
+  const cityIdRaw = match.city_id ?? match.cityId ?? (typeof match.city === 'number' ? match.city : null);
+  const cityId = cityIdRaw !== null && cityIdRaw !== undefined ? Number(cityIdRaw) : null;
+  const cityMeta = cityId !== null && !Number.isNaN(cityId) ? CITY_META[cityId] : null;
 
-  // Group / Round
-  let groupName = match.group || 'Grupo A';
-  if (groupName && groupName.length === 1) groupName = `Grupo ${groupName}`;
-  
+  let cityName = match.city_name || (typeof match.city === 'string' ? match.city : '') || cityMeta?.name || '';
+  if (!cityName && cityId !== null) cityName = CITY_NAMES[cityId] || `Ciudad ${cityId}`;
+  if (!cityName) cityName = 'Sede Oficial';
+
+  const stadium = match.stadium || match.venue || cityMeta?.stadium || '';
+
+  let groupName = match.group || '';
+  if (groupName && String(groupName).length === 1) groupName = `Grupo ${String(groupName).toUpperCase()}`;
+  if (!groupName) groupName = '';
+
   let roundName = match.round;
   if (typeof roundName === 'number') {
-    roundName = `Ronda ${roundName}`;
+    roundName = ROUND_NAMES[roundName] || `Ronda ${roundName}`;
   } else if (!roundName) {
-    roundName = 'Fase de Grupos';
+    roundName = groupName ? 'Fase de Grupos' : 'Mundial';
   }
 
-  // Datetime
   let datetimeStr = match.datetime;
-  if (!datetimeStr && (match.date || match.time)) {
-    const d = match.date || '';
-    const t = match.time || '';
-    datetimeStr = `${d} • ${t}`.trim();
+  if (!datetimeStr) {
+    datetimeStr = formatMatchDatetime(match.date, match.time);
   }
-  if (!datetimeStr) datetimeStr = 'Por definir';
 
   return {
     id: match.id || 'm1',
     city: cityName,
-    cityId: typeof match.city === 'number' ? match.city : null,
-    stadium: match.stadium || '',
+    cityId: cityId,
+    stadium: stadium,
     status: status,
     statusLabel: statusLabel,
     statusClass: statusClass,
     round: roundName,
-    group: groupName,
+    group: groupName || roundName,
     home: {
       code: homeCode,
       name: homeName,
@@ -1211,12 +1329,12 @@ function normalizeMatch(match) {
       name: awayName,
       score: awayScoreVal
     },
-    // Backwards compatibility for existing views
     team1: { code: homeCode, name: homeName, score: homeScoreVal },
     team2: { code: awayCode, name: awayName, score: awayScoreVal },
     datetime: datetimeStr,
     date: match.date || '',
-    time: match.time || ''
+    time: match.time || '',
+    referee: match.referee || ''
   };
 }
 
@@ -1224,7 +1342,22 @@ function normalizeMatchesList(rawData) {
   if (!rawData) return [];
   const list = Array.isArray(rawData) ? rawData : (rawData.matches || rawData.data || []);
   if (!Array.isArray(list)) return [];
-  return list.map(normalizeMatch).filter(Boolean);
+  return list
+    .filter(isValidApiMatch)
+    .map(normalizeMatch)
+    .filter(Boolean);
+}
+
+/**
+ * Descarta partidos basura/placeholder de la API (ej. final falsa id 11111111)
+ */
+function isValidApiMatch(match) {
+  if (!match) return false;
+  const id = String(match.id ?? '');
+  if (id === '11111111') return false;
+  // Fuera del rango oficial del Mundial 2026 (jun–jul)
+  if (match.date && (match.date < '2026-06-01' || match.date > '2026-07-31')) return false;
+  return true;
 }
 
 /**
@@ -1349,22 +1482,39 @@ export async function getMatches(filters = {}, forceRefresh = false) {
  */
 function normalizeRankingItem(item, idx) {
   if (!item) return null;
-  const code = item.code || item.isoCode || item.id || 'MX';
-  const name = item.name || item.nombre || COUNTRY_NAMES[code] || code;
-  const conf = item.conf || item.confederation || item.confederacion || 'FIFA';
-  const pos = item.pos || item.position || item.rank || (idx + 1);
-  const rank = item.rank || item.points || item.puntos || pos;
-  const titles = item.titles ?? item.titulos ?? 0;
-  const dt = item.dt || item.coach || item.entrenador || 'Director Técnico';
+  
+  // Soporte para estructura anidada de la API (`{ team: {...}, rank, points, previous_rank }`) o plana (mock)
+  const rawTeam = item.team || item;
+
+  const code = rawTeam.id || rawTeam.code || rawTeam.isoCode || 'FIFA';
+  const name = rawTeam.name || rawTeam.nombre || COUNTRY_NAMES[code] || code;
+  const conf = rawTeam.confederation || rawTeam.confederacion || rawTeam.conf || 'FIFA';
+  const flagUri = rawTeam.flag_uri || rawTeam.flag || rawTeam.bandera || (code && code !== 'FIFA' ? `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}` : '');
+
+  const pos = item.rank !== undefined && item.rank !== null ? Number(item.rank) : (item.pos || idx + 1);
+  const previousRank = item.previous_rank !== undefined && item.previous_rank !== null ? Number(item.previous_rank) : (item.previousRank ?? pos);
+  
+  const pointsVal = item.points !== undefined && item.points !== null ? Number(item.points) : (pos ? Math.max(1200, 2000 - pos * 15) : 0);
+  const previousPointsVal = item.previous_points !== undefined && item.previous_points !== null ? Number(item.previous_points) : pointsVal;
+  
+  const worldRank = rawTeam.world_ranking || item.world_ranking || pos;
+  const appearances = rawTeam.appearances || rawTeam.participaciones || item.appearances || item.titles || 0;
+  const titles = item.titles ?? rawTeam.titles ?? rawTeam.titulos ?? 0;
+  const dt = item.dt || rawTeam.coach || rawTeam.entrenador || item.coach || 'Director Técnico';
 
   return {
     pos: Number(pos),
-    code: code,
-    name: name,
-    conf: conf,
-    rank: Number(rank),
+    code: String(code),
+    name: String(name),
+    conf: String(conf),
+    flagUri: String(flagUri),
+    rank: Number(worldRank),
+    previousRank: Number(previousRank),
+    points: Number(pointsVal),
+    previousPoints: Number(previousPointsVal),
+    appearances: Number(appearances),
     titles: Number(titles),
-    dt: dt
+    dt: String(dt)
   };
 }
 
@@ -1376,10 +1526,10 @@ export async function getRanking(forceRefresh = false) {
     const data = await fetchWithCache('ranking', forceRefresh);
     const list = Array.isArray(data) ? data : (data?.ranking || data?.data || []);
     const normalized = list.map(normalizeRankingItem).filter(Boolean);
-    return normalized.length > 0 ? normalized : MOCK_DATA.ranking;
+    return normalized.length > 0 ? normalized : MOCK_DATA.ranking.map(normalizeRankingItem);
   } catch (error) {
     console.warn('[getRanking] Fallback a MOCK_DATA.ranking:', error);
-    return MOCK_DATA.ranking;
+    return MOCK_DATA.ranking.map(normalizeRankingItem);
   }
 }
 

@@ -155,12 +155,10 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
 .section-link:hover {
   color: #33eb91;
-  transform: translateX(4px);
 }
 
 .section-link-btn {

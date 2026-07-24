@@ -111,7 +111,7 @@ function renderTeams(container, teams) {
   }
 
   container.innerHTML = teams.map(team => `
-    <a href="detalle-equipo.html?id=${team.id}" class="group-card team-card-item" style="text-decoration: none; color: inherit; display: block; padding: 1.25rem; transition: transform 0.2s ease, border-color 0.2s ease; cursor: pointer;">
+    <a href="detalle-equipo.html?id=${team.id}" class="group-card team-card-item" style="text-decoration: none; color: inherit; display: block; padding: 1.25rem; cursor: pointer;">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <div class="flag-box" style="width: 40px; height: 28px; font-weight: 800; font-size: 0.9rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color);">${team.code}</div>

@@ -79,20 +79,41 @@ const MATCHES_PREVIEW_LIMIT = 6;
 
 function getUpcomingMatches(matches) {
  return matches.filter(match =>
- match.status === 'Programado' || match.status === 'En vivo'
+ match.status === 'Programado' || match.status === 'En vivo' ||
+ match.status === 'scheduled' || match.status === 'live'
  );
 }
 
+function getHomeMatchesPreview(matches) {
+ const upcoming = getUpcomingMatches(matches)
+ .slice()
+ .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.time || '').localeCompare(String(b.time || '')));
+
+ if (upcoming.length >= MATCHES_PREVIEW_LIMIT) {
+ return upcoming.slice(0, MATCHES_PREVIEW_LIMIT);
+ }
+
+ const upcomingIds = new Set(upcoming.map(m => String(m.id)));
+ const recentFinished = matches
+ .filter(m => !upcomingIds.has(String(m.id)))
+ .slice()
+ .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.time || '').localeCompare(String(a.time || '')));
+
+ return [...upcoming, ...recentFinished].slice(0, MATCHES_PREVIEW_LIMIT);
+}
+
 function renderMatchCard(match) {
- let statusClass = 'scheduled';
- if (match.status === 'En vivo') statusClass = 'live';
- if (match.status === 'Finalizado') statusClass = 'finished';
+ const statusClass = match.statusClass || (
+ match.status === 'En vivo' || match.status === 'live' ? 'live' :
+ match.status === 'Finalizado' || match.status === 'finished' ? 'finished' : 'scheduled'
+ );
+ const statusText = match.statusLabel || match.status || 'Programado';
 
  return `
  <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
  <div class="match-header">
- <span class="match-venue">${match.city}</span>
- <span class="status-badge ${statusClass}">${match.status}</span>
+ <span class="match-venue">${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
+ <span class="status-badge ${statusClass}">${statusText}</span>
  </div>
  
  <div class="match-teams">
@@ -117,7 +138,7 @@ function renderMatchCard(match) {
 
  <div class="match-footer">
  <span>${match.datetime}</span>
- <span>${match.group}</span>
+ <span>${match.group || match.round || 'Mundial'}</span>
  </div>
  </a>
  `;
@@ -141,8 +162,7 @@ async function loadMatchesSection() {
 
  try {
  const allMatches = await FIFA_API.getMatches();
- const upcoming = getUpcomingMatches(allMatches || []);
- const previewMatches = upcoming.slice(0, MATCHES_PREVIEW_LIMIT);
+ const previewMatches = getHomeMatchesPreview(allMatches || []);
 
  renderHomeMatches(previewMatches);
 

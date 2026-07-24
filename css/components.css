@@ -3077,3 +3077,76 @@
   color: #000000;
   border-color: var(--accent-mint);
 }
+
+/* ==========================================
+   SIN ANIMACIONES AL PASAR EL CURSOR
+   ========================================== */
+.btn-primary:hover,
+.btn-secondary:hover,
+.btn-retry:hover,
+.btn-official-site:hover,
+.btn-listen-album:hover,
+.btn-detail:hover,
+.news-card:hover,
+.match-card:hover,
+.group-card:hover,
+.event-card:hover,
+.team-tile:hover,
+.city-tile:hover,
+.explore-card:hover,
+.explore-sub-card:hover,
+.ods-card:hover,
+.city-card:hover,
+.city-card-full:hover,
+.clip-card:hover,
+.stat-card-kpi:hover,
+.tournament-card:hover,
+.mascot-card:hover,
+.podium-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.explore-card:hover .explore-img-wrap img,
+.city-card:hover .city-card-img-wrap img,
+.city-card-full:hover .city-card-img,
+.news-card:hover .news-image-wrap img {
+  transform: none !important;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-retry,
+.btn-official-site,
+.btn-listen-album,
+.btn-detail,
+.btn-details,
+.news-card,
+.news-read-more,
+.match-card,
+.group-card,
+.event-card,
+.team-tile,
+.city-tile,
+.explore-card,
+.explore-card .explore-img-wrap img,
+.explore-sub-card,
+.ods-card,
+.city-card,
+.city-card-full,
+.city-card-img-wrap img,
+.city-card-img,
+.clip-card,
+.stat-card-kpi,
+.tournament-card,
+.mascot-card,
+.podium-card,
+.slider-arrow,
+.nav-link,
+.sub-link {
+  transition: none !important;
+}
+
+.news-read-more:hover {
+  text-decoration: none;
+}

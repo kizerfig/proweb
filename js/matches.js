@@ -40,6 +40,12 @@ async function loadMatches() {
  }
 
  allMatches = matchesData;
+ // Ordenar por fecha (más recientes / próximos primero en calendario)
+ allMatches.sort((a, b) => {
+ const byDate = String(a.date || '').localeCompare(String(b.date || ''));
+ if (byDate !== 0) return byDate;
+ return String(a.time || '').localeCompare(String(b.time || ''));
+ });
  filterAndRenderMatches();
 
  } catch (error) {
@@ -131,15 +137,17 @@ function renderSkeletons(container, count = 6) {
  */
 function renderMatchCards(container, matchesList) {
  container.innerHTML = matchesList.map(match => {
- let statusClass = 'scheduled';
- if (match.status === 'En vivo') statusClass = 'live';
- if (match.status === 'Finalizado') statusClass = 'finished';
+ const statusClass = match.statusClass || (
+ match.status === 'En vivo' || match.status === 'live' ? 'live' :
+ match.status === 'Finalizado' || match.status === 'finished' ? 'finished' : 'scheduled'
+ );
+ const statusText = match.statusLabel || match.status || 'Programado';
 
  return `
  <a href="detalle-partido.html?id=${match.id}" class="match-card" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
  <div class="match-header">
  <span class="match-venue"> ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
- <span class="status-badge ${statusClass}">${match.status}</span>
+ <span class="status-badge ${statusClass}">${statusText}</span>
  </div>
  
  <div class="match-teams">
