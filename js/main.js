@@ -47,10 +47,12 @@ async function loadNewsSection() {
  return;
  }
 
- container.innerHTML = latestNews.map(news => `
+ container.innerHTML = latestNews.map(news => {
+ const articleUrl = news.url || 'https://www.fifa.com/es/articles';
+ return `
  <article class="news-card">
  <div class="news-image-wrap">
- <img src="${news.image || NEWS_IMAGE_FALLBACK}" alt="${news.title}" loading="lazy" onerror="this.onerror=null;this.src='${NEWS_IMAGE_FALLBACK}'" />
+ <img src="${news.image || NEWS_IMAGE_FALLBACK}" alt="${news.title}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${NEWS_IMAGE_FALLBACK}'" />
  </div>
  <div class="news-body">
  <div class="news-meta">
@@ -58,9 +60,11 @@ async function loadNewsSection() {
  <span class="news-time">${news.time || 'Reciente'}</span>
  </div>
  <h3 class="news-title">${news.title}</h3>
+ <a class="news-read-more" href="${articleUrl}" target="_blank" rel="noopener noreferrer">Leer más →</a>
  </div>
  </article>
- `).join('');
+ `;
+ }).join('');
 
  } catch (error) {
  console.error('Error cargando noticias:', error);

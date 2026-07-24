@@ -9,7 +9,7 @@ const API_CONFIG = {
   CACHE_TTL: 15 * 60 * 1000 // 15 minutos
 };
 
-const CACHE_VERSION = '7';
+const CACHE_VERSION = '9';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
 // Determina si se está ejecutando en servidor local
@@ -55,42 +55,48 @@ const MOCK_DATA = {
       category: 'Equipos',
       time: 'Hace 2 horas',
       title: 'México presenta nueva convocatoria para Copa del Mundo 2026',
-      image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner1.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     },
     {
       id: '2',
       category: 'Estadios',
       time: 'Hace 5 horas',
       title: 'Estadio Azteca listo para el torneo más grande de la historia',
-      image: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner2.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     },
     {
       id: '3',
       category: 'Oficial',
       time: 'Hace 1 día',
       title: 'FIFA confirma calendario oficial del Mundial 2026',
-      image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner3.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     },
     {
       id: '4',
       category: 'Cultura',
       time: 'Hace 2 días',
       title: 'Revelada la mascota oficial del Mundial 2026',
-      image: 'https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner1.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     },
     {
       id: '5',
       category: 'Equipos',
       time: 'Hace 3 días',
       title: 'Argentina busca defender el título en suelo norteamericano',
-      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner2.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     },
     {
       id: '6',
       category: 'Historia',
       time: 'Hace 4 días',
       title: 'Los mejores momentos de la historia del Mundial',
-      image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=600&q=80'
+      image: '../imagenes/banner3.jpg',
+      url: 'https://www.fifa.com/es/tournaments/mens/worldcup/canadamexicousa2026'
     }
   ],
 
@@ -765,7 +771,7 @@ const MOCK_DATA = {
 /**
  * Petición con Timeout utilizando AbortController para prevenir bloqueos infinitos (1.5s max)
  */
-async function fetchWithTimeout(url, timeoutMs = 1500) {
+async function fetchWithTimeout(url, timeoutMs = 8000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -808,9 +814,9 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
   let data = null;
   let fetchSuccess = false;
 
-  // Intento 1: Fetch directo con timeout de 1.5 segundos
+  // Intento 1: Fetch directo (Render cold start puede tardar varios segundos)
   try {
-    const response = await fetchWithTimeout(directUrl, 1500);
+    const response = await fetchWithTimeout(directUrl, 8000);
     if (response.ok) {
       data = await response.json();
       if (data && (Array.isArray(data) ? data.length > 0 : true)) {
@@ -821,11 +827,11 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
     console.warn(`[Fetch Directo] Endpoint '${endpoint}' no respondió a tiempo (${err.message})`);
   }
 
-  // Intento 2: Si estamos en local y falló directo, intentar Proxy CORS con 1.5s timeout
+  // Intento 2: Si estamos en local y falló directo, intentar Proxy CORS
   if (!fetchSuccess && isLocalEnvironment()) {
     try {
       const proxyUrl = `${API_CONFIG.CORS_PROXY}${encodeURIComponent(directUrl)}`;
-      const response = await fetchWithTimeout(proxyUrl, 1500);
+      const response = await fetchWithTimeout(proxyUrl, 8000);
       if (response.ok) {
         data = await response.json();
         if (data && (Array.isArray(data) ? data.length > 0 : true)) {
@@ -869,12 +875,7 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
 
   const mockFallback = MOCK_DATA[rootEndpoint] || MOCK_DATA.news || [];
   console.warn(`[Fallback Mock Instantáneo] Cargando MOCK_DATA para '${rootEndpoint}'`);
-  try {
-    localStorage.setItem(cacheKey, JSON.stringify({
-      timestamp: Date.now(),
-      data: mockFallback
-    }));
-  } catch (e) {}
+  // No guardar mock en localStorage: evita envenenar la caché con datos sin imágenes válidas
   return mockFallback;
 }
 
@@ -1000,14 +1001,19 @@ function resolveNewsImage(item) {
   const raw = item.image_url ?? item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? '';
   if (!raw || typeof raw !== 'string') return '';
 
-  const trimmed = raw.trim();
-  if (!trimmed) return '';
+  let url = raw.trim();
+  if (!url) return '';
 
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  if (trimmed.startsWith('//')) return `https:${trimmed}`;
-  if (trimmed.startsWith('/')) return `https://wc-api-u378.onrender.com${trimmed}`;
+  if (url.startsWith('//')) url = `https:${url}`;
+  if (url.startsWith('/')) url = `https://wc-api-u378.onrender.com${url}`;
 
-  return trimmed;
+  // Optimiza imágenes de digitalhub.fifa.com para carga más rápida y estable
+  if (/digitalhub\.fifa\.com/i.test(url) && !/[?&]io=/i.test(url)) {
+    const separator = url.includes('?') ? '&' : '?';
+    url = `${url}${separator}io=transform:fill,width:800,height:450`;
+  }
+
+  return url;
 }
 
 function formatNewsDate(value) {
@@ -1015,6 +1021,26 @@ function formatNewsDate(value) {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return String(value);
   return parsed.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+/**
+ * Resuelve URL oficial de la noticia en fifa.com
+ */
+function resolveNewsUrl(item) {
+  const raw = item?.url ?? item?.link ?? item?.source_url ?? item?.article_url ?? item?.href ?? '';
+  if (!raw || typeof raw !== 'string') return '';
+
+  let url = raw.trim();
+  if (!url) return '';
+
+  if (url.startsWith('//')) url = `https:${url}`;
+  if (url.startsWith('/')) url = `https://www.fifa.com${url}`;
+
+  // Corrige dobles barras típicas de la API (fifa.com//es/...)
+  url = url.replace(/^(https?:\/\/[^/]+)\/{2,}/i, '$1/');
+
+  if (!/^https?:\/\//i.test(url)) return '';
+  return url;
 }
 
 /**
@@ -1036,7 +1062,8 @@ function normalizeNewsList(raw) {
     time: item.time ?? formatNewsDate(item.published_date) ?? item.fecha ?? item.date ?? item.publicadoEn ?? 'Reciente',
     image: resolveNewsImage(item),
     summary: item.preview_text ?? item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
-    content: item.content ?? item.contenido ?? item.body ?? item.preview_text ?? ''
+    content: item.content ?? item.contenido ?? item.body ?? item.preview_text ?? '',
+    url: resolveNewsUrl(item)
   }));
 }
 
@@ -1054,7 +1081,8 @@ function normalizeNewsDetail(raw, requestedId) {
     image: resolveNewsImage(item),
     summary: item.preview_text ?? item.summary ?? item.resumen ?? item.description ?? item.descripcion ?? '',
     content: item.content ?? item.contenido ?? item.body ?? item.preview_text ?? 'Detalles de la noticia oficial de la FIFA Copa Mundial 2026.',
-    author: item.author ?? item.autor ?? 'FIFA Media'
+    author: item.author ?? item.autor ?? 'FIFA Media',
+    url: resolveNewsUrl(item)
   };
 }
 
