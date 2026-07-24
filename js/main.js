@@ -73,9 +73,9 @@ async function loadNewsSection() {
 }
 
 /**
- * Render Upcoming Matches Cards (6 en inicio + enlace al calendario completo)
+ * Render Upcoming Matches Cards (8 en inicio + enlace al calendario completo)
  */
-const MATCHES_PREVIEW_LIMIT = 6;
+const MATCHES_PREVIEW_LIMIT = 8;
 
 function getUpcomingMatches(matches) {
  return matches.filter(match =>
@@ -204,8 +204,24 @@ async function loadEventsSection() {
 /**
  * Render Teams & Host Cities Preview Grids
  */
+const TEAMS_PREVIEW_MAX = 12;
 const CITIES_PREVIEW_LIMIT = 8;
 let homepageCities = [];
+
+function getHomeTeamsPreview(teams) {
+ if (!Array.isArray(teams) || teams.length === 0) return [];
+ return teams
+  .slice()
+  .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'es'))
+  .slice(0, TEAMS_PREVIEW_MAX);
+}
+
+function renderTeamTile(team) {
+ return `<a href="equipos.html" class="team-tile" style="text-decoration: none; color: inherit; cursor: pointer;">
+  <span class="team-tile-code">${team.code}</span>
+  <span class="team-tile-name">${team.name}</span>
+ </a>`;
+}
 
 function renderCityTile(city) {
  return `<a href="ciudades-anfitrionas.html" class="city-tile" style="text-decoration: none; color: inherit; cursor: pointer;"><span class="city-name">${city.name}</span></a>`;
@@ -254,12 +270,12 @@ async function loadTeamsAndCitiesSection() {
   if (teamsContainer) {
     try {
       const teams = await FIFA_API.getTeams();
-      teamsContainer.innerHTML = teams.map(team => `
-        <a href="equipos.html" class="team-tile" style="text-decoration: none; color: inherit; cursor: pointer;">
-          <span class="team-tile-code">${team.code}</span>
-          <span class="team-tile-name">${team.name}</span>
-        </a>
-      `).join('');
+      const previewTeams = getHomeTeamsPreview(teams || []);
+      if (!previewTeams.length) {
+        teamsContainer.innerHTML = `<p style="color: var(--text-secondary);">No hay equipos disponibles.</p>`;
+      } else {
+        teamsContainer.innerHTML = previewTeams.map(renderTeamTile).join('');
+      }
     } catch (e) { console.error('Error en equipos:', e); }
   }
 
