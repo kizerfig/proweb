@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - NAVBAR & MOBILE MENU
-   js/navbar.js
-   ========================================== */
-
 export function initNavbar() {
   const menuToggle = document.querySelector('.menu-toggle');
   const mainNav = document.querySelector('.main-nav');

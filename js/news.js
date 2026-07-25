@@ -1,8 +1,3 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - NEWS PAGE MODULE
- js/news.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
@@ -10,24 +5,15 @@ const NEWS_IMAGE_FALLBACK = '../imagenes/banner1.jpg';
 const FIFA_NEWS_FALLBACK = 'https://www.fifa.com/es/articles';
 
 document.addEventListener('DOMContentLoaded', () => {
- console.log(' FIFA World Cup 2026 - Noticias Destacadas Initialized');
- 
- // 1. Initialize mobile navbar logic
- initLayout();
-
- // 2. Load news with 15-min LocalStorage cache strategy
+ console.log(' FIFA World Cup 2026 - Noticias Destacadas Initialized');
+ initLayout();
  loadNews();
 });
 
-/**
- * Loads news data and renders cards or error state
- * @param {boolean} forceRefresh - If true, bypasses valid cache to force network request
- */
+
 async function loadNews(forceRefresh = false) {
  const container = document.getElementById('news-grid-container') || document.getElementById('news-grid-full');
- if (!container) return;
-
- // Show Skeleton Loaders during fetch
+ if (!container) return;
  renderSkeletons(container, 6);
 
  try {
@@ -46,18 +32,14 @@ async function loadNews(forceRefresh = false) {
  }
 }
 
-/**
- * Render Skeleton Loading Skeletons
- */
+
 function renderSkeletons(container, count = 6) {
  container.innerHTML = Array(count).fill(0).map(() => `
  <div class="skeleton" style="height: 320px; border-radius: var(--radius-md);"></div>
  `).join('');
 }
 
-/**
- * Escapa atributos HTML en URLs/textos dinámicos
- */
+
 function escapeAttr(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -66,9 +48,7 @@ function escapeAttr(value) {
     .replace(/>/g, '&gt;');
 }
 
-/**
- * Render News Cards; "Leer más" abre la noticia en fifa.com
- */
+
 function renderNewsCards(container, newsList) {
   container.innerHTML = newsList.map(news => {
     const articleUrl = news.url || FIFA_NEWS_FALLBACK;
@@ -91,9 +71,7 @@ function renderNewsCards(container, newsList) {
   }).join('');
 }
 
-/**
- * Render Error State with Retry Button
- */
+
 function renderErrorState(container, message) {
   container.innerHTML = `
     <div class="error-box">
@@ -104,9 +82,7 @@ function renderErrorState(container, message) {
         Reintentar
       </button>
     </div>
-  `;
-
-  // Attach retry button listener
+  `;
   const retryBtn = document.getElementById('btn-retry-news');
   if (retryBtn) {
     retryBtn.addEventListener('click', () => {

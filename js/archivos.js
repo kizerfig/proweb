@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - ARCHIVOS DEL TORNEO MODULE
-   js/archivos.js
-   ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
@@ -11,24 +6,14 @@ let activeCategory = 'all';
 let searchTerm = '';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('📹 FIFA World Cup 2026 - Archivos del Torneo Initialized');
-
-  // 1. Initialize Layout & Navbar
-  initLayout();
-
-  // 2. Setup Category Tabs & Search Event Listeners
-  setupFilters();
-
-  // 3. Setup Video Modal Controls
-  setupModalEvents();
-
-  // 4. Load Records from API / Cache
+  console.log('📹 FIFA World Cup 2026 - Archivos del Torneo Initialized');
+  initLayout();
+  setupFilters();
+  setupModalEvents();
   loadRecords();
 });
 
-/**
- * Carga la lista de archivos desde la API / Caché
- */
+
 async function loadRecords() {
   const container = document.getElementById('records-grid-container');
   if (!container) return;
@@ -52,9 +37,7 @@ async function loadRecords() {
   }
 }
 
-/**
- * Configura los eventos para los botones de categoría y la barra de búsqueda
- */
+
 function setupFilters() {
   const tabs = document.querySelectorAll('.video-tabs .tab-btn');
   const searchInput = document.getElementById('records-search-input');
@@ -77,25 +60,19 @@ function setupFilters() {
   }
 }
 
-/**
- * Filtra y renderiza los archivos según la categoría activa y el término de búsqueda
- */
+
 function filterAndRenderRecords() {
   const container = document.getElementById('records-grid-container');
   if (!container) return;
 
-  let filtered = allRecords.slice();
-
-  // Filtrar por categoría
+  let filtered = allRecords.slice();
   if (activeCategory !== 'all') {
-    filtered = filtered.filter(item => 
+    filtered = filtered.filter(item =>
       String(item.category || '').toLowerCase() === activeCategory.toLowerCase()
     );
-  }
-
-  // Filtrar por término de búsqueda
+  }
   if (searchTerm) {
-    filtered = filtered.filter(item => 
+    filtered = filtered.filter(item =>
       String(item.title || '').toLowerCase().includes(searchTerm) ||
       String(item.subtitle || '').toLowerCase().includes(searchTerm) ||
       String(item.category || '').toLowerCase().includes(searchTerm)
@@ -110,9 +87,7 @@ function filterAndRenderRecords() {
   renderRecordsGrid(container, filtered);
 }
 
-/**
- * Renderiza las tarjetas multimedia en el DOM
- */
+
 function renderRecordsGrid(container, recordsList) {
   container.innerHTML = recordsList.map(record => {
     const fallbackImage = '../imagenes/banner1.jpg';
@@ -139,9 +114,7 @@ function renderRecordsGrid(container, recordsList) {
         </div>
       </article>
     `;
-  }).join('');
-
-  // Asignar manejadores de eventos para abrir modal al hacer clic en cualquier tarjeta
+  }).join('');
   container.querySelectorAll('.record-card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.getAttribute('data-record-id');
@@ -153,9 +126,7 @@ function renderRecordsGrid(container, recordsList) {
   });
 }
 
-/**
- * Renderiza esqueletos de carga
- */
+
 function renderSkeletons(container, count = 6) {
   let skeletonsHtml = '';
   for (let i = 0; i < count; i++) {
@@ -164,9 +135,7 @@ function renderSkeletons(container, count = 6) {
   container.innerHTML = skeletonsHtml;
 }
 
-/**
- * Renderiza estado vacío
- */
+
 function renderEmptyState(container, message) {
   container.innerHTML = `
     <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1.5rem; background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 12px;">
@@ -177,9 +146,7 @@ function renderEmptyState(container, message) {
   `;
 }
 
-/**
- * Renderiza estado de error con botón de reintento
- */
+
 function renderErrorState(container, message) {
   container.innerHTML = `
     <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1.5rem; background: rgba(225, 29, 72, 0.1); border: 1px solid rgba(225, 29, 72, 0.3); border-radius: 12px;">
@@ -196,18 +163,14 @@ function renderErrorState(container, message) {
   }
 }
 
-/**
- * Extrae el ID de YouTube de una URL si aplica
- */
+
 function extractYouTubeId(url) {
   if (!url || typeof url !== 'string') return null;
   const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
   return match ? match[1] : null;
 }
 
-/**
- * Abre el reproductor de video modal con la información del registro
- */
+
 function openVideoModal(record) {
   const modal = document.getElementById('records-video-modal');
   const titleEl = document.getElementById('modal-video-title');
@@ -256,9 +219,7 @@ function openVideoModal(record) {
   document.body.style.overflow = 'hidden';
 }
 
-/**
- * Cierra el modal de video y detiene la reproducción
- */
+
 function closeVideoModal() {
   const modal = document.getElementById('records-video-modal');
   const videoEl = document.getElementById('modal-video-element');
@@ -280,9 +241,7 @@ function closeVideoModal() {
   document.body.style.overflow = '';
 }
 
-/**
- * Configura los eventos para cerrar el modal
- */
+
 function setupModalEvents() {
   const modal = document.getElementById('records-video-modal');
   const closeBtn = document.getElementById('modal-close-btn');

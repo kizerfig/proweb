@@ -1,28 +1,18 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - MAIN APP ORCHESTRATOR
- js/main.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initHeroSlider } from './slider.js';
 import { initLayout } from './layout.js';
 import { renderHomeIdentitySection } from './identity.js';
 
 document.addEventListener('DOMContentLoaded', () => {
- console.log(' FIFA World Cup 2026 Portal Initialized');
- 
- // 1. Initialize UI Controls
+ console.log(' FIFA World Cup 2026 Portal Initialized');
  initLayout();
- initHeroSlider();
-
- // 2. Load Dynamic Content from API/Cache
+ initHeroSlider();
  loadHomepageData();
 });
 
 const NEWS_IMAGE_FALLBACK = '../imagenes/banner1.jpg';
 
-function loadHomepageData() {
-  // Carga asíncrona no bloqueante: cada sección se renderiza en cuanto sus datos estén listos
+function loadHomepageData() {
   loadNewsSection().catch(err => console.warn('Error en sección noticias:', err));
   loadMatchesSection().catch(err => console.warn('Error en sección partidos:', err));
   loadTeamsAndCitiesSection().catch(err => console.warn('Error en sección equipos/ciudades:', err));
@@ -31,9 +21,7 @@ function loadHomepageData() {
   loadODSSection().catch(err => console.warn('Error en sección ODS:', err));
 }
 
-/**
- * Render News Cards (últimas 3 desde API)
- */
+
 async function loadNewsSection() {
  const container = document.getElementById('news-container');
  if (!container) return;
@@ -72,9 +60,7 @@ async function loadNewsSection() {
  }
 }
 
-/**
- * Render Upcoming Matches Cards (8 en inicio + enlace al calendario completo)
- */
+
 const MATCHES_PREVIEW_LIMIT = 8;
 
 function getUpcomingMatches(matches) {
@@ -115,7 +101,7 @@ function renderMatchCard(match) {
  <span class="match-venue">${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
  <span class="status-badge ${statusClass}">${statusText}</span>
  </div>
- 
+
  <div class="match-teams">
  <div class="team-row">
  <div class="team-info">
@@ -125,7 +111,7 @@ function renderMatchCard(match) {
  </div>
  <span class="team-score">${match.team1.score}</span>
  </div>
- 
+
  <div class="team-row">
  <div class="team-info">
  <div class="flag-box">${match.team2.code}</div>
@@ -172,9 +158,7 @@ async function loadMatchesSection() {
  }
 }
 
-/**
- * Render Events Cards
- */
+
 async function loadEventsSection() {
  const container = document.getElementById('events-container');
  if (!container) return;
@@ -201,9 +185,7 @@ async function loadEventsSection() {
  }
 }
 
-/**
- * Render Teams & Host Cities Preview Grids
- */
+
 const TEAMS_PREVIEW_MAX = 12;
 const CITIES_PREVIEW_LIMIT = 8;
 let homepageCities = [];
@@ -301,18 +283,14 @@ async function loadTeamsAndCitiesSection() {
   }
 }
 
-/**
- * Render Identity Cards from API
- */
+
 async function loadIdentitySection() {
  const container = document.getElementById('identity-container');
  if (!container) return;
  await renderHomeIdentitySection(container);
 }
 
-/**
- * Render ODS Section Cards
- */
+
 async function loadODSSection() {
   const container = document.getElementById('ods-container');
   if (!container) return;

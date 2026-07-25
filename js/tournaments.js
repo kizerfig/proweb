@@ -1,24 +1,13 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - TOURNAMENTS MODULE
- js/tournaments.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
- console.log(' FIFA World Cup 2026 - Torneos y Eventos Initialized');
-
- // 1. Initialize mobile menu and navbar brand redirection
- initLayout();
-
- // 2. Fetch and render tournaments list with 15-min LocalStorage cache
+ console.log(' FIFA World Cup 2026 - Torneos y Eventos Initialized');
+ initLayout();
  loadTournaments();
 });
 
-/**
- * Loads tournaments data with LocalStorage cache strategy
- */
+
 async function loadTournaments() {
  const container = document.getElementById('tournaments-container');
  if (!container) return;
@@ -49,17 +38,13 @@ async function loadTournaments() {
  }
 }
 
-/**
- * Render tournament cards into DOM
- */
+
 function renderTournamentCards(container, tournamentsList) {
  container.innerHTML = tournamentsList.map(item => {
  let statusClass = 'scheduled';
  if (item.status === 'Finalizado') statusClass = 'finished';
  if (item.status === 'Próximo') statusClass = 'live';
- if (item.status === 'Futuro') statusClass = 'future';
-
- // Theme color helpers based on organization
+ if (item.status === 'Futuro') statusClass = 'future';
  let orgClass = 'fifa';
  if (item.org === 'CONMEBOL') orgClass = 'conmebol';
  if (item.org === 'CONCACAF') orgClass = 'concacaf';
@@ -68,7 +53,7 @@ function renderTournamentCards(container, tournamentsList) {
  return `
  <article class="tournament-card">
 
- <!-- Center Body Info -->
+
  <div class="tournament-card-body">
  <div class="tournament-card-header">
  <h2 class="tournament-card-title">${item.title}</h2>
@@ -85,11 +70,11 @@ function renderTournamentCards(container, tournamentsList) {
  <p class="tournament-card-desc">${item.desc || item.description || ''}</p>
  </div>
 
- <!-- Right Action Column -->
+
  <div class="tournament-card-action">
- <a href="${item.officialUrl || item.url || 'https://www.fifa.com/'}" 
- class="btn-official-site ${orgClass}" 
- target="_blank" 
+ <a href="${item.officialUrl || item.url || 'https://www.fifa.com/'}"
+ class="btn-official-site ${orgClass}"
+ target="_blank"
  rel="noopener noreferrer"
  aria-label="Sitio Oficial de ${item.title}">
  Sitio Oficial &rarr;

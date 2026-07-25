@@ -1,8 +1,3 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - ODS MODULE
- js/ods.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 

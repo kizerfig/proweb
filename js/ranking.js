@@ -1,36 +1,21 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - RANKING FIFA MODULE
-   js/ranking.js
-   ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 let rankingData = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('⭐ FIFA World Cup 2026 - Ranking FIFA Initialized');
-
-  // 1. Initialize Global Layout Controls
-  initLayout();
-
-  // 2. Setup Filter & Tab Event Listeners
-  setupFilterListeners();
-
-  // 3. Load Ranking Data with Skeletons
+  console.log('⭐ FIFA World Cup 2026 - Ranking FIFA Initialized');
+  initLayout();
+  setupFilterListeners();
   loadRanking();
 });
 
-/**
- * Solicitar la lista del Ranking FIFA (Exportable según especificaciones)
- */
+
 export async function getRankingList(forceRefresh = false) {
   return await FIFA_API.getRanking(forceRefresh);
 }
 
-/**
- * Carga los datos del Ranking FIFA con manejo de estados de carga (Skeletons)
- */
+
 async function loadRanking(forceRefresh = false) {
   const tbody = document.getElementById('ranking-table-body');
   const podiumContainer = document.getElementById('podium-container');
@@ -55,9 +40,7 @@ async function loadRanking(forceRefresh = false) {
   }
 }
 
-/**
- * Renderiza el Podio Destacado Top 3
- */
+
 function renderPodium(container, data) {
   if (!container) return;
 
@@ -80,7 +63,7 @@ function renderPodium(container, data) {
   };
 
   container.innerHTML = `
-    <!-- 2° Lugar (Izquierda / Plata) -->
+
     <div class="podium-card rank-2">
       <div style="position: absolute; top: -12px; background: #8B949E; color: #000; font-weight: 800; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">2° LUGAR</div>
       ${getFlagHtml(second, '48px', '32px')}
@@ -90,7 +73,7 @@ function renderPodium(container, data) {
       <div class="podium-medal">🥈</div>
     </div>
 
-    <!-- 1° Lugar (Centro / Oro / Destacado) -->
+
     <div class="podium-card rank-1">
       <div style="position: absolute; top: -14px; background: #D29922; color: #000; font-weight: 900; padding: 3px 14px; border-radius: 12px; font-size: 0.8rem; letter-spacing: 0.05em;">👑 LÍDER MUNDIAL</div>
       ${getFlagHtml(first, '56px', '38px')}
@@ -100,7 +83,7 @@ function renderPodium(container, data) {
       <div class="podium-medal">🥇</div>
     </div>
 
-    <!-- 3° Lugar (Derecha / Bronce) -->
+
     <div class="podium-card rank-3">
       <div style="position: absolute; top: -12px; background: #DB6D28; color: #000; font-weight: 800; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">3° LUGAR</div>
       ${getFlagHtml(third, '48px', '32px')}
@@ -112,9 +95,7 @@ function renderPodium(container, data) {
   `;
 }
 
-/**
- * Renderiza las filas de la tabla general del Ranking
- */
+
 function renderTable(tbody, data) {
   if (!tbody) return;
 
@@ -136,11 +117,9 @@ function renderTable(tbody, data) {
     else if (posNum === 2) medalBadge = '<span style="margin-right: 6px; font-size: 1.1rem;">🥈</span>';
     else if (posNum === 3) medalBadge = '<span style="margin-right: 6px; font-size: 1.1rem;">🥉</span>';
 
-    const flagHtml = team.flagUri 
+    const flagHtml = team.flagUri
       ? `<img src="${team.flagUri}" alt="${team.name}" style="width: 30px; height: 20px; object-fit: cover; border-radius: 3px; border: 1px solid var(--border-color); flex-shrink: 0;" loading="lazy">`
-      : `<div class="flag-box" style="width: 30px; height: 20px; font-weight: 800; font-size: 0.75rem; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); flex-shrink: 0;">${team.code}</div>`;
-
-    // Cálculo del cambio en la tabla
+      : `<div class="flag-box" style="width: 30px; height: 20px; font-weight: 800; font-size: 0.75rem; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); flex-shrink: 0;">${team.code}</div>`;
     let changeHtml = '<span style="color: var(--text-secondary); font-weight: 600;">-</span>';
     if (team.previousRank && team.previousRank !== posNum) {
       const diff = team.previousRank - posNum;
@@ -183,9 +162,7 @@ function renderTable(tbody, data) {
   }).join('');
 }
 
-/**
- * Configura los eventos para filtro de confederación y cambio de vista
- */
+
 function setupFilterListeners() {
   const confSelect = document.getElementById('filter-confederation') || document.getElementById('conf-select');
   const btnRank = document.getElementById('btn-by-rank');
@@ -228,9 +205,7 @@ function setupFilterListeners() {
   });
 }
 
-/**
- * Estado Skeleton mientras carga la promesa
- */
+
 function renderSkeletons(tbody, podiumContainer) {
   if (podiumContainer) {
     podiumContainer.innerHTML = `
@@ -249,9 +224,7 @@ function renderSkeletons(tbody, podiumContainer) {
   }
 }
 
-/**
- * Estado de error si la conexión falla
- */
+
 function renderErrorState(tbody, podiumContainer, message) {
   if (podiumContainer) podiumContainer.style.display = 'none';
 

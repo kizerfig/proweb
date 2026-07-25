@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - IDENTITY MODULE
-   js/identity.js
-   ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
@@ -170,9 +165,7 @@ async function loadSoundPage() {
   }
 }
 
-/**
- * Renderiza las tarjetas de Identidad en la página de inicio
- */
+
 export async function renderHomeIdentitySection(container) {
   if (!container) return;
 

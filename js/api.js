@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - API CLIENT & LOCALSTORAGE CACHE
-   js/api.js
-   ========================================== */
-
 const API_CONFIG = {
   BASE_URL: 'https://wc-api-u378.onrender.com/wc-api/api/v1',
   CORS_PROXY: 'https://api.allorigins.win/raw?url=',
@@ -12,11 +7,9 @@ const API_CONFIG = {
 const CACHE_VERSION = '20';
 const CACHE_VERSION_KEY = 'fifa_cache_version';
 
-// In-Memory RAM Cache & In-Flight Request Deduplication
 const MEMORY_CACHE = new Map();
 const IN_FLIGHT_REQUESTS = new Map();
 
-// Determina si se está ejecutando en servidor local
 function isLocalEnvironment() {
   return (
     window.location.hostname === 'localhost' ||
@@ -25,9 +18,7 @@ function isLocalEnvironment() {
   );
 }
 
-/**
- * URL base de la API: en producción (Vercel) usa proxy same-origin para evitar CORS
- */
+
 function getApiBaseUrl() {
   if (typeof window === 'undefined') return API_CONFIG.BASE_URL;
 
@@ -38,7 +29,7 @@ function getApiBaseUrl() {
   return API_CONFIG.BASE_URL;
 }
 
-/** Rutas alternativas del proxy en producción (función serverless + rewrite legacy) */
+
 function getProductionProxyUrls(endpoint) {
   const origin = window.location.origin;
   return [
@@ -72,9 +63,7 @@ async function fetchJsonFromUrl(url, label = 'fetch') {
   }
 }
 
-/**
- * Intenta cargar un endpoint probando proxy same-origin, URL directa y proxy CORS
- */
+
 async function fetchApiEndpoint(endpoint) {
   const renderUrl = buildApiUrl(API_CONFIG.BASE_URL, endpoint);
   const attempts = [];
@@ -95,7 +84,6 @@ async function fetchApiEndpoint(endpoint) {
     return tryFetchAttempts(attempts);
   }
 
-  // En producción el navegador bloquea Render por CORS; solo usar proxy same-origin
   return tryFetchAttempts(attempts);
 }
 
@@ -135,7 +123,6 @@ function ensureCacheVersion() {
 
 ensureCacheVersion();
 
-// Curated high-fidelity mock fallback data to handle network failures or Render latency seamlessly
 const MOCK_DATA = {
   news: [
     {
@@ -533,62 +520,62 @@ const MOCK_DATA = {
   ],
 
   teams: [
-    // ── GRUPO A ──
+
     { id: 'MEX', code: 'MEX', name: 'México',           confederation: 'CONCACAF', group: 'A', world_ranking: 14, appearances: 18, host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/MEX' },
     { id: 'KOR', code: 'KOR', name: 'República de Corea', confederation: 'AFC',    group: 'A', world_ranking: 25, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/KOR' },
     { id: 'CZE', code: 'CZE', name: 'Chequia',          confederation: 'UEFA',     group: 'A', world_ranking: 40, appearances: 10, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CZE' },
     { id: 'RSA', code: 'RSA', name: 'Sudáfrica',        confederation: 'CAF',      group: 'A', world_ranking: 60, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/RSA' },
-    // ── GRUPO B ──
+
     { id: 'CAN', code: 'CAN', name: 'Canadá',           confederation: 'CONCACAF', group: 'B', world_ranking: 47, appearances: 2,  host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CAN' },
     { id: 'BIH', code: 'BIH', name: 'Bosnia y Herzegovina', confederation: 'UEFA', group: 'B', world_ranking: 62, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BIH' },
     { id: 'QAT', code: 'QAT', name: 'Catar',            confederation: 'AFC',      group: 'B', world_ranking: 58, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/QAT' },
     { id: 'SUI', code: 'SUI', name: 'Suiza',            confederation: 'UEFA',     group: 'B', world_ranking: 19, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SUI' },
-    // ── GRUPO C ──
+
     { id: 'HAI', code: 'HAI', name: 'Haití',            confederation: 'CONCACAF', group: 'C', world_ranking: 83, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/HAI' },
     { id: 'BRA', code: 'BRA', name: 'Brasil',           confederation: 'CONMEBOL', group: 'C', world_ranking: 6,  appearances: 23, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BRA' },
     { id: 'SCO', code: 'SCO', name: 'Escocia',          confederation: 'UEFA',     group: 'C', world_ranking: 39, appearances: 8,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SCO' },
     { id: 'MAR', code: 'MAR', name: 'Marruecos',        confederation: 'CAF',      group: 'C', world_ranking: 14, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/MAR' },
-    // ── GRUPO D ──
+
     { id: 'AUS', code: 'AUS', name: 'Australia',        confederation: 'AFC',      group: 'D', world_ranking: 24, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/AUS' },
     { id: 'TUR', code: 'TUR', name: 'Turquía',          confederation: 'UEFA',     group: 'D', world_ranking: 26, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/TUR' },
     { id: 'USA', code: 'USA', name: 'EE. UU.',          confederation: 'CONCACAF', group: 'D', world_ranking: 11, appearances: 11, host: true,  flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/USA' },
     { id: 'PAR', code: 'PAR', name: 'Paraguay',         confederation: 'CONMEBOL', group: 'D', world_ranking: 64, appearances: 9,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/PAR' },
-    // ── GRUPO E ──
+
     { id: 'CIV', code: 'CIV', name: 'Costa de Marfil', confederation: 'CAF',      group: 'E', world_ranking: 52, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CIV' },
     { id: 'GER', code: 'GER', name: 'Alemania',         confederation: 'UEFA',     group: 'E', world_ranking: 12, appearances: 20, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/GER' },
     { id: 'CUW', code: 'CUW', name: 'Curazao',          confederation: 'CONCACAF', group: 'E', world_ranking: 90, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CUW' },
     { id: 'ECU', code: 'ECU', name: 'Ecuador',          confederation: 'CONMEBOL', group: 'E', world_ranking: 35, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ECU' },
-    // ── GRUPO F ──
+
     { id: 'JPN', code: 'JPN', name: 'Japón',            confederation: 'AFC',      group: 'F', world_ranking: 15, appearances: 8,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/JPN' },
     { id: 'NED', code: 'NED', name: 'Países Bajos',     confederation: 'UEFA',     group: 'F', world_ranking: 7,  appearances: 11, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NED' },
     { id: 'SWE', code: 'SWE', name: 'Suecia',           confederation: 'UEFA',     group: 'F', world_ranking: 22, appearances: 12, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SWE' },
     { id: 'TUN', code: 'TUN', name: 'Túnez',            confederation: 'CAF',      group: 'F', world_ranking: 31, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/TUN' },
-    // ── GRUPO G ──
+
     { id: 'EGY', code: 'EGY', name: 'Egipto',           confederation: 'CAF',      group: 'G', world_ranking: 34, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/EGY' },
     { id: 'NZL', code: 'NZL', name: 'Nueva Zelanda',    confederation: 'OFC',      group: 'G', world_ranking: 97, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NZL' },
     { id: 'IRN', code: 'IRN', name: 'RI de Irán',       confederation: 'AFC',      group: 'G', world_ranking: 21, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/IRN' },
     { id: 'BEL', code: 'BEL', name: 'Bélgica',          confederation: 'UEFA',     group: 'G', world_ranking: 3,  appearances: 14, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/BEL' },
-    // ── GRUPO H ──
+
     { id: 'URU', code: 'URU', name: 'Uruguay',          confederation: 'CONMEBOL', group: 'H', world_ranking: 16, appearances: 14, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/URU' },
     { id: 'CPV', code: 'CPV', name: 'Islas de Cabo Verde', confederation: 'CAF',  group: 'H', world_ranking: 76, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CPV' },
     { id: 'KSA', code: 'KSA', name: 'Arabia Saudí',     confederation: 'AFC',      group: 'H', world_ranking: 56, appearances: 6,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/KSA' },
     { id: 'ESP', code: 'ESP', name: 'España',            confederation: 'UEFA',     group: 'H', world_ranking: 5,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ESP' },
-    // ── GRUPO I ──
+
     { id: 'SEN', code: 'SEN', name: 'Senegal',          confederation: 'CAF',      group: 'I', world_ranking: 20, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/SEN' },
     { id: 'NOR', code: 'NOR', name: 'Noruega',          confederation: 'UEFA',     group: 'I', world_ranking: 18, appearances: 3,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/NOR' },
     { id: 'IRQ', code: 'IRQ', name: 'Irak',             confederation: 'AFC',      group: 'I', world_ranking: 64, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/IRQ' },
     { id: 'FRA', code: 'FRA', name: 'Francia',          confederation: 'UEFA',     group: 'I', world_ranking: 2,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/FRA' },
-    // ── GRUPO J ──
+
     { id: 'ALG', code: 'ALG', name: 'Argelia',          confederation: 'CAF',      group: 'J', world_ranking: 28, appearances: 5,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ALG' },
     { id: 'JOR', code: 'JOR', name: 'Jordania',         confederation: 'AFC',      group: 'J', world_ranking: 74, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/JOR' },
     { id: 'ARG', code: 'ARG', name: 'Argentina',        confederation: 'CONMEBOL', group: 'J', world_ranking: 1,  appearances: 18, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ARG' },
     { id: 'AUT', code: 'AUT', name: 'Austria',          confederation: 'UEFA',     group: 'J', world_ranking: 27, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/AUT' },
-    // ── GRUPO K ──
+
     { id: 'COL', code: 'COL', name: 'Colombia',         confederation: 'CONMEBOL', group: 'K', world_ranking: 10, appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/COL' },
     { id: 'COD', code: 'COD', name: 'RD Congo',         confederation: 'CAF',      group: 'K', world_ranking: 73, appearances: 2,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/COD' },
     { id: 'POR', code: 'POR', name: 'Portugal',         confederation: 'UEFA',     group: 'K', world_ranking: 8,  appearances: 9,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/POR' },
     { id: 'UZB', code: 'UZB', name: 'Uzbekistán',       confederation: 'AFC',      group: 'K', world_ranking: 70, appearances: 1,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/UZB' },
-    // ── GRUPO L ──
+
     { id: 'CRO', code: 'CRO', name: 'Croacia',          confederation: 'UEFA',     group: 'L', world_ranking: 9,  appearances: 7,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/CRO' },
     { id: 'ENG', code: 'ENG', name: 'Inglaterra',       confederation: 'UEFA',     group: 'L', world_ranking: 4,  appearances: 16, host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/ENG' },
     { id: 'GHA', code: 'GHA', name: 'Ghana',            confederation: 'CAF',      group: 'L', world_ranking: 55, appearances: 4,  host: false, flag_url: 'https://api.fifa.com/api/v3/picture/flags-sq-5/GHA' },
@@ -832,9 +819,7 @@ const MOCK_DATA = {
   ]
 };
 
-/**
- * Petición con Timeout utilizando AbortController (2.5s por defecto para máxima agilidad)
- */
+
 async function fetchWithTimeout(url, timeoutMs = 2500) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -852,9 +837,7 @@ async function fetchWithTimeout(url, timeoutMs = 2500) {
   }
 }
 
-/**
- * Ejecuta una petición HTTP deduplicando solicitudes idénticas en vuelo (Request Coalescing)
- */
+
 async function executeApiFetch(cleanEndpoint) {
   if (IN_FLIGHT_REQUESTS.has(cleanEndpoint)) {
     console.log(`[Deduplication HIT] Reutilizando petición en vuelo para: ${cleanEndpoint}`);
@@ -874,12 +857,10 @@ async function executeApiFetch(cleanEndpoint) {
   return fetchPromise;
 }
 
-/**
- * Revalida un endpoint en segundo plano sin bloquear la interfaz
- */
+
 function revalidateInBackground(cleanEndpoint, cacheKey) {
-  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback 
-    ? window.requestIdleCallback 
+  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback
+    ? window.requestIdleCallback
     : (fn) => setTimeout(fn, 150);
 
   scheduler(async () => {
@@ -897,16 +878,12 @@ function revalidateInBackground(cleanEndpoint, cacheKey) {
   });
 }
 
-/**
- * Petición asíncrona optimizada con Caché en Memoria (RAM), Stale-While-Revalidate (SWR),
- * Deduplicación de Peticiones en Vuelo y Fallback Instantáneo (<100ms)
- */
+
 export async function fetchWithCache(endpoint, forceRefresh = false) {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
   const cacheKey = `fifa_cache_${cleanEndpoint.replace(/[^a-zA-Z0-9]/g, '_')}`;
   const now = Date.now();
 
-  // 1. RAM Cache HIT (0ms)
   if (!forceRefresh && MEMORY_CACHE.has(cleanEndpoint)) {
     const cached = MEMORY_CACHE.get(cleanEndpoint);
     if (now - cached.timestamp < API_CONFIG.CACHE_TTL && cached.data) {
@@ -915,7 +892,6 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
     }
   }
 
-  // 2. LocalStorage HIT & RAM Warming
   let existingCacheData = null;
   const rawLocalStorage = localStorage.getItem(cacheKey);
   if (rawLocalStorage) {
@@ -934,15 +910,13 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
     } catch (e) {}
   }
 
-  // 3. Stale-While-Revalidate (SWR): Si tenemos datos de caché anteriores y no se forzó refresco,
-  // responder INMEDIATAMENTE (0ms) y revalidar en segundo plano
+
   if (existingCacheData && !forceRefresh) {
     console.log(`[SWR HIT 0ms] Sirviendo datos en caché mientras se revalida en segundo plano: ${cleanEndpoint}`);
     revalidateInBackground(cleanEndpoint, cacheKey);
     return existingCacheData;
   }
 
-  // 4. Intentar petición de red fresca con deduplicación
   const networkData = await executeApiFetch(cleanEndpoint);
 
   if (networkData !== null) {
@@ -954,30 +928,27 @@ export async function fetchWithCache(endpoint, forceRefresh = false) {
     return networkData;
   }
 
-  // 5. Fallback 1: Servir datos de la caché local anterior si existía (incluso si era obsoleta)
   if (existingCacheData) {
     console.warn(`[Fallback Caché Stale] Sirviendo datos previos para ${cleanEndpoint}`);
     return existingCacheData;
   }
 
-  // 6. Fallback 2: Servir MOCK_DATA instantáneamente si el servidor tarda por cold start
   let rootEndpoint = cleanEndpoint.split('?')[0].split('/')[0];
   if (rootEndpoint === 'noticias') rootEndpoint = 'news';
   if (rootEndpoint === 'partidos') rootEndpoint = 'matches';
   if (rootEndpoint === 'clasificacion') rootEndpoint = 'standings';
   if (rootEndpoint === 'eliminatorias') rootEndpoint = 'knockout';
   if (rootEndpoint === 'torneos') rootEndpoint = 'tournaments';
+  if (rootEndpoint === 'events') rootEndpoint = 'tournaments';
 
   const mockFallback = MOCK_DATA[rootEndpoint] || MOCK_DATA.news || [];
   console.warn(`[Fallback Mock Instantáneo <100ms] Cargando MOCK_DATA para '${rootEndpoint}'`);
-  
-  // Revalidar en segundo plano para calentar la instancia de Render si estaba dormida
+
   revalidateInBackground(cleanEndpoint, cacheKey);
 
   return mockFallback;
 }
 
-// Curated high-fidelity mock detailed matches data
 const MATCH_DETAILS_MOCK = {
   'm1': {
     id: 'm1',
@@ -1058,9 +1029,7 @@ const MATCH_DETAILS_MOCK = {
   }
 };
 
-/**
- * Fetch detailed match by ID using LocalStorage strategy
- */
+
 export async function getMatchById(id = 'm1', forceRefresh = false) {
   try {
     const data = await fetchWithCache(`matches/${id}`, forceRefresh);
@@ -1095,16 +1064,12 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
   return detail;
 }
 
-/**
- * Normaliza detalle de partido (/v1/matches/{id})
- * Mapea los campos reales de la API: chronology, statistics, line_ups, highlight
- */
+
 function normalizeMatchDetail(raw, requestedId) {
   const item = raw?.data || raw?.match || raw;
   const base = normalizeMatch(item);
   if (!base) return null;
 
-  // --- Cronología (events) ---
   const chronology = Array.isArray(item.chronology) ? item.chronology : [];
   const timeline = chronology
     .sort((a, b) => (b.time || 0) - (a.time || 0)) // más reciente primero
@@ -1137,11 +1102,10 @@ function normalizeMatchDetail(raw, requestedId) {
       };
     });
 
-  // --- Estadísticas ---
   let stats = null;
   const rawStats = Array.isArray(item.statistics) ? item.statistics : [];
   if (rawStats.length > 0) {
-    // La API devuelve grupos de estadísticas; las aplanamos en el objeto que espera renderStats
+
     const allStats = [];
     rawStats.forEach(group => {
       if (Array.isArray(group.statistics)) allStats.push(...group.statistics);
@@ -1168,7 +1132,6 @@ function normalizeMatchDetail(raw, requestedId) {
     };
   }
 
-  // --- Alineaciones ---
   let lineups = null;
   if (item.line_ups?.home && item.line_ups?.away) {
     const mapTeam = (side) => {
@@ -1192,7 +1155,6 @@ function normalizeMatchDetail(raw, requestedId) {
     lineups = { team1: mapTeam('home'), team2: mapTeam('away') };
   }
 
-  // --- Highlights ---
   let highlights = null;
   const rawHighlights = Array.isArray(item.highlight) ? item.highlight : [];
   if (rawHighlights.length > 0) {
@@ -1213,7 +1175,6 @@ function normalizeMatchDetail(raw, requestedId) {
     };
   }
 
-  // --- Ciudad y Estadio ---
   const city = item.city || {};
   const stadium = city.stadium?.name || '';
   const cityName = city.name || base.city || '';
@@ -1234,9 +1195,7 @@ function normalizeMatchDetail(raw, requestedId) {
   };
 }
 
-/**
- * Resuelve URL de imagen de noticia desde la API v1 u otros formatos
- */
+
 function resolveNewsImage(item) {
   const raw = item.image_url ?? item.image ?? item.imagen ?? item.urlImagen ?? item.img ?? '';
   if (!raw || typeof raw !== 'string') return '';
@@ -1247,7 +1206,6 @@ function resolveNewsImage(item) {
   if (url.startsWith('//')) url = `https:${url}`;
   if (url.startsWith('/')) url = `https://wc-api-u378.onrender.com${url}`;
 
-  // Optimiza imágenes de digitalhub.fifa.com para carga más rápida y estable
   if (/digitalhub\.fifa\.com/i.test(url) && !/[?&]io=/i.test(url)) {
     const separator = url.includes('?') ? '&' : '?';
     url = `${url}${separator}io=transform:fill,width:800,height:450`;
@@ -1263,9 +1221,7 @@ function formatNewsDate(value) {
   return parsed.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-/**
- * Resuelve URL oficial de la noticia en fifa.com
- */
+
 function resolveNewsUrl(item) {
   const raw = item?.url ?? item?.link ?? item?.source_url ?? item?.article_url ?? item?.href ?? '';
   if (!raw || typeof raw !== 'string') return '';
@@ -1276,16 +1232,13 @@ function resolveNewsUrl(item) {
   if (url.startsWith('//')) url = `https:${url}`;
   if (url.startsWith('/')) url = `https://www.fifa.com${url}`;
 
-  // Corrige dobles barras típicas de la API (fifa.com//es/...)
   url = url.replace(/^(https?:\/\/[^/]+)\/{2,}/i, '$1/');
 
   if (!/^https?:\/\//i.test(url)) return '';
   return url;
 }
 
-/**
- * Normaliza noticias desde distintos formatos de la API
- */
+
 function normalizeNewsList(raw) {
   if (!raw) return [];
 
@@ -1307,9 +1260,7 @@ function normalizeNewsList(raw) {
   }));
 }
 
-/**
- * Normaliza el detalle de una noticia por ID
- */
+
 function normalizeNewsDetail(raw, requestedId) {
   if (!raw) return null;
   const item = raw.data || raw.news || raw;
@@ -1326,9 +1277,7 @@ function normalizeNewsDetail(raw, requestedId) {
   };
 }
 
-/**
- * Mapeo de códigos de países (ISO-2 y FIFA ISO-3) para normalizar partidos API
- */
+
 const COUNTRY_NAMES = {
   MX: 'México', MEX: 'México',
   AR: 'Argentina', ARG: 'Argentina',
@@ -1392,7 +1341,7 @@ const COUNTRY_NAMES = {
   SCO: 'Escocia', SCT: 'Escocia'
 };
 
-/** Ciudades anfitrionas según /v1/cities (id API) */
+
 const CITY_META = {
   1: { name: 'Ciudad de México', stadium: 'Estadio Azteca' },
   2: { name: 'Nueva York / Nueva Jersey', stadium: 'MetLife Stadium' },
@@ -1416,7 +1365,7 @@ const CITY_NAMES = Object.fromEntries(
   Object.entries(CITY_META).map(([id, meta]) => [Number(id), meta.name])
 );
 
-/** Rondas numéricas de la API FIFA WC 2026 */
+
 const ROUND_NAMES = {
   1: 'Fase de Grupos',
   2: 'Fase de Grupos',
@@ -1464,27 +1413,24 @@ function mapMatchStatus(rawStatus) {
   return { status: 'Programado', statusLabel: 'Programado', statusClass: 'scheduled' };
 }
 
-/**
- * Normaliza un partido individual desde el JSON exacto de la API (/v1/matches)
- */
+
 function normalizeMatch(match) {
   if (!match) return null;
 
-  // El endpoint de lista usa home_id/away_id; el endpoint de detalle usa home_team.id/away_team.id
   const isApiFormat = match.home_id !== undefined || match.home_score !== undefined || match.city_id !== undefined;
   const isDetailFormat = match.home_team !== undefined || match.away_team !== undefined;
 
   let homeCode, awayCode;
   if (isDetailFormat) {
-    // Endpoint /v1/matches/{id}: usa home_team.id y away_team.id
+
     homeCode = String(match.home_team?.id || match.home_id || match.team1?.code || 'TBD').toUpperCase();
     awayCode = String(match.away_team?.id || match.away_id || match.team2?.code || 'TBD').toUpperCase();
   } else if (isApiFormat) {
-    // Endpoint /v1/matches: usa home_id y away_id directamente
+
     homeCode = String(match.home_id || match.team1?.code || 'TBD').toUpperCase();
     awayCode = String(match.away_id || match.team2?.code || 'TBD').toUpperCase();
   } else {
-    // Formato mock / legacy
+
     homeCode = String(match.team1?.code || match.homeCode || 'TBD').toUpperCase();
     awayCode = String(match.team2?.code || match.awayCode || 'TBD').toUpperCase();
   }
@@ -1580,9 +1526,7 @@ function normalizeMatchesList(rawData) {
     .filter(Boolean);
 }
 
-/**
- * Descarta partidos fuera del calendario de grupos (jun–jul), excepto fases finales
- */
+
 function isValidApiMatch(match) {
   if (!match) return false;
 
@@ -1593,9 +1537,7 @@ function isValidApiMatch(match) {
   return true;
 }
 
-/**
- * Resuelve URL de bandera desde la API de equipos
- */
+
 function resolveTeamFlagUri(raw, code) {
   const rawFlag = raw.flag_url || raw.flag_uri || raw.flag || raw.bandera || '';
   let flagUri = typeof rawFlag === 'string' ? rawFlag.trim() : '';
@@ -1610,9 +1552,7 @@ function resolveTeamFlagUri(raw, code) {
   return flagUri;
 }
 
-/**
- * Normaliza un equipo/selección individual desde la API (/v1/teams y /v1/teams/{id})
- */
+
 function normalizeTeam(item) {
   if (!item) return null;
   const raw = item.data || item.team || item;
@@ -1644,9 +1584,7 @@ function normalizeTeam(item) {
   };
 }
 
-/**
- * Helper genérico para intentar cargar datos locales JSON antes del endpoint de la API
- */
+
 async function fetchLocalData(filename, fallbackEndpoint, forceRefresh = false) {
   try {
     const isHtmlDir = window.location.pathname.includes('/html/');
@@ -1662,9 +1600,7 @@ async function fetchLocalData(filename, fallbackEndpoint, forceRefresh = false) 
   return fetchWithCache(fallbackEndpoint, forceRefresh);
 }
 
-/**
- * Obtiene el listado completo de equipos/selecciones (/v1/teams)
- */
+
 export async function getTeams(forceRefresh = false) {
   try {
     const data = await fetchLocalData('teams.json', 'teams', forceRefresh);
@@ -1677,9 +1613,7 @@ export async function getTeams(forceRefresh = false) {
   }
 }
 
-/**
- * Obtiene el detalle de un equipo por ID (/v1/teams/{id})
- */
+
 export async function getTeamById(id, forceRefresh = false) {
   try {
     const teamsList = await getTeams(forceRefresh);
@@ -1693,9 +1627,7 @@ export async function getTeamById(id, forceRefresh = false) {
   return normalizeTeam(mockItem);
 }
 
-/**
- * Obtiene el listado completo de noticias (/v1/news)
- */
+
 export async function getNews(forceRefresh = false) {
   try {
     const data = await fetchWithCache('news', forceRefresh);
@@ -1706,9 +1638,7 @@ export async function getNews(forceRefresh = false) {
   }
 }
 
-/**
- * Obtiene el detalle de una noticia por ID (/v1/news/{id})
- */
+
 export async function getNewsById(id, forceRefresh = false) {
   try {
     const data = await fetchWithCache(`news/${id}`, forceRefresh);
@@ -1720,11 +1650,7 @@ export async function getNewsById(id, forceRefresh = false) {
   }
 }
 
-/**
- * Obtiene la lista de partidos con opción de filtros por Query Params (/v1/matches)
- * @param {Object} filters - Objeto con filtros opcionales { city_id, round, status, group, home_id, away_id, from, to }
- * @param {boolean} forceRefresh - Forzar actualización ignorando caché
- */
+
 export async function getMatches(filters = {}, forceRefresh = false) {
   try {
     const rawData = await fetchLocalData('matches.json', 'matches', forceRefresh);
@@ -1732,7 +1658,7 @@ export async function getMatches(filters = {}, forceRefresh = false) {
     if (!normalized || normalized.length === 0) {
       normalized = normalizeMatchesList(MOCK_DATA.matches);
     }
-    // Aplicar filtros si fueron provistos
+
     if (filters && typeof filters === 'object') {
       if (filters.city_id && filters.city_id !== 'all') normalized = normalized.filter(m => String(m.cityId) === String(filters.city_id));
       if (filters.round && filters.round !== 'all') normalized = normalized.filter(m => String(m.round).toLowerCase() === String(filters.round).toLowerCase());
@@ -1748,12 +1674,10 @@ export async function getMatches(filters = {}, forceRefresh = false) {
   }
 }
 
-/**
- * Normaliza un ítem del Ranking FIFA Mundial (/v1/ranking)
- */
+
 function normalizeRankingItem(item, idx) {
   if (!item) return null;
-  
+
   const rawTeam = item.team || item;
 
   const code = rawTeam.id || rawTeam.code || rawTeam.isoCode || 'FIFA';
@@ -1763,10 +1687,10 @@ function normalizeRankingItem(item, idx) {
 
   const pos = item.rank !== undefined && item.rank !== null ? Number(item.rank) : (item.pos || idx + 1);
   const previousRank = item.previous_rank !== undefined && item.previous_rank !== null ? Number(item.previous_rank) : (item.previousRank ?? pos);
-  
+
   const pointsVal = item.points !== undefined && item.points !== null ? Number(item.points) : (pos ? Math.max(1200, 2000 - pos * 15) : 0);
   const previousPointsVal = item.previous_points !== undefined && item.previous_points !== null ? Number(item.previous_points) : pointsVal;
-  
+
   const worldRank = item.rank || rawTeam.world_ranking || pos;
   const appearances = rawTeam.appearances || rawTeam.participaciones || item.appearances || item.titles || 0;
   const titles = item.titles ?? rawTeam.titles ?? rawTeam.titulos ?? 0;
@@ -1788,9 +1712,7 @@ function normalizeRankingItem(item, idx) {
   };
 }
 
-/**
- * Obtiene el Ranking FIFA Mundial (/v1/ranking)
- */
+
 export async function getRanking(forceRefresh = false) {
   try {
     const data = await fetchLocalData('ranking.json', 'ranking', forceRefresh);
@@ -1803,9 +1725,7 @@ export async function getRanking(forceRefresh = false) {
   }
 }
 
-/**
- * Normaliza una ciudad anfitriona individual (/v1/cities y /v1/cities/{id})
- */
+
 function resolveCountryDisplay(rawCountry) {
   const value = String(rawCountry || '').trim();
   const map = {
@@ -1912,9 +1832,7 @@ function normalizeCity(item) {
   };
 }
 
-/**
- * Obtiene el listado completo de ciudades anfitrionas (/v1/cities)
- */
+
 export async function getCities(forceRefresh = false) {
   try {
     let data = await fetchWithCache('cities', forceRefresh);
@@ -1939,9 +1857,7 @@ export async function getCities(forceRefresh = false) {
   }
 }
 
-/**
- * Obtiene el detalle de una ciudad por ID (/v1/cities/{id})
- */
+
 export async function getCityById(id, forceRefresh = false) {
   const cleanId = String(id || '').trim();
   if (!cleanId) return null;
@@ -1984,9 +1900,7 @@ export async function getCityById(id, forceRefresh = false) {
   return mockItem ? normalizeCity(mockItem) : null;
 }
 
-/**
- * Normaliza URLs de imágenes FIFA / API
- */
+
 function resolveFifaImageUrl(raw) {
   if (!raw || typeof raw !== 'string') return '';
   let url = raw.trim();
@@ -2120,9 +2034,7 @@ export async function getSound(forceRefresh = false) {
   }
 }
 
-/**
- * Normaliza un ítem individual de clasificación de equipo
- */
+
 function normalizeStandingItem(item, idx) {
   if (!item) return null;
   const rawTeam = item.team || item;
@@ -2157,9 +2069,7 @@ function normalizeStandingItem(item, idx) {
   };
 }
 
-/**
- * Normaliza la respuesta completa de clasificaciones (/v1/standings)
- */
+
 function normalizeStandingsData(rawData) {
   if (!rawData) return null;
 
@@ -2202,9 +2112,7 @@ function normalizeStandingsData(rawData) {
   return null;
 }
 
-/**
- * Obtiene la tabla completa de posiciones por grupos (/v1/standings)
- */
+
 export async function getStandings(forceRefresh = false) {
   try {
     const data = await fetchWithCache('standings', forceRefresh);
@@ -2218,9 +2126,7 @@ export async function getStandings(forceRefresh = false) {
   return normalizeStandingsData(MOCK_DATA.standings);
 }
 
-/**
- * Obtiene las posiciones de un grupo específico (/v1/standings/{group}/group)
- */
+
 export async function getStandingsByGroup(groupLetter, forceRefresh = false) {
   const cleanGroup = String(groupLetter || 'A').toUpperCase().replace('GRUPO', '').trim();
   try {
@@ -2236,9 +2142,7 @@ export async function getStandingsByGroup(groupLetter, forceRefresh = false) {
   return found ? found.teams : [];
 }
 
-/**
- * Normaliza un ítem individual de récords/archivos del torneo (/v1/records)
- */
+
 function normalizeRecordItem(item, idx) {
   if (!item) return null;
   const raw = item.data || item;
@@ -2249,7 +2153,6 @@ function normalizeRecordItem(item, idx) {
   let rawUrl = String(raw.url || raw.video_url || raw.link || '').trim();
   let rawThumb = raw.thumbnail_url || raw.thumbnail || raw.image || raw.imagen || '';
 
-  // Sanear placeholder "string" de Swagger en la API si aplica
   if (title === 'string' || !title) title = `Highlight del Partido #${idx + 1}`;
   if (subtitle === 'string') subtitle = 'Momento destacado de la Copa Mundial de la FIFA 2026';
   if (rawUrl === 'string') rawUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
@@ -2267,7 +2170,6 @@ function normalizeRecordItem(item, idx) {
     thumbnail = FALLBACK_POSTERS[idx % FALLBACK_POSTERS.length];
   }
 
-  // Determinar categoría inteligente basada en el título y subtítulo real de la API
   let category = 'Highlights';
   const combinedText = `${title} ${subtitle}`.toLowerCase();
   if (combinedText.includes('goal') || combinedText.includes('gol')) {
@@ -2293,9 +2195,7 @@ function normalizeRecordItem(item, idx) {
   };
 }
 
-/**
- * Obtiene el listado completo de récords/archivos del torneo (/v1/records)
- */
+
 export async function getRecords(forceRefresh = false) {
   async function fetchRecords() {
     try {
@@ -2322,7 +2222,95 @@ export async function getRecords(forceRefresh = false) {
   return MOCK_DATA.records.map(normalizeRecordItem);
 }
 
-// Public API Methods
+function extractYearFromText(text) {
+  const match = String(text || '').match(/\b(20\d{2})\b/);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function inferEventStatus(year) {
+  if (!year) return 'Próximo';
+  const currentYear = new Date().getFullYear();
+  if (year <= currentYear + 1) return 'Próximo';
+  return 'Futuro';
+}
+
+function inferEventLocation(title, description) {
+  const combined = `${title} ${description}`;
+
+  const afterFifa = String(title).match(/de la FIFA\s+(.+?)\s+20\d{2}/i);
+  if (afterFifa) return afterFifa[1].replace(/™/g, '').trim();
+
+  if (/españa|marruecos y portugal|2030/i.test(combined)) return 'España, Marruecos y Portugal';
+  if (/brasil/i.test(combined)) return 'Brasil';
+  if (/polonia/i.test(combined)) return 'Polonia';
+  if (/catar|qatar/i.test(combined)) return 'Catar';
+  if (/marruecos|morocco/i.test(combined)) return 'Marruecos';
+
+  return 'Por confirmar';
+}
+
+function normalizeEventItem(item) {
+  if (!item) return null;
+
+  const title = String(item.title || '').trim();
+  if (!title) return null;
+
+  const description = String(item.description || item.desc || '').trim();
+  const year = extractYearFromText(title) || extractYearFromText(description);
+
+  return {
+    id: item.id,
+    title,
+    description,
+    url: item.url || item.officialUrl || '',
+    image_url: item.image_url || item.image || '',
+    org: item.org || 'FIFA',
+    status: item.status || inferEventStatus(year),
+    date: item.date || item.dates || (year ? String(year) : 'Por confirmar'),
+    location: item.location || inferEventLocation(title, description)
+  };
+}
+
+function normalizeTournamentItem(item) {
+  const normalized = normalizeEventItem(item);
+  if (!normalized) return null;
+
+  return {
+    ...normalized,
+    dates: item.dates || normalized.date,
+    teams: item.teams || 'Varios equipos',
+    desc: item.desc || normalized.description,
+    officialUrl: item.officialUrl || normalized.url,
+    icon: item.icon || ''
+  };
+}
+
+export async function getEvents(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('events', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.events || data?.data || []);
+    const normalized = list.map(normalizeEventItem).filter(Boolean);
+    if (normalized.length > 0) return normalized;
+  } catch (error) {
+    console.warn('[getEvents] Fallback a MOCK_DATA.tournaments:', error);
+  }
+
+  return MOCK_DATA.tournaments.map(normalizeEventItem).filter(Boolean);
+}
+
+export async function getTournaments(forceRefresh = false) {
+  try {
+    const data = await fetchWithCache('torneos', forceRefresh);
+    const list = Array.isArray(data) ? data : (data?.tournaments || data?.torneos || data?.data || []);
+    const normalized = list.map(normalizeTournamentItem).filter(Boolean);
+    if (normalized.length > 0) return normalized;
+  } catch (error) {
+    console.warn('[getTournaments] Fallback a MOCK_DATA.tournaments:', error);
+  }
+
+  return MOCK_DATA.tournaments.map(normalizeTournamentItem).filter(Boolean);
+}
+
 export async function getODS() {
   return [
     {
@@ -2410,8 +2398,8 @@ export const FIFA_API = {
   getRecords: (forceRefresh = false) => getRecords(forceRefresh),
   getRecordsList: (forceRefresh = false) => getRecords(forceRefresh),
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
-  getEvents: () => fetchWithCache('events'),
-  getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
+  getEvents: (forceRefresh = false) => getEvents(forceRefresh),
+  getTournaments: (forceRefresh = false) => getTournaments(forceRefresh),
   getODS: () => getODS(),
   getBall: (forceRefresh = false) => getBall(forceRefresh),
   getMascots: (forceRefresh = false) => getMascots(forceRefresh),
@@ -2423,12 +2411,10 @@ export const FIFA_API = {
   }
 };
 
-/**
- * Precarga de forma inteligente en segundo plano los datos de la API para navegar a velocidad luz (0ms)
- */
+
 export function prefetchEssentialData() {
-  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback 
-    ? window.requestIdleCallback 
+  const scheduler = typeof window !== 'undefined' && window.requestIdleCallback
+    ? window.requestIdleCallback
     : (fn) => setTimeout(fn, 200);
 
   scheduler(() => {
@@ -2439,7 +2425,6 @@ export function prefetchEssentialData() {
   });
 }
 
-// Inicialización automática de precarga al cargar el módulo API
 if (typeof window !== 'undefined') {
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     setTimeout(prefetchEssentialData, 300);

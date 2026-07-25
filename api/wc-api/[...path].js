@@ -1,7 +1,3 @@
-/**
- * Proxy same-origin para la API en Render (evita CORS en el navegador).
- * Ruta: /api/wc-api/{endpoint} → https://wc-api-u378.onrender.com/wc-api/api/v1/{endpoint}
- */
 const RENDER_API_BASE = 'https://wc-api-u378.onrender.com/wc-api/api/v1';
 
 export default async function handler(req, res) {

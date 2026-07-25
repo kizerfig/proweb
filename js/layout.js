@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - SHARED LAYOUT
-   js/layout.js
-   ========================================== */
-
 import { initNavbar } from './navbar.js';
 
 const MORE_NAV_ITEMS = [

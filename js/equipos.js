@@ -1,20 +1,11 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - TEAMS & TEAM DETAIL MODULE
-   js/equipos.js & js/teams.js
-   ========================================== */
-
 import { FIFA_API, fetchWithCache } from './api.js';
 import { initLayout } from './layout.js';
 
 let allTeams = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('⚽ FIFA World Cup 2026 - Módulo de Equipos Inicializado');
-  
-  // 1. Initialize mobile navbar
-  initLayout();
-
-  // 2. Check current page view
+  console.log('⚽ FIFA World Cup 2026 - Módulo de Equipos Inicializado');
+  initLayout();
   if (document.getElementById('teams-grid-container') || document.querySelector('.teams-grid')) {
     setupFilterListeners();
     loadTeams();
@@ -23,23 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/**
- * Obtener todos los equipos (Exportable según requerimiento)
- */
+
 export async function getTeamsList(forceRefresh = false) {
   return await FIFA_API.getTeams(forceRefresh);
 }
 
-/**
- * Obtener equipo detallado por ID (Exportable según requerimiento)
- */
+
 export async function getTeamById(id, forceRefresh = false) {
   return await FIFA_API.getTeamById(id, forceRefresh);
 }
 
-/**
- * Carga y renderiza el listado completo de equipos en equipos.html
- */
+
 async function loadTeams() {
   const container = document.getElementById('teams-grid-container') || document.querySelector('.teams-grid');
   if (!container) return;
@@ -64,9 +49,7 @@ async function loadTeams() {
   }
 }
 
-/**
- * Configura los eventos de filtrado por Confederación, Grupo y Búsqueda por texto
- */
+
 function setupFilterListeners() {
   const confSelect = document.getElementById('filter-confederation');
   const groupSelect = document.getElementById('filter-team-group');
@@ -80,8 +63,8 @@ function setupFilterListeners() {
     const filtered = allTeams.filter(team => {
       const matchConf = confVal === 'all' || team.confederation === confVal;
       const matchGroup = groupVal === 'all' || normalizeGroupLabel(team.group) === normalizeGroupLabel(groupVal);
-      const matchSearch = !searchVal || 
-        team.name.toLowerCase().includes(searchVal) || 
+      const matchSearch = !searchVal ||
+        team.name.toLowerCase().includes(searchVal) ||
         team.code.toLowerCase().includes(searchVal);
 
       return matchConf && matchGroup && matchSearch;
@@ -123,9 +106,7 @@ function getGroupSortKey(groupName) {
   return letter ? letter.charCodeAt(0) : 999;
 }
 
-/**
- * Rellena el selector de grupos con todos los grupos disponibles (A–L)
- */
+
 function populateGroupFilter(teams) {
   const groupSelect = document.getElementById('filter-team-group');
   if (!groupSelect) return;
@@ -149,9 +130,7 @@ function populateGroupFilter(teams) {
   }
 }
 
-/**
- * Escapa atributos HTML dinámicos
- */
+
 function escapeHtmlAttr(value) {
   return String(value || '')
     .replace(/&/g, '&amp;')
@@ -161,9 +140,7 @@ function escapeHtmlAttr(value) {
     .replace(/>/g, '&gt;');
 }
 
-/**
- * Renderiza bandera del equipo o fallback con código ISO
- */
+
 function renderTeamFlag(team, width, height, fontSize = '0.9rem') {
   if (team.flagUri) {
     return `<img src="${escapeHtmlAttr(team.flagUri)}" alt="${escapeHtmlAttr(team.name)}" class="team-flag-img" style="width: ${width}; height: ${height}; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); flex-shrink: 0;" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;flag-box&quot; style=&quot;width:${width};height:${height};font-weight:800;font-size:${fontSize};border-radius:4px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.08);border:1px solid var(--border-color);flex-shrink:0;&quot;>${escapeHtmlAttr(team.code)}</div>'" />`;
@@ -172,9 +149,7 @@ function renderTeamFlag(team, width, height, fontSize = '0.9rem') {
   return `<div class="flag-box" style="width: ${width}; height: ${height}; font-weight: 800; font-size: ${fontSize}; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); flex-shrink: 0;">${team.code}</div>`;
 }
 
-/**
- * Renderiza las tarjetas de equipo en la grilla
- */
+
 function renderTeams(container, teams) {
   if (!teams || teams.length === 0) {
     container.innerHTML = `
@@ -208,9 +183,7 @@ function renderTeams(container, teams) {
   `).join('');
 }
 
-/**
- * Carga el detalle del equipo en detalle-equipo.html
- */
+
 async function loadTeamDetailView() {
   const container = document.getElementById('team-detail-container');
   if (!container) return;
@@ -242,19 +215,17 @@ async function loadTeamDetailView() {
   }
 }
 
-/**
- * Renderiza la interfaz detallada de una selección
- */
+
 function renderTeamDetailHTML(container, team) {
   container.innerHTML = `
-    <!-- Top Back Navigation -->
+
     <div style="margin-bottom: 1.5rem;">
       <a href="equipos.html" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent-mint); text-decoration: none; font-weight: 600; font-size: 0.95rem;">
         &larr; Volver a Equipos
       </a>
     </div>
 
-    <!-- Team Hero Header -->
+
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 1.5rem;">
         ${renderTeamFlag(team, '72px', '50px', '1.5rem')}
@@ -267,7 +238,7 @@ function renderTeamDetailHTML(container, team) {
         </div>
       </div>
 
-      <!-- Quick Metrics -->
+
       <div style="display: flex; gap: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
         <div style="text-align: center;">
           <span style="font-size: 0.75rem; color: var(--text-secondary); display: block; text-transform: uppercase;">Ranking FIFA</span>
@@ -286,7 +257,7 @@ function renderTeamDetailHTML(container, team) {
       </div>
     </div>
 
-    <!-- Squad List Section -->
+
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem;">
       <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
         📋 Nómina Oficial / Convocados
@@ -318,18 +289,14 @@ function renderTeamDetailHTML(container, team) {
   `;
 }
 
-/**
- * Render Skeletons Loading List
- */
+
 function renderSkeletons(container, count = 6) {
   container.innerHTML = Array(count).fill(0).map(() => `
     <div class="skeleton" style="height: 140px; border-radius: var(--radius-md);"></div>
   `).join('');
 }
 
-/**
- * Render Detail Skeleton
- */
+
 function renderDetailSkeleton(container) {
   container.innerHTML = `
     <div class="skeleton" style="height: 200px; border-radius: var(--radius-lg); margin-bottom: 2rem;"></div>
@@ -337,9 +304,7 @@ function renderDetailSkeleton(container) {
   `;
 }
 
-/**
- * Render Error State
- */
+
 function renderErrorState(container, message) {
   container.innerHTML = `
     <div class="error-box" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">

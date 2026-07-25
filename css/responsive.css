@@ -1,12 +1,5 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - RESPONSIVE STYLES (responsive.css)
-   ========================================== */
-
-/* ------------------------------------------
-   1. MEDIA QUERY: TABLET & MOBILE NAVBAR (< 1199px)
-   ------------------------------------------ */
 @media screen and (max-width: 1199px) {
-  /* Header & Navbar Adaptation */
+
   .menu-toggle {
     display: flex;
   }
@@ -74,11 +67,9 @@
   }
 }
 
-/* ------------------------------------------
-   2. MEDIA QUERY: MOBILE (< 767px)
-   ------------------------------------------ */
+
 @media screen and (max-width: 767px) {
-  /* Layout Padding */
+
   .container {
     padding: 0 1rem;
   }
@@ -91,7 +82,7 @@
     font-size: 1.35rem;
   }
 
-  /* Hero Slider */
+
   .hero-slider-container {
     height: 380px;
   }
@@ -124,13 +115,13 @@
   .slider-arrow.prev { left: 0.5rem; }
   .slider-arrow.next { right: 0.5rem; }
 
-  /* News Section */
+
   .news-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
-  /* Matches Section */
+
   .match-card {
     padding: 1rem;
   }
@@ -156,7 +147,7 @@
     flex: 1 1 100%;
   }
 
-  /* Standings Group Grid */
+
   .group-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -186,13 +177,13 @@
     min-width: 100%;
   }
 
-  /* Events Grid */
+
   .events-grid {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 
-  /* Split Preview: Teams & Cities */
+
   .preview-split-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -208,7 +199,7 @@
     gap: 0.75rem;
   }
 
-  /* Explore Section */
+
   .explore-grid-featured {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -219,19 +210,19 @@
     gap: 1rem;
   }
 
-  /* ODS Section */
+
   .ods-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 
-  /* Footer */
+
   .footer-columns {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
 
-  /* Match Detail Responsive */
+
   .hero-scoreboard {
     gap: 1.25rem;
   }
@@ -265,7 +256,7 @@
     font-size: 0.65rem;
   }
 
-  /* Tournaments Page Responsive */
+
   .tournament-card {
     flex-direction: column;
     align-items: flex-start;
@@ -283,7 +274,7 @@
     margin-top: 0.25rem;
   }
 
-  /* Identity Page Responsive */
+
   .identity-grid-two {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -309,7 +300,7 @@
     padding: 1.5rem;
   }
 
-  /* Videos Page Responsive */
+
   .video-horizontal-card {
     flex-direction: column;
     align-items: flex-start;
@@ -327,9 +318,7 @@
   }
 }
 
-/* ------------------------------------------
-   2. MEDIA QUERY: TABLET (768px - 1023px)
-   ------------------------------------------ */
+
 @media screen and (min-width: 768px) and (max-width: 1023px) {
   .hero-slider-container {
     height: 420px;
@@ -389,9 +378,7 @@
   }
 }
 
-/* ------------------------------------------
-   4. MEDIA QUERY: DESKTOP NAVBAR (>= 1200px)
-   ------------------------------------------ */
+
 @media screen and (min-width: 1200px) {
   .main-nav {
     display: flex !important;
@@ -410,9 +397,7 @@
   }
 }
 
-/* ------------------------------------------
-   5. MEDIA QUERY: DESKTOP OTHER (>= 1024px)
-   ------------------------------------------ */
+
 @media screen and (min-width: 1024px) {
 
   .matches-grid-full {

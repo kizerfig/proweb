@@ -1,8 +1,3 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - STANDINGS & PHASES MODULE
- js/standings.js
- ========================================== */
-
 import { fetchWithCache } from './api.js';
 import { initLayout } from './layout.js';
 
@@ -18,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAll();
 });
 
-/* ═══════════════════════════ DATA LOADING ═══════════════════════════════ */
+
 
 async function loadAll() {
   const container = document.getElementById('group-grid-container');
@@ -29,9 +24,7 @@ async function loadAll() {
     const [rawTeams, rawMatches] = await Promise.all([
       fetchWithCache('teams'),
       fetchWithCache('matches')
-    ]);
-
-    // Build teams lookup map
+    ]);
     const teams = Array.isArray(rawTeams) ? rawTeams : (rawTeams?.teams || rawTeams?.data || []);
     teams.forEach(t => {
       const code = t.id || t.code;
@@ -46,9 +39,7 @@ async function loadAll() {
       };
     });
 
-    allMatches = Array.isArray(rawMatches) ? rawMatches : (rawMatches?.matches || rawMatches?.data || []);
-
-    // Build standings from real match results
+    allMatches = Array.isArray(rawMatches) ? rawMatches : (rawMatches?.matches || rawMatches?.data || []);
     allStandings = buildStandingsFromMatches(allMatches, teamsMap);
 
     if (!allStandings.length) {
@@ -65,12 +56,10 @@ async function loadAll() {
   }
 }
 
-/* ═══════════════════════════ STANDINGS BUILDER ══════════════════════════ */
+
 
 function buildStandingsFromMatches(matches, tmap) {
-  const groupStats = {};   // { groupLetter: { teamCode: stats } }
-
-  // Process group stage matches
+  const groupStats = {};   // { groupLetter: { teamCode: stats } }
   matches
     .filter(m => m.group && m.group !== '' && m.status === 'Ended')
     .forEach(m => {
@@ -110,11 +99,8 @@ function buildStandingsFromMatches(matches, tmap) {
         groupStats[g][m.away_id].draws++;
         groupStats[g][m.away_id].pts++;
       }
-    });
-
-  // Merge with teams fallback (for teams with 0 group matches in the API)
-  if (!Object.keys(groupStats).length) {
-    // No match data found — build from teamsMap with zeroed stats
+    });
+  if (!Object.keys(groupStats).length) {
     Object.values(tmap).forEach(t => {
       const g = t.group || 'X';
       if (!groupStats[g]) groupStats[g] = {};
@@ -122,9 +108,7 @@ function buildStandingsFromMatches(matches, tmap) {
         groupStats[g][t.code] = { pj:0,wins:0,draws:0,loss:0,gf:0,ga:0,gd:0,pts:0 };
       }
     });
-  }
-
-  // Build sorted groups
+  }
   return Object.keys(groupStats).sort().map(gId => {
     const teamsList = Object.entries(groupStats[gId]).map(([code, stats]) => {
       const info = tmap[code] || { code, name: code, flagUri: `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}`, host: false, worldRanking: 999 };
@@ -137,9 +121,7 @@ function buildStandingsFromMatches(matches, tmap) {
         ...stats,
         gd: stats.gf - stats.ga
       };
-    });
-
-    // Sort: pts desc → gd desc → gf desc → worldRanking asc
+    });
     teamsList.sort((a, b) =>
       (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf) || (a.worldRanking - b.worldRanking)
     );
@@ -147,17 +129,7 @@ function buildStandingsFromMatches(matches, tmap) {
 
     return { groupId: gId, groupName: `Grupo ${gId}`, teams: teamsList };
   });
-}
-
-/* ═══════════════════════════ KNOCKOUT BUILDER ═══════════════════════════ */
-
-// WC 2026 Round mapping (confirmed from API match data):
-// Round 6  → Dieciseisavos de Final / R32 (16 matches - main bracket)
-// Round 5  → Octavos de Final / R16 (8 matches - best 3rd place teams)
-// Round 27 → Cuartos de Final / QF  (4 matches)
-// Round 28 → Semifinales / SF       (2 matches)
-// Round 29 → FINAL                  (1 match - España 1-0 Argentina)
-// Round 50 → TERCER LUGAR           (1 match - Francia 4-6 Inglaterra)
+}
 
 function buildKnockoutRounds(matches) {
   const knockout = matches.filter(m => (!m.group || m.group === ''));
@@ -168,32 +140,20 @@ function buildKnockoutRounds(matches) {
     byRound[r].push(m);
   });
 
-  const rounds = [];
-
-  // 1. Round 6 = Dieciseisavos de Final (R32) — 16 main bracket matches
+  const rounds = [];
   const r32 = (byRound[6] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (r32.length) rounds.push({ id: 'r32', label: 'Dieciseisavos de Final', matches: r32, type: 'default' });
-
-  // 2. Round 5 = Octavos de Final (R16) — 8 best-3rd-place qualifying matches
+  if (r32.length) rounds.push({ id: 'r32', label: 'Dieciseisavos de Final', matches: r32, type: 'default' });
   const r16 = (byRound[5] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (r16.length) rounds.push({ id: 'r16', label: 'Octavos de Final', matches: r16, type: 'default' });
-
-  // 3. Round 27 = Cuartos de Final (QF) — 4 matches
+  if (r16.length) rounds.push({ id: 'r16', label: 'Octavos de Final', matches: r16, type: 'default' });
   const qf = (byRound[27] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (qf.length) rounds.push({ id: 'qf', label: 'Cuartos de Final', matches: qf, type: 'default' });
-
-  // 4. Round 28 = Semifinales (SF) — 2 matches
+  if (qf.length) rounds.push({ id: 'qf', label: 'Cuartos de Final', matches: qf, type: 'default' });
   const sf = (byRound[28] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
-  if (sf.length) rounds.push({ id: 'sf', label: 'Semifinales', matches: sf, type: 'sf' });
-
-  // 5. Round 29 = FINAL — incluye final programada (ESP vs ARG)
+  if (sf.length) rounds.push({ id: 'sf', label: 'Semifinales', matches: sf, type: 'sf' });
   const finalMatches = (byRound[29] || []).sort((a, b) => a.date?.localeCompare(b.date) || 0);
   const mainFinal = finalMatches[0] || null;
   if (mainFinal) {
     rounds.push({ id: 'final', label: 'Final', matches: [mainFinal], type: 'final' });
-  }
-
-  // Round 50 = TERCER LUGAR — Francia 4-6 Inglaterra
+  }
   const place3Matches = (byRound[50] || []).filter(m => m.status === 'Ended');
   const place3 = place3Matches[0] || null;
 
@@ -201,7 +161,7 @@ function buildKnockoutRounds(matches) {
 }
 
 
-/* ═══════════════════════════ UI HELPERS ═════════════════════════════════ */
+
 
 function populateGroupSelector(groups) {
   const select = document.getElementById('single-group-select');
@@ -249,7 +209,7 @@ function renderCurrentTab() {
   }
 }
 
-/* ═══════════════════════════ RENDER — GROUPS ════════════════════════════ */
+
 
 function renderSkeletons(container, count = 6) {
   container.innerHTML = Array(count).fill(0).map(() =>
@@ -348,7 +308,7 @@ function renderAllGroups(container, groups) {
   }).join('');
 }
 
-/* ═══════════════════════════ RENDER — KNOCKOUT ══════════════════════════ */
+
 
 function matchCard(m, isFinal = false) {
   const hs = m.home_score?.total ?? null;
@@ -397,9 +357,7 @@ function renderKnockoutStage(container) {
         </p>
       </div>`;
     return;
-  }
-
-  // Determine champion from the FINAL match (round 29)
+  }
   let champion = null;
   if (mainFinal && mainFinal.status === 'Ended') {
     const hs = mainFinal.home_score?.total ?? 0;
@@ -413,7 +371,7 @@ function renderKnockoutStage(container) {
         🏆 LLAVES DE ELIMINATORIA DIRECTA
       </h2>
 
-      <!-- Main bracket (scrollable tree with vertical alignment) -->
+
       <div class="ko-bracket">
         ${rounds.map(round => {
           const isFinalCol = round.type === 'final';
@@ -429,7 +387,7 @@ function renderKnockoutStage(container) {
         }).join('')}
       </div>
 
-      <!-- Bottom summary cards: Tercer Puesto & Gran Final side by side -->
+
       <div style="margin-top:2.5rem;width:100%;border-top:1px dashed var(--border-color);padding-top:1.5rem;display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;align-items:flex-start;">
         ${place3 ? `
           <div style="min-width:240px;">
@@ -445,7 +403,7 @@ function renderKnockoutStage(container) {
         ` : ''}
       </div>
 
-      <!-- Champion banner -->
+
       ${champion ? (() => {
         const winnerInfo = teamsMap[champion] || { name: champion, flagUri: `https://api.fifa.com/api/v3/picture/flags-sq-5/${champion}` };
         return `
@@ -465,7 +423,7 @@ function renderKnockoutStage(container) {
     </div>`;
 }
 
-/* ═══════════════════════════ ERROR / SKELETON ═══════════════════════════ */
+
 
 function renderErrorState(container, message) {
   container.innerHTML = `

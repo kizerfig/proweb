@@ -1,34 +1,19 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - MATCHES CALENDAR MODULE
- js/matches.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 let allMatches = [];
 
 document.addEventListener('DOMContentLoaded', () => {
- console.log(' FIFA World Cup 2026 - Calendario de Partidos Initialized');
-
- // 1. Initialize mobile navbar
- initLayout();
-
- // 2. Setup filter listeners
- setupFilterListeners();
-
- // 3. Load matches with 15-min LocalStorage cache strategy
+ console.log(' FIFA World Cup 2026 - Calendario de Partidos Initialized');
+ initLayout();
+ setupFilterListeners();
  loadMatches();
 });
 
-/**
- * Loads matches data and initial render
- */
+
 async function loadMatches() {
  const container = document.getElementById('matches-grid-container');
- if (!container) return;
-
- // Show Skeleton Loaders during fetch
+ if (!container) return;
  renderSkeletons(container, 6);
 
  try {
@@ -39,8 +24,7 @@ async function loadMatches() {
  return;
  }
 
- allMatches = matchesData;
- // Ordenar por fecha (más recientes / próximos primero en calendario)
+ allMatches = matchesData;
  allMatches.sort((a, b) => {
  const byDate = String(a.date || '').localeCompare(String(b.date || ''));
  if (byDate !== 0) return byDate;
@@ -67,9 +51,7 @@ async function loadMatches() {
  }
 }
 
-/**
- * Attach event listeners to all filter controls
- */
+
 function setupFilterListeners() {
   const filterCity = document.getElementById('filter-city');
   const filterRound = document.getElementById('filter-round');
@@ -85,9 +67,7 @@ function setupFilterListeners() {
   });
 }
 
-/**
- * Populates the team filter select with unique teams extracted from match data
- */
+
 function populateTeamFilter(matches) {
   const filterTeam = document.getElementById('filter-team');
   if (!filterTeam) return;
@@ -112,9 +92,7 @@ function populateTeamFilter(matches) {
     ).join('');
 }
 
-/**
- * Filters the matches array based on current inputs and renders output
- */
+
 function filterAndRenderMatches() {
   const container = document.getElementById('matches-grid-container');
   if (!container) return;
@@ -145,18 +123,14 @@ function filterAndRenderMatches() {
  }
 }
 
-/**
- * Render Skeleton Loading Cards
- */
+
 function renderSkeletons(container, count = 6) {
  container.innerHTML = Array(count).fill(0).map(() => `
  <div class="skeleton" style="height: 180px; border-radius: var(--radius-md);"></div>
  `).join('');
 }
 
-/**
- * Render Match Cards into DOM
- */
+
 function renderMatchCards(container, matchesList) {
   const getFlagImgHtml = (code, name) => {
     const flagUrl = `https://api.fifa.com/api/v3/picture/flags-sq-5/${code}`;
@@ -179,7 +153,7 @@ function renderMatchCards(container, matchesList) {
         <span class="match-venue">📍 ${match.city}${match.stadium ? ' • ' + match.stadium : ''}</span>
         <span class="status-badge ${statusClass}">${statusText}</span>
       </div>
-      
+
       <div class="match-teams">
         <div class="team-row">
           <div class="team-info">
@@ -189,7 +163,7 @@ function renderMatchCards(container, matchesList) {
           </div>
           <span class="team-score">${match.team1.score}</span>
         </div>
-        
+
         <div class="team-row">
           <div class="team-info">
             ${getFlagImgHtml(match.team2.code, match.team2.name)}
@@ -209,9 +183,7 @@ function renderMatchCards(container, matchesList) {
   }).join('');
 }
 
-/**
- * Render Empty State when no matches match filters
- */
+
 function renderNoMatchesState(container) {
  container.innerHTML = `
  <div class="no-matches-box">

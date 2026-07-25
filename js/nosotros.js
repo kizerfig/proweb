@@ -1,8 +1,3 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - NOSOTROS MODULE
- js/nosotros.js
- ========================================== */
-
 import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,8 +1,3 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - HERO SLIDER MODULE
-   js/slider.js
-   ========================================== */
-
 export function initHeroSlider() {
   const container = document.querySelector('.hero-slider-container');
   if (!container) return;
@@ -58,9 +53,7 @@ export function initHeroSlider() {
       clearInterval(autoPlayTimer);
       autoPlayTimer = null;
     }
-  }
-
-  // Event Listeners
+  }
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
       nextSlide();
@@ -80,13 +73,9 @@ export function initHeroSlider() {
       showSlide(index);
       startAutoplay();
     });
-  });
-
-  // Pause on hover for enhanced UX
+  });
   container.addEventListener('mouseenter', stopAutoplay);
-  container.addEventListener('mouseleave', startAutoplay);
-
-  // Touch Swipe Support for Mobile
+  container.addEventListener('mouseleave', startAutoplay);
   let touchStartX = 0;
   let touchEndX = 0;
 
@@ -108,8 +97,6 @@ export function initHeroSlider() {
       prevSlide();
       startAutoplay();
     }
-  }
-
-  // Start initial autoplay
+  }
   startAutoplay();
 }

@@ -6,12 +6,12 @@
  <meta name="description" content="Equipos Participantes - Copa Mundial de la FIFA 2026. Selección de países, grupos, ranking y estadísticas.">
  <title>Equipos Participantes - Copa Mundial de la FIFA 2026</title>
 
- <!-- Google Fonts for Modern Typography -->
+
  <link rel="preconnect" href="https://fonts.googleapis.com">
  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 
- <!-- Native Stylesheets -->
+
  <link rel="stylesheet" href="../css/main.css">
  <link rel="stylesheet" href="../css/components.css">
  <link rel="stylesheet" href="../css/responsive.css">
@@ -20,19 +20,17 @@
 
  <header id="site-header" class="site-header"></header>
 
- <!-- ==========================================
- MAIN CONTENT - EQUIPOS PARTICIPANTES
- ========================================== -->
+
  <main class="container section-padding" id="main-content">
- 
+
  <div class="section-header" style="margin-bottom: 1.5rem;">
  <h1 class="section-title" style="font-size: 2.2rem;"> Equipos Participantes</h1>
  </div>
 
- <!-- Interactive Filter Bar -->
+
  <form class="filter-bar" id="teams-filter-form" onsubmit="event.preventDefault();">
- 
- <!-- Filter by Confederation -->
+
+
  <select id="filter-confederation" class="filter-select" aria-label="Filtrar por confederación">
  <option value="all">Todas las confederaciones</option>
  <option value="CONCACAF">CONCACAF</option>
@@ -42,19 +40,19 @@
  <option value="CAF">CAF</option>
  </select>
 
- <!-- Filter by Group -->
+
  <select id="filter-team-group" class="filter-select" aria-label="Filtrar por grupo">
  <option value="all">Todos los grupos</option>
  </select>
 
- <!-- Team Search Input -->
+
  <input type="text" id="search-team-input" class="search-input" placeholder="Buscar equipo por nombre o código..." aria-label="Buscar equipo">
 
  </form>
 
- <!-- Teams Grid Container -->
+
  <div class="group-grid teams-grid" id="teams-grid-container" style="margin-top: 1.5rem;">
- <!-- Skeletons loaded initially -->
+
  <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
  <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
  <div class="skeleton" style="height: 160px; border-radius: var(--radius-md);"></div>
@@ -67,7 +65,7 @@
 
  <footer id="site-footer" class="site-footer"></footer>
 
- <!-- Equipos Page Entry JavaScript Module -->
+
  <script type="module" src="../js/equipos.js"></script>
 </body>
 </html>

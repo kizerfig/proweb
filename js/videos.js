@@ -1,14 +1,7 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - HISTORIC VIDEOS MODULE
-   js/videos.js
-   ========================================== */
-
 import { initLayout } from './layout.js';
 
 const CACHE_KEY = 'fifa_videos_data';
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL
-
-// Curated high-fidelity mock video database matching prototype
+const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL
 const MOCK_VIDEOS = [
   {
     id: 'v1',
@@ -103,21 +96,13 @@ const MOCK_VIDEOS = [
 let allVideos = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('FIFA World Cup 2026 - Videos Históricos Initialized');
-
-  // 1. Initialize Navbar
-  initLayout();
-
-  // 2. Setup Category Tabs Switcher
-  setupCategoryTabs();
-
-  // 3. Load Videos with 15-min LocalStorage cache
+  console.log('FIFA World Cup 2026 - Videos Históricos Initialized');
+  initLayout();
+  setupCategoryTabs();
   loadVideos();
 });
 
-/**
- * Loads video data from cache or mock database
- */
+
 async function loadVideos() {
   const container = document.getElementById('videos-container');
   if (!container) return;
@@ -136,9 +121,7 @@ async function loadVideos() {
     } catch (e) {
       localStorage.removeItem(CACHE_KEY);
     }
-  }
-
-  // Set & cache mock video data
+  }
   allVideos = MOCK_VIDEOS;
   localStorage.setItem(CACHE_KEY, JSON.stringify({
     timestamp: Date.now(),
@@ -148,9 +131,7 @@ async function loadVideos() {
   renderVideos(container, allVideos);
 }
 
-/**
- * Setup Tab Category Event Listener
- */
+
 function setupCategoryTabs() {
   const tabs = document.querySelectorAll('.video-tabs .tab-btn');
   const container = document.getElementById('videos-container');
@@ -172,9 +153,7 @@ function setupCategoryTabs() {
   });
 }
 
-/**
- * Render video horizontal card list into DOM
- */
+
 function renderVideos(container, videosList) {
   if (!container) return;
 
@@ -189,15 +168,15 @@ function renderVideos(container, videosList) {
 
   container.innerHTML = videosList.map(video => `
     <article class="video-horizontal-card" onclick="alert('Reproduciendo: ${video.title}')">
-      
-      <!-- Left Thumbnail Box -->
+
+
       <div class="video-thumb-wrapper">
         <img src="${video.image}" alt="${video.title}" loading="lazy" />
         <span class="video-duration-overlay">${video.duration}</span>
         <div class="play-hover-btn">▶</div>
       </div>
 
-      <!-- Center Body Info -->
+
       <div class="video-card-body">
         <div class="video-card-meta-top">
           <span class="category-badge-mint">${video.category}</span>
@@ -208,7 +187,7 @@ function renderVideos(container, videosList) {
         <span class="video-card-submeta">${video.meta}</span>
       </div>
 
-      <!-- Right Metric Column -->
+
       <div class="video-card-views">
         <span>${video.views}</span>
       </div>

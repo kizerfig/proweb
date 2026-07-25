@@ -1,27 +1,14 @@
-/* ==========================================
- FIFA WORLD CUP 2026 - MATCH DETAIL MODULE
- js/match-detail.js
- ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
- console.log(' FIFA World Cup 2026 - Detalle de Partido Initialized');
-
- // 1. Initialize global header/navbar logic
- initLayout();
-
- // 2. Setup interactive tab switcher
- setupTabSwitcher();
-
- // 3. Load Match Data based on URL ID parameter
+ console.log(' FIFA World Cup 2026 - Detalle de Partido Initialized');
+ initLayout();
+ setupTabSwitcher();
  loadMatchDetail();
 });
 
-/**
- * Parses URL params and fetches match detail
- */
+
 async function loadMatchDetail() {
  const heroContainer = document.getElementById('match-hero');
  const urlParams = new URLSearchParams(window.location.search);
@@ -41,9 +28,7 @@ async function loadMatchDetail() {
  `;
  }
  return;
- }
-
- // Render components
+ }
  renderHero(match);
  renderTimeline(match);
  renderStats(match);
@@ -63,9 +48,7 @@ async function loadMatchDetail() {
  }
 }
 
-/**
- * Render Hero Card (.match-hero-card)
- */
+
 function renderHero(match) {
  const container = document.getElementById('match-hero');
  if (!container) return;
@@ -73,9 +56,7 @@ function renderHero(match) {
  const team1 = match.team1 || { code: 'T1', name: 'Equipo 1', score: '-' };
  const team2 = match.team2 || { code: 'T2', name: 'Equipo 2', score: '-' };
 
- const isScheduled = match.status === 'Programado' || match.status === 'Scheduled';
-
- // Format date nicely
+ const isScheduled = match.status === 'Programado' || match.status === 'Scheduled';
  let dateStr = match.datetime || match.date || 'Próximamente';
 
  container.innerHTML = `
@@ -87,19 +68,19 @@ function renderHero(match) {
  </div>
 
  <div class="hero-scoreboard">
- <!-- Team 1 -->
+
  <div class="hero-team home">
  <div class="hero-code">${team1.code}</div>
  <div class="hero-team-name">${team1.name}</div>
  <div class="hero-score">${team1.score ?? '-'}</div>
  </div>
 
- <!-- Divider / Separator -->
+
  <div class="hero-vs">
  ${isScheduled ? '<span class="status-badge scheduled">VS</span>' : '<span class="hero-divider">-</span>'}
  </div>
 
- <!-- Team 2 -->
+
  <div class="hero-team away">
  <div class="hero-code">${team2.code}</div>
  <div class="hero-team-name">${team2.name}</div>
@@ -109,11 +90,7 @@ function renderHero(match) {
  `;
 }
 
-/**
- * Render Timeline Tab (#tab-cronologia)
- * The API returns chronology sorted descending (most recent first).
- * We reverse to show ascending order (earliest events first).
- */
+
 function renderTimeline(match) {
  const container = document.getElementById('timeline-list');
  if (!container) return;
@@ -128,9 +105,7 @@ function renderTimeline(match) {
  </div>
  `;
  return;
- }
-
- // Reverse to show chronological order (earliest first)
+ }
  const ordered = [...timeline].reverse();
 
  container.innerHTML = ordered.map(event => {
@@ -162,11 +137,7 @@ function renderTimeline(match) {
  }).join('');
 }
 
-/**
- * Render Statistics Tab (#tab-estadisticas)
- * Uses the new allStats array from the API for a full table,
- * or falls back to the basic stats object fields.
- */
+
 function renderStats(match) {
  const container = document.getElementById('stats-list');
  if (!container) return;
@@ -184,9 +155,7 @@ function renderStats(match) {
  }
 
  const team1Name = match.team1?.name || 'Local';
- const team2Name = match.team2?.name || 'Visitante';
-
- // If we have the full allStats array from the API, show everything
+ const team2Name = match.team2?.name || 'Visitante';
  if (stats.allStats && stats.allStats.length > 0) {
  const rows = stats.allStats.map(s => ({
  label: translateStatName(s.name),
@@ -223,9 +192,7 @@ function renderStats(match) {
  </div>
  `;
  return;
- }
-
- // Fallback to basic stats fields
+ }
  const rows = [
  { label: 'Posesión', val1: `${stats.possession[0]}%`, val2: `${stats.possession[1]}%`, num1: stats.possession[0], num2: stats.possession[1] },
  { label: 'Tiros a puerta', val1: stats.shotsOnTarget[0], val2: stats.shotsOnTarget[1], num1: stats.shotsOnTarget[0], num2: stats.shotsOnTarget[1] },
@@ -264,9 +231,7 @@ function renderStats(match) {
  `;
 }
 
-/**
- * Translate English stat name to Spanish
- */
+
 function translateStatName(name) {
  const map = {
  'Ball possession': 'Posesión',
@@ -297,9 +262,7 @@ function renderCardBadges(count, type) {
  return `<div class="cards-flex">${badgeHTML} <span>(${count})</span></div>`;
 }
 
-/**
- * Render Lineups Tab (#tab-alineaciones)
- */
+
 function renderLineups(match) {
  const container = document.getElementById('lineups-view');
  if (!container) return;
@@ -327,8 +290,8 @@ function renderLineups(match) {
 
  container.innerHTML = `
  <div class="lineups-wrapper">
- 
- <!-- Lineup Lists side by side -->
+
+
  <div class="lineup-extras-grid" style="margin-bottom: 1.5rem;">
  <div class="extras-card">
  <h4>🏠 ${match.team1?.name} ${team1.formation ? '('+team1.formation+')' : ''}</h4>
@@ -361,10 +324,7 @@ function renderLineups(match) {
  `;
 }
 
-/**
- * Render Highlights Tab (#tab-highlights)
- * The API provides YouTube links, so we embed them via iframe or show link cards.
- */
+
 function renderHighlights(match) {
  const container = document.getElementById('highlights-view');
  if (!container) return;
@@ -382,9 +342,7 @@ function renderHighlights(match) {
  }
 
  const main = highlights.main;
- const gallery = highlights.gallery || [];
-
- // Extract YouTube ID if possible
+ const gallery = highlights.gallery || [];
  function getYouTubeId(url) {
  if (!url) return null;
  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
@@ -404,15 +362,15 @@ function renderHighlights(match) {
 
  container.innerHTML = `
  <div class="highlights-wrapper">
- 
- <!-- Main Video / Link -->
+
+
  <div class="main-video-box">
  ${main.poster && !mainYtId ? `<img src="${main.poster}" alt="${main.title}" style="width:100%;border-radius:var(--radius-md);margin-bottom:0.75rem;object-fit:cover;max-height:220px;">` : ''}
  ${mainEmbed}
  <h3 class="video-main-title" style="margin-top:0.75rem;">${main.title}${main.subtitle ? ' — '+main.subtitle : ''}</h3>
  </div>
 
- <!-- Gallery clips -->
+
  ${gallery.length > 0 ? `
  <h4 class="gallery-section-title">📽️ Más Clips del Partido</h4>
  <div class="highlights-gallery">
@@ -435,22 +393,16 @@ function renderHighlights(match) {
  `;
 }
 
-/**
- * Setup Tab Switcher Event Listener
- */
+
 function setupTabSwitcher() {
  const tabBtns = document.querySelectorAll('.tab-btn');
  const tabContents = document.querySelectorAll('.tab-content');
 
  tabBtns.forEach(btn => {
  btn.addEventListener('click', () => {
- const targetTab = btn.getAttribute('data-tab');
-
- // Update button state
+ const targetTab = btn.getAttribute('data-tab');
  tabBtns.forEach(b => b.classList.remove('active'));
- btn.classList.add('active');
-
- // Update contents visibility
+ btn.classList.add('active');
  tabContents.forEach(content => {
  if (content.id === `tab-${targetTab}`) {
  content.classList.add('active');

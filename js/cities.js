@@ -1,20 +1,11 @@
-/* ==========================================
-   FIFA WORLD CUP 2026 - CITIES & CITY DETAIL MODULE
-   js/cities.js
-   ========================================== */
-
 import { FIFA_API } from './api.js';
 import { initLayout } from './layout.js';
 
 let allCities = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🏙️ FIFA World Cup 2026 - Módulo de Ciudades Anfitrionas Inicializado');
-
-  // 1. Initialize mobile navbar
-  initLayout();
-
-  // 2. Determine active page view
+  console.log('🏙️ FIFA World Cup 2026 - Módulo de Ciudades Anfitrionas Inicializado');
+  initLayout();
   if (document.getElementById('cities-grid-container') || document.getElementById('cities-full-container') || document.querySelector('.cities-grid')) {
     setupCountryFilter();
     loadCitiesView();
@@ -23,26 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/**
- * Obtener todas las ciudades (Exportable según especificaciones)
- */
+
 export async function getCitiesList(forceRefresh = false) {
   return await FIFA_API.getCities(forceRefresh);
 }
 
-/**
- * Obtener ciudad detallada por ID (Exportable según especificaciones)
- */
+
 export async function getCityById(id, forceRefresh = false) {
   return await FIFA_API.getCityById(id, forceRefresh);
 }
 
-/**
- * Carga la lista de ciudades anfitrionas en la vista general
- */
+
 async function loadCitiesView() {
-  const container = document.getElementById('cities-grid-container') || 
-                    document.getElementById('cities-full-container') || 
+  const container = document.getElementById('cities-grid-container') ||
+                    document.getElementById('cities-full-container') ||
                     document.querySelector('.cities-grid');
   if (!container) return;
 
@@ -65,17 +50,15 @@ async function loadCitiesView() {
   }
 }
 
-/**
- * Configura los eventos del filtro por país (#filter-country y #country-filter)
- */
+
 function setupCountryFilter() {
   const filterSelect = document.getElementById('filter-country') || document.getElementById('country-filter');
   if (!filterSelect) return;
 
   filterSelect.addEventListener('change', (e) => {
     const selectedVal = e.target.value;
-    const container = document.getElementById('cities-grid-container') || 
-                      document.getElementById('cities-full-container') || 
+    const container = document.getElementById('cities-grid-container') ||
+                      document.getElementById('cities-full-container') ||
                       document.querySelector('.cities-grid');
 
     if (!container) return;
@@ -83,7 +66,7 @@ function setupCountryFilter() {
     if (selectedVal === 'all' || selectedVal === 'Todos los países') {
       renderCitiesGrid(container, allCities);
     } else {
-      const filtered = allCities.filter(c => 
+      const filtered = allCities.filter(c =>
         c.country.toLowerCase().trim() === selectedVal.toLowerCase().trim() ||
         c.countryCode.toLowerCase().trim() === selectedVal.toLowerCase().trim()
       );
@@ -92,9 +75,7 @@ function setupCountryFilter() {
   });
 }
 
-/**
- * Renderiza las tarjetas de la grilla de ciudades
- */
+
 function renderCitiesGrid(container, cities) {
   if (!container) return;
 
@@ -131,9 +112,7 @@ function renderCitiesGrid(container, cities) {
     `).join('');
 }
 
-/**
- * Carga la vista de detalle de ciudad en detalle-ciudad.html
- */
+
 async function loadCityDetailView() {
   const container = document.getElementById('city-detail-container');
   if (!container) return;
@@ -171,9 +150,7 @@ async function loadCityDetailView() {
   }
 }
 
-/**
- * Renderiza el detalle completo de la ciudad y su estadio
- */
+
 function renderCityDetailHTML(container, city) {
   const stadiumInfo = city.stadiumInfo || {};
   const matches = city.matches || [];
@@ -280,18 +257,14 @@ function renderCityDetailHTML(container, city) {
   `;
 }
 
-/**
- * Skeletons para la vista de grilla
- */
+
 function renderSkeletons(container, count = 8) {
   container.innerHTML = Array(count).fill(0).map(() => `
     <div class="skeleton" style="height: 320px; border-radius: var(--radius-lg);"></div>
   `).join('');
 }
 
-/**
- * Skeleton para la vista de detalle
- */
+
 function renderDetailSkeleton(container) {
   container.innerHTML = `
     <div class="skeleton" style="height: 360px; border-radius: var(--radius-lg); margin-bottom: 2rem;"></div>
@@ -300,9 +273,7 @@ function renderDetailSkeleton(container) {
   `;
 }
 
-/**
- * Estado de error
- */
+
 function renderErrorState(container, message) {
   container.innerHTML = `
     <div class="error-box" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
