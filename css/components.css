@@ -1438,21 +1438,8 @@
 
 .explore-sub-card:hover {
   background: var(--bg-card);
-  border-color: var(--accent-blue);
+  border-color: var(--border-hover);
   transform: translateY(-2px);
-}
-
-.explore-sub-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: rgba(31, 111, 235, 0.15);
-  color: var(--accent-blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
 }
 
 .explore-sub-content h4 {
@@ -2583,6 +2570,46 @@
   align-items: center;
 }
 
+.ball-page-grid {
+  align-items: stretch;
+}
+
+.ball-img-wrapper--page {
+  aspect-ratio: auto;
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 0.25rem;
+}
+
+.ball-image--page {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: contain;
+  object-position: top center;
+}
+
+.ball-info-content--page {
+  min-height: 100%;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.ball-info-tech {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ball-info-tech .identity-feature-block + .identity-feature-block {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 /* Ball Section */
 .ball-img-wrapper {
   width: 100%;
@@ -2659,10 +2686,6 @@
   transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
-.mascot-card.us-theme { border-top: 4px solid var(--accent-blue); }
-.mascot-card.mx-theme { border-top: 4px solid var(--accent-mint); }
-.mascot-card.ca-theme { border-top: 4px solid var(--accent-red); }
-
 .mascot-card:hover {
   transform: translateY(-4px);
   border-color: var(--border-hover);
@@ -2693,28 +2716,17 @@
   flex-grow: 1;
 }
 
-.mascot-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .mascot-name {
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-primary);
 }
 
-.mascot-country-badge {
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 0.15rem 0.5rem;
-  border-radius: var(--radius-sm);
+.mascot-country-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
-
-.mascot-country-badge.us { background: rgba(31, 111, 235, 0.2); color: var(--accent-blue); }
-.mascot-country-badge.mx { background: rgba(0, 230, 118, 0.2); color: var(--accent-mint); }
-.mascot-country-badge.ca { background: rgba(255, 51, 102, 0.2); color: var(--accent-red); }
 
 .mascot-info-item {
   display: flex;
@@ -2725,13 +2737,10 @@
 .mascot-label {
   font-size: 0.78rem;
   font-weight: 800;
-  color: var(--accent-blue);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-
-.mascot-card.mx-theme .mascot-label { color: var(--accent-mint); }
-.mascot-card.ca-theme .mascot-label { color: var(--accent-red); }
 
 .mascot-text {
   font-size: 0.85rem;

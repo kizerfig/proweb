@@ -289,6 +289,18 @@
     gap: 1.5rem;
   }
 
+  .ball-page-grid {
+    align-items: start;
+  }
+
+  .ball-img-wrapper--page {
+    max-height: 320px;
+  }
+
+  .ball-info-tech {
+    margin-top: 1rem;
+  }
+
   .mascots-grid {
     grid-template-columns: 1fr;
   }

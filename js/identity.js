@@ -42,6 +42,23 @@ function renderFeatureBlocks(features) {
   `).join('');
 }
 
+function splitBallFeatures(features) {
+  const list = features || [];
+  const techIndex = list.findIndex(feature => /tecnolog/i.test(feature.title || ''));
+
+  if (techIndex === -1) {
+    return {
+      main: list.slice(0, 1),
+      tech: list.slice(1)
+    };
+  }
+
+  return {
+    main: list.filter((_, index) => index !== techIndex),
+    tech: [list[techIndex]]
+  };
+}
+
 async function loadBallPage() {
   const container = document.getElementById('ball-page-content');
   if (!container) return;
@@ -49,16 +66,22 @@ async function loadBallPage() {
   try {
     const ball = await FIFA_API.getBall();
     const gallery = (ball.images || []).slice(1);
+    const { main, tech } = splitBallFeatures(ball.features);
 
     container.innerHTML = `
       <section class="identity-block green-theme">
         <h2 class="identity-block-header">Balón Oficial FIFA 2026 — ${escapeHtml(ball.name)}</h2>
-        <div class="identity-grid-two">
-          <div class="ball-img-wrapper">
-            <img src="${escapeAttr(ball.image)}" alt="${escapeAttr(ball.name)}" class="ball-image" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${IDENTITY_IMAGE_FALLBACK}'" />
+        <div class="identity-grid-two ball-page-grid">
+          <div class="ball-img-wrapper ball-img-wrapper--page">
+            <img src="${escapeAttr(ball.image)}" alt="${escapeAttr(ball.name)}" class="ball-image ball-image--page" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${IDENTITY_IMAGE_FALLBACK}'" />
           </div>
-          <div class="ball-info-content">
-            ${renderFeatureBlocks(ball.features)}
+          <div class="ball-info-content ball-info-content--page">
+            <div class="ball-info-main">
+              ${renderFeatureBlocks(main)}
+            </div>
+            <div class="ball-info-tech">
+              ${renderFeatureBlocks(tech)}
+            </div>
           </div>
         </div>
         ${gallery.length ? `
@@ -90,21 +113,15 @@ async function loadMascotsPage() {
 
     container.innerHTML = `
       <section class="mascots-section-block">
-        <div class="mascots-header">
-          <h2 class="section-title">Mascotas Oficiales</h2>
-          <p class="section-subtitle">Los embajadores oficiales que representan la unión de tres naciones</p>
-        </div>
         <div class="mascots-grid">
           ${mascots.map(mascot => `
-            <article class="mascot-card ${mascot.countryCode}-theme">
+            <article class="mascot-card">
               <div class="mascot-img-box">
                 <img src="${escapeAttr(mascot.image)}" alt="${escapeAttr(mascot.name)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.onerror=null;this.src='${IDENTITY_IMAGE_FALLBACK}'" />
               </div>
               <div class="mascot-card-body">
-                <div class="mascot-card-top">
-                  <h3 class="mascot-name">${escapeHtml(mascot.name)}</h3>
-                  <span class="mascot-country-badge ${mascot.countryCode}">${escapeHtml(mascot.countryCode.toUpperCase())}</span>
-                </div>
+                <h3 class="mascot-name">${escapeHtml(mascot.name)}</h3>
+                <p class="mascot-country-name">🌎 <strong>País:</strong> ${escapeHtml(mascot.country)}</p>
                 <div class="mascot-info-item">
                   <span class="mascot-label">Descripción:</span>
                   <p class="mascot-text">${escapeHtml(mascot.description)}</p>

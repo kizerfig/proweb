@@ -2017,18 +2017,36 @@ function normalizeBall(raw) {
       }))
     : [];
 
+  const defaultFeatures = [
+    {
+      title: 'Homenaje a los tres países anfitriones',
+      paragraphs: [
+        'El sugerente nombre de TRIONDA rinde homenaje al hecho de que, por primera vez, tres países —Canadá, México y Estados Unidos— se unirán para albergar la Copa Mundial de la FIFA™.',
+        'El diseño del esférico presenta un patrón rojo, verde y azul, con cuatro paneles que forman un triángulo central en referencia a la unión de los tres países anfitriones.'
+      ]
+    },
+    {
+      title: 'Tecnología sofisticada',
+      paragraphs: [
+        'Su composición de cuatro paneles incorpora costuras profundas que garantizan estabilidad y resistencia aerodinámica uniforme en el aire. Los gráficos en relieve mejoran la adherencia bajo lluvia o alta humedad.',
+        'TRIONDA incluye la tecnología del balón conectado con un sensor de movimiento de 500 Hz que envía datos precisos al VAR en tiempo real para apoyar decisiones como los fueras de juego.'
+      ]
+    }
+  ];
+
   return {
     name: item.name || 'Trionda',
     image: images[0] || '../imagenes/banner1.jpg',
     images,
-    features
+    features: features.length > 0 ? features : defaultFeatures
   };
 }
 
 function normalizeMascotItem(item) {
   if (!item) return null;
-  const country = item.country || '';
-  const countryLower = String(country).toLowerCase();
+  const rawCountry = item.country || '';
+  const country = resolveCountryDisplay(rawCountry);
+  const countryLower = String(rawCountry).toLowerCase();
   let countryCode = 'fifa';
   if (countryLower.includes('mex')) countryCode = 'mx';
   else if (countryLower.includes('usa') || countryLower.includes('estados')) countryCode = 'us';
