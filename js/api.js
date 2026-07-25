@@ -1806,41 +1806,109 @@ export async function getRanking(forceRefresh = false) {
 /**
  * Normaliza una ciudad anfitriona individual (/v1/cities y /v1/cities/{id})
  */
+function resolveCountryDisplay(rawCountry) {
+  const value = String(rawCountry || '').trim();
+  const map = {
+    Mexico: 'México',
+    'United States': 'Estados Unidos',
+    Canada: 'Canadá',
+    'México': 'México',
+    'Estados Unidos': 'Estados Unidos',
+    'Canadá': 'Canadá',
+    'EE.UU.': 'Estados Unidos',
+    EEUU: 'Estados Unidos'
+  };
+  return map[value] || value || 'Estados Unidos';
+}
+
+function resolveStadiumInfo(rawStadium) {
+  if (!rawStadium) {
+    return { name: 'Estadio Oficial FIFA', capacity: null, image: '', coordinates: null };
+  }
+  if (typeof rawStadium === 'string') {
+    return { name: rawStadium, capacity: null, image: '', coordinates: null };
+  }
+  return {
+    name: rawStadium.name || rawStadium.stadium || 'Estadio Oficial FIFA',
+    capacity: rawStadium.capacity ?? null,
+    image: resolveFifaImageUrl(rawStadium.image_url || rawStadium.image || ''),
+    coordinates: rawStadium.coordinates || null
+  };
+}
+
+function formatStadiumCoordinates(coords) {
+  if (!coords || typeof coords !== 'object') return '';
+  const lat = coords.latitude ?? coords.lat;
+  const lng = coords.longitude ?? coords.lng ?? coords.lon;
+  if (lat == null || lng == null) return '';
+  const latDir = Number(lat) >= 0 ? 'N' : 'S';
+  const lngDir = Number(lng) >= 0 ? 'E' : 'W';
+  return `${Math.abs(Number(lat)).toFixed(4)}° ${latDir}, ${Math.abs(Number(lng)).toFixed(4)}° ${lngDir}`;
+}
+
+function formatCityCapacity(capacity) {
+  if (capacity === null || capacity === undefined || capacity === '') {
+    return '70,000 personas';
+  }
+  if (typeof capacity === 'string') {
+    return capacity.toLowerCase().includes('personas') ? capacity : `${capacity} personas`;
+  }
+  return `${Number(capacity).toLocaleString('es-ES')} personas`;
+}
+
 function normalizeCity(item) {
   if (!item) return null;
   const raw = item.data || item.city || item;
   const id = String(raw.id || raw.cityId || 'c1');
   const name = raw.name || raw.nombre || 'Ciudad Anfitriona';
-  const stadium = raw.stadium || raw.estadio || 'Estadio Oficial FIFA';
-  const country = raw.country || raw.pais || 'Estados Unidos';
+  const stadiumData = resolveStadiumInfo(raw.stadium || raw.estadio);
+  const country = resolveCountryDisplay(raw.country || raw.pais);
   let countryCode = raw.countryCode || raw.codigoPais || 'USA';
-  if (country === 'México' || country === 'Mexico') countryCode = 'MEX';
-  if (country === 'Canadá' || country === 'Canada') countryCode = 'CAN';
-  if (country === 'Estados Unidos' || country === 'EE.UU.' || country === 'EEUU') countryCode = 'USA';
+  if (country === 'México') countryCode = 'MEX';
+  if (country === 'Canadá') countryCode = 'CAN';
+  if (country === 'Estados Unidos') countryCode = 'USA';
 
-  const capacity = raw.capacity || raw.capacidad || '70,000 personas';
-  const image = raw.image || raw.imagen || raw.img || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80';
-  const description = raw.description || raw.descripcion || `${name} es una de las 16 sedes oficiales confirmadas para la Copa Mundial de la FIFA 2026.`;
+  const capacity = formatCityCapacity(raw.capacity || raw.capacidad || stadiumData.capacity);
+  const cityImage = resolveFifaImageUrl(raw.image_url || raw.image || raw.imagen || raw.img || '')
+    || 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=800&q=80';
+  const stadiumImage = stadiumData.image || cityImage;
+  const descriptionRaw = raw.description || raw.descripcion;
+  const description = Array.isArray(descriptionRaw)
+    ? descriptionRaw.join(' ')
+    : (descriptionRaw || `${name} es una de las 16 sedes oficiales confirmadas para la Copa Mundial de la FIFA 2026.`);
+
+  const extraInfoRaw = raw.extra_info || raw.extraInfo;
+  const extraInfo = extraInfoRaw
+    ? {
+        title: extraInfoRaw.title || '',
+        description: Array.isArray(extraInfoRaw.description)
+          ? extraInfoRaw.description.filter(Boolean).join(' ')
+          : (extraInfoRaw.description || ''),
+        hashtag: extraInfoRaw.hashtag || ''
+      }
+    : null;
 
   return {
     id: id,
     name: name,
-    stadium: stadium,
+    stadium: stadiumData.name,
     country: country,
     countryCode: countryCode,
     capacity: capacity,
-    image: image,
+    image: cityImage,
+    stadiumImage: stadiumImage,
+    logo: resolveFifaImageUrl(raw.logo_url || raw.logo || ''),
+    officialUrl: raw.url || raw.officialUrl || '',
     description: description,
+    extraInfo,
     stadiumInfo: raw.stadiumInfo || {
-      image: image,
-      surface: 'Césped Híbrido Certificado FIFA',
-      opened: '2015',
-      coordinates: '37.7749° N, 122.4194° W',
-      highlights: `Sede oficial en ${name} para la Copa Mundial de la FIFA 2026.`
+      image: stadiumImage,
+      surface: '',
+      opened: '',
+      coordinates: formatStadiumCoordinates(stadiumData.coordinates) || '',
+      highlights: extraInfo?.description || `Sede oficial en ${name} para la Copa Mundial de la FIFA 2026.`
     },
-    matches: Array.isArray(raw.matches) ? raw.matches : [
-      { id: 'm-fase', round: 'Fase de Grupos', teams: 'Partido Oficial FIFA', datetime: 'Junio 2026' }
-    ]
+    matches: Array.isArray(raw.matches) && raw.matches.length > 0 ? raw.matches : []
   };
 }
 
@@ -1849,7 +1917,19 @@ function normalizeCity(item) {
  */
 export async function getCities(forceRefresh = false) {
   try {
-    const data = await fetchLocalData('cities.json', 'cities', forceRefresh);
+    let data = await fetchWithCache('cities', forceRefresh);
+
+    if (!data) {
+      try {
+        const isHtmlDir = window.location.pathname.includes('/html/');
+        const localPath = isHtmlDir ? '../data/cities.json' : './data/cities.json';
+        const res = await fetch(localPath);
+        if (res.ok) data = await res.json();
+      } catch (e) {
+        console.warn('[getCities] Fallback a data/cities.json:', e);
+      }
+    }
+
     const list = Array.isArray(data) ? data : (data?.cities || data?.data || (typeof data === 'object' ? Object.values(data) : []));
     const normalized = list.map(normalizeCity).filter(Boolean);
     return normalized.length > 0 ? normalized : MOCK_DATA.cities.map(normalizeCity);
@@ -1863,17 +1943,45 @@ export async function getCities(forceRefresh = false) {
  * Obtiene el detalle de una ciudad por ID (/v1/cities/{id})
  */
 export async function getCityById(id, forceRefresh = false) {
+  const cleanId = String(id || '').trim();
+  if (!cleanId) return null;
+
   try {
-    const data = await fetchWithCache(`cities/${id}`, forceRefresh);
+    const data = await fetchWithCache(`cities/${cleanId}`, forceRefresh);
     if (data && (data.id || data.name || data.stadium)) {
       return normalizeCity(data);
     }
   } catch (error) {
-    console.warn(`[getCityById] Fallback a MOCK_DATA para id ${id}:`, error);
+    console.warn(`[getCityById] API cities/${cleanId} falló:`, error);
   }
 
-  const mockItem = MOCK_DATA.cities.find(c => String(c.id).toLowerCase() === String(id).toLowerCase() || String(c.name).toLowerCase().includes(String(id).toLowerCase())) || MOCK_DATA.cities[0];
-  return normalizeCity(mockItem);
+  try {
+    const list = await getCities(forceRefresh);
+    const fromList = list.find(city => String(city.id) === cleanId);
+    if (fromList) return fromList;
+  } catch (error) {
+    console.warn(`[getCityById] Fallback desde listado para id ${cleanId}:`, error);
+  }
+
+  try {
+    const isHtmlDir = window.location.pathname.includes('/html/');
+    const localPath = isHtmlDir ? '../data/cities.json' : './data/cities.json';
+    const res = await fetch(localPath);
+    if (res.ok) {
+      const json = await res.json();
+      const item = json[cleanId] || Object.values(json).find(city => String(city.id) === cleanId);
+      if (item) return normalizeCity(item);
+    }
+  } catch (error) {
+    console.warn(`[getCityById] Fallback data/cities.json para id ${cleanId}:`, error);
+  }
+
+  const mockItem = MOCK_DATA.cities.find(city =>
+    String(city.id).toLowerCase() === cleanId.toLowerCase() ||
+    String(city.id).replace(/^c/i, '') === cleanId
+  );
+
+  return mockItem ? normalizeCity(mockItem) : null;
 }
 
 /**

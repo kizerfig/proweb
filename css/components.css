@@ -2398,52 +2398,6 @@
   font-weight: 400;
 }
 
-/* KPIs Top Row (.tournaments-stats) */
-.tournaments-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
-}
-
-.stat-card-kpi {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 1.25rem 1rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
-}
-
-.stat-card-kpi:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-hover);
-}
-
-.kpi-num {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.kpi-num.mint { color: var(--accent-mint); }
-.kpi-num.blue { color: var(--accent-blue); }
-.kpi-num.red { color: var(--accent-red); }
-.kpi-num.gold { color: var(--accent-gold); }
-
-.kpi-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
 /* Tournament Card List Container */
 .tournament-card-list {
   display: flex;
@@ -2470,31 +2424,6 @@
   border-color: var(--border-hover);
   box-shadow: var(--shadow-md);
 }
-
-/* Colored accent bar / border indicator per organization */
-.tournament-card.conmebol { border-left: 4px solid var(--accent-mint); }
-.tournament-card.concacaf { border-left: 4px solid var(--accent-blue); }
-.tournament-card.fifa { border-left: 4px solid var(--accent-red); }
-.tournament-card.uefa { border-left: 4px solid var(--accent-purple); }
-
-/* Left Icon Box */
-.tournament-card-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.6rem;
-  flex-shrink: 0;
-}
-
-.tournament-card-icon.conmebol { background: rgba(0, 230, 118, 0.1); border-color: rgba(0, 230, 118, 0.3); }
-.tournament-card-icon.concacaf { background: rgba(31, 111, 235, 0.1); border-color: rgba(31, 111, 235, 0.3); }
-.tournament-card-icon.fifa { background: rgba(255, 51, 102, 0.1); border-color: rgba(255, 51, 102, 0.3); }
-.tournament-card-icon.uefa { background: rgba(137, 87, 229, 0.1); border-color: rgba(137, 87, 229, 0.3); }
 
 /* Card Body */
 .tournament-card-body {
@@ -2556,19 +2485,6 @@
   flex-shrink: 0;
   min-width: 140px;
 }
-
-.org-label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.org-label.conmebol strong { color: var(--accent-mint); }
-.org-label.concacaf strong { color: var(--accent-blue); }
-.org-label.fifa strong { color: var(--accent-red); }
-.org-label.uefa strong { color: var(--accent-purple); }
 
 /* Official Site Button */
 .btn-official-site {
@@ -3222,6 +3138,15 @@
   font-family: 'Rajdhani', sans-serif;
 }
 
+.city-country-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .city-stadium-name {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -3285,7 +3210,6 @@
 .city-card:hover,
 .city-card-full:hover,
 .clip-card:hover,
-.stat-card-kpi:hover,
 .tournament-card:hover,
 .mascot-card:hover,
 .podium-card:hover {
@@ -3323,7 +3247,6 @@
 .city-card-img-wrap img,
 .city-card-img,
 .clip-card,
-.stat-card-kpi,
 .tournament-card,
 .mascot-card,
 .podium-card,

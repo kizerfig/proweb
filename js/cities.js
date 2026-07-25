@@ -107,17 +107,16 @@ function renderCitiesGrid(container, cities) {
     return;
   }
 
-  container.innerHTML = cities.map(city => {
-    const isoCode = city.countryCode || (city.country === 'México' ? 'MEX' : city.country === 'Canadá' ? 'CAN' : 'USA');
-
-    return `
+  container.innerHTML = cities.map(city => `
       <article class="city-card">
         <div class="city-card-img-wrap">
-          <img src="${city.image}" alt="${city.stadium}" loading="lazy" />
-          <span class="country-badge-iso ${isoCode}">${isoCode}</span>
+          <img src="${city.stadiumImage || city.image}" alt="${city.stadium}" loading="lazy" />
         </div>
         <div class="city-card-content">
           <h3 class="city-card-name">${city.name}</h3>
+          <div class="city-country-name">
+            🌎 <strong>País:</strong> ${city.country}
+          </div>
           <div class="city-stadium-name">
             📍 <strong>Estadio:</strong> ${city.stadium}
           </div>
@@ -129,8 +128,7 @@ function renderCitiesGrid(container, cities) {
           </a>
         </div>
       </article>
-    `;
-  }).join('');
+    `).join('');
 }
 
 /**
@@ -141,7 +139,12 @@ async function loadCityDetailView() {
   if (!container) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-  const cityId = urlParams.get('id') || 'c1';
+  const cityId = urlParams.get('id');
+
+  if (!cityId) {
+    container.innerHTML = `<div class="error-box"><p>No se indicó ninguna sede.</p><a href="ciudades-anfitrionas.html" class="btn-retry">← Volver a Ciudades</a></div>`;
+    return;
+  }
 
   renderDetailSkeleton(container);
 
@@ -149,10 +152,11 @@ async function loadCityDetailView() {
     const city = await getCityById(cityId);
 
     if (!city) {
-      container.innerHTML = `<div class="error-box"><p>No se encontró la información de la sede solicitada.</p><a href="ciudades.html" class="btn-retry">← Volver a Ciudades</a></div>`;
+      container.innerHTML = `<div class="error-box"><p>No se encontró la información de la sede solicitada.</p><a href="ciudades-anfitrionas.html" class="btn-retry">← Volver a Ciudades</a></div>`;
       return;
     }
 
+    document.title = `${city.stadium} - ${city.name} | Copa Mundial FIFA 2026`;
     renderCityDetailHTML(container, city);
 
   } catch (error) {
@@ -161,7 +165,7 @@ async function loadCityDetailView() {
       <div class="error-box" style="text-align: center; padding: 3rem;">
         <h3>Error de conexión</h3>
         <p>No se pudo consultar los detalles técnicos de esta ciudad anfitriona.</p>
-        <a href="ciudades.html" class="btn-retry" style="display: inline-block; margin-top: 1rem; text-decoration: none;">← Volver a Ciudades</a>
+        <a href="ciudades-anfitrionas.html" class="btn-retry" style="display: inline-block; margin-top: 1rem; text-decoration: none;">← Volver a Ciudades</a>
       </div>
     `;
   }
@@ -171,83 +175,40 @@ async function loadCityDetailView() {
  * Renderiza el detalle completo de la ciudad y su estadio
  */
 function renderCityDetailHTML(container, city) {
-  const isoCode = city.countryCode || (city.country === 'México' ? 'MEX' : city.country === 'Canadá' ? 'CAN' : 'USA');
   const stadiumInfo = city.stadiumInfo || {};
   const matches = city.matches || [];
-
-  container.innerHTML = `
-    <!-- Navegación superior -->
-    <div style="margin-bottom: 1.5rem;">
-      <a href="ciudades.html" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent-mint); text-decoration: none; font-weight: 600; font-size: 0.95rem;">
-        &larr; Volver a Ciudades Anfitrionas
-      </a>
-    </div>
-
-    <!-- Hero / Banner Panorámico de la Ciudad -->
-    <div style="position: relative; width: 100%; height: 360px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
-      <img src="${city.image}" alt="${city.name}" style="width: 100%; height: 100%; object-fit: cover;" />
-      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(13, 17, 23, 0.95) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;">
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-          <span class="country-badge-iso ${isoCode}" style="position: static; font-size: 0.85rem; padding: 4px 12px;">${isoCode}</span>
-          <span style="color: var(--text-secondary); font-size: 1rem; font-weight: 600;">${city.country}</span>
-        </div>
-        <h1 style="font-size: 2.8rem; font-weight: 900; color: #FFF; margin: 0; font-family: 'Rajdhani', sans-serif;">${city.name}</h1>
-        <p style="color: var(--accent-mint); font-size: 1.2rem; font-weight: 700; margin-top: 0.25rem;">📍 Estadio Principal: ${city.stadium}</p>
+  const extraInfo = city.extraInfo;
+  const heroImage = city.stadiumImage || stadiumInfo.image || city.image;
+  const logoHtml = city.logo
+    ? `<img src="${city.logo}" alt="Logo ${city.name}" style="width: 56px; height: 56px; object-fit: contain; background: rgba(255,255,255,0.08); border-radius: var(--radius-md); padding: 0.35rem;" />`
+    : '';
+  const officialLinkHtml = city.officialUrl
+    ? `<a href="${city.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn-official-site" style="margin-top: 1.5rem; display: inline-flex;">Sitio oficial FIFA &rarr;</a>`
+    : '';
+  const extraInfoHtml = extraInfo && (extraInfo.title || extraInfo.description)
+    ? `
+      <div style="background: rgba(0, 245, 140, 0.06); border: 1px solid rgba(0, 245, 140, 0.2); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 1.5rem;">
+        ${extraInfo.title ? `<h3 style="font-size: 1.1rem; font-weight: 800; color: var(--accent-mint); margin: 0 0 0.5rem;">${extraInfo.title}</h3>` : ''}
+        ${extraInfo.description ? `<p style="color: var(--text-secondary); margin: 0; line-height: 1.6;">${extraInfo.description}</p>` : ''}
+        ${extraInfo.hashtag ? `<p style="color: var(--text-primary); margin: 0.75rem 0 0; font-weight: 700;">${extraInfo.hashtag}</p>` : ''}
       </div>
-    </div>
-
-    <!-- Sección: Acerca de la Ciudad -->
-    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;">
-      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
-        🌆 Acerca de ${city.name}
-      </h2>
-      <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin: 0;">
-        ${city.description}
-      </p>
-    </div>
-
-    <!-- Sección: Información del Estadio -->
-    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;">
-      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
-        🏟️ Información Técnica del Estadio
-      </h2>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; align-items: center;">
-        <div>
-          <img src="${stadiumInfo.image || city.image}" alt="${city.stadium}" style="width: 100%; height: 220px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" />
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-            <span style="color: var(--text-secondary);">Nombre del Estadio:</span>
-            <strong style="color: var(--text-primary);">${city.stadium}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-            <span style="color: var(--text-secondary);">Capacidad Oficial:</span>
-            <strong style="color: var(--accent-mint); font-weight: 800;">${city.capacity}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-            <span style="color: var(--text-secondary);">Tipo de Terreno:</span>
-            <strong style="color: var(--text-primary);">${stadiumInfo.surface || 'Césped Híbrido FIFA'}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-            <span style="color: var(--text-secondary);">Año de Apertura:</span>
-            <strong style="color: var(--text-primary);">${stadiumInfo.opened || '2010'}</strong>
-          </div>
-          <div style="display: flex; justify-content: space-between;">
-            <span style="color: var(--text-secondary);">Coordenadas:</span>
-            <strong style="color: var(--text-primary);">${stadiumInfo.coordinates || 'Coordenadas Oficiales'}</strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección: Partidos Programados en esta Sede -->
+    `
+    : '';
+  const technicalRows = [
+    { label: 'Nombre del Estadio', value: city.stadium },
+    { label: 'Ciudad Sede', value: city.name },
+    { label: 'País', value: city.country },
+    { label: 'Capacidad Oficial', value: city.capacity, accent: true },
+    stadiumInfo.coordinates ? { label: 'Coordenadas', value: stadiumInfo.coordinates } : null,
+    stadiumInfo.surface ? { label: 'Tipo de Terreno', value: stadiumInfo.surface } : null,
+    stadiumInfo.opened ? { label: 'Año de Apertura', value: stadiumInfo.opened } : null
+  ].filter(Boolean);
+  const matchesHtml = matches.length > 0
+    ? `
     <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem;">
       <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
         ⚽ Partidos Programados en esta Sede
       </h2>
-
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
         ${matches.map(m => `
           <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem;">
@@ -260,6 +221,62 @@ function renderCityDetailHTML(container, city) {
         `).join('')}
       </div>
     </div>
+    `
+    : '';
+
+  container.innerHTML = `
+    <div style="margin-bottom: 1.5rem;">
+      <a href="ciudades-anfitrionas.html" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--accent-mint); text-decoration: none; font-weight: 600; font-size: 0.95rem;">
+        &larr; Volver a Ciudades Anfitrionas
+      </a>
+    </div>
+
+    <div style="position: relative; width: 100%; height: 360px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+      <img src="${heroImage}" alt="${city.stadium}" style="width: 100%; height: 100%; object-fit: cover;" />
+      <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(13, 17, 23, 0.95) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          ${logoHtml}
+          <span style="color: var(--text-secondary); font-size: 1rem; font-weight: 600;">🌎 ${city.country} · ${city.name}</span>
+        </div>
+        <h1 style="font-size: 2.8rem; font-weight: 900; color: #FFF; margin: 0; font-family: 'Rajdhani', sans-serif;">${city.stadium}</h1>
+        <p style="color: var(--accent-mint); font-size: 1.1rem; font-weight: 700; margin-top: 0.35rem;">🏟️ Estadio oficial de ${city.name}</p>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
+        🌆 Acerca de ${city.name}
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin: 0;">
+        ${city.description}
+      </p>
+    </div>
+
+    <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem; font-family: 'Rajdhani', sans-serif; display: flex; align-items: center; gap: 0.5rem;">
+        🏟️ Detalle del Estadio
+      </h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; align-items: start;">
+        <div>
+          <img src="${stadiumInfo.image || heroImage}" alt="${city.stadium}" style="width: 100%; height: 240px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-color);" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+          ${technicalRows.map(row => `
+            <div style="display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+              <span style="color: var(--text-secondary);">${row.label}:</span>
+              <strong style="color: ${row.accent ? 'var(--accent-mint)' : 'var(--text-primary)'}; text-align: right;">${row.value}</strong>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      ${extraInfoHtml}
+      ${officialLinkHtml}
+    </div>
+
+    ${matchesHtml}
   `;
 }
 

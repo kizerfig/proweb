@@ -66,12 +66,7 @@ function renderTournamentCards(container, tournamentsList) {
  if (item.org === 'UEFA') orgClass = 'uefa';
 
  return `
- <article class="tournament-card ${orgClass}">
- 
- <!-- Left Icon Container -->
- <div class="tournament-card-icon ${orgClass}">
- <span>${item.icon || ''}</span>
- </div>
+ <article class="tournament-card">
 
  <!-- Center Body Info -->
  <div class="tournament-card-body">
@@ -92,7 +87,6 @@ function renderTournamentCards(container, tournamentsList) {
 
  <!-- Right Action Column -->
  <div class="tournament-card-action">
- <span class="org-label ${orgClass}">Organiza <strong>${item.org}</strong></span>
  <a href="${item.officialUrl || item.url || 'https://www.fifa.com/'}" 
  class="btn-official-site ${orgClass}" 
  target="_blank" 
