@@ -2285,30 +2285,26 @@ function normalizeTournamentItem(item) {
   };
 }
 
-export async function getEvents(forceRefresh = false) {
+export async function fetchEventsRaw(forceRefresh = false) {
   try {
     const data = await fetchWithCache('events', forceRefresh);
     const list = Array.isArray(data) ? data : (data?.events || data?.data || []);
-    const normalized = list.map(normalizeEventItem).filter(Boolean);
-    if (normalized.length > 0) return normalized;
+    if (list.length > 0) return list;
   } catch (error) {
-    console.warn('[getEvents] Fallback a MOCK_DATA.tournaments:', error);
+    console.warn('[fetchEventsRaw] Fallback a MOCK_DATA.tournaments:', error);
   }
 
-  return MOCK_DATA.tournaments.map(normalizeEventItem).filter(Boolean);
+  return MOCK_DATA.tournaments;
+}
+
+export async function getEvents(forceRefresh = false) {
+  const list = await fetchEventsRaw(forceRefresh);
+  return list.map(normalizeEventItem).filter(Boolean);
 }
 
 export async function getTournaments(forceRefresh = false) {
-  try {
-    const data = await fetchWithCache('torneos', forceRefresh);
-    const list = Array.isArray(data) ? data : (data?.tournaments || data?.torneos || data?.data || []);
-    const normalized = list.map(normalizeTournamentItem).filter(Boolean);
-    if (normalized.length > 0) return normalized;
-  } catch (error) {
-    console.warn('[getTournaments] Fallback a MOCK_DATA.tournaments:', error);
-  }
-
-  return MOCK_DATA.tournaments.map(normalizeTournamentItem).filter(Boolean);
+  const list = await fetchEventsRaw(forceRefresh);
+  return list.map(normalizeTournamentItem).filter(Boolean);
 }
 
 export async function getODS() {
