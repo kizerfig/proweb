@@ -1045,19 +1045,24 @@ export async function getMatchById(id = 'm1', forceRefresh = false) {
     const matchesList = await getMatches({}, forceRefresh);
     const basicMatch = matchesList.find(m => String(m.id) === String(id)) || matchesList[0];
     detail = {
-      ...MATCH_DETAILS_MOCK['m1'],
       id: basicMatch?.id || id,
-      city: basicMatch?.city || 'Ciudad de México',
-      stadium: basicMatch?.stadium || 'Estadio Azteca',
+      city: basicMatch?.city || '',
+      stadium: basicMatch?.stadium || '',
       status: basicMatch?.status || 'Programado',
       statusLabel: basicMatch?.statusLabel || basicMatch?.status || 'Programado',
       statusClass: basicMatch?.statusClass || 'scheduled',
       round: basicMatch?.round || 'Fase de Grupos',
-      group: basicMatch?.group || 'Grupo A',
-      team1: basicMatch?.team1 || { code: 'MEX', name: 'México', score: '-' },
-      team2: basicMatch?.team2 || { code: 'ARG', name: 'Argentina', score: '-' },
-      datetime: basicMatch?.datetime || '15 jun • 18:00',
-      referee: basicMatch?.referee || ''
+      group: basicMatch?.group || '',
+      team1: basicMatch?.team1 || { code: '???', name: 'Equipo Local', score: '-' },
+      team2: basicMatch?.team2 || { code: '???', name: 'Equipo Visitante', score: '-' },
+      datetime: basicMatch?.datetime || '',
+      referee: basicMatch?.referee || '',
+      // No copiar timeline/stats/lineups/highlights del mock m1,
+      // para no mostrar eventos de un partido diferente
+      timeline: [],
+      stats: null,
+      lineups: null,
+      highlights: null
     };
   }
 
