@@ -2197,6 +2197,75 @@ export async function getRecords(forceRefresh = false) {
 }
 
 // Public API Methods
+export async function getODS() {
+  return [
+    {
+      id: 3,
+      number: '3',
+      title: 'Salud y Bienestar',
+      icon: '❤️',
+      desc: 'Promoción del deporte y actividad física. El fútbol como herramienta para la salud pública en 48 naciones participantes.',
+      stat: '🌱 Salud Pública & Deporte'
+    },
+    {
+      id: 4,
+      number: '4',
+      title: 'Educación de Calidad',
+      icon: '📚',
+      desc: 'Programas educativos FIFA en comunidades anfitrionas. Acceso igualitario a formación deportiva para jóvenes de toda la región.',
+      stat: '🎓 Formación Juvenil FIFA'
+    },
+    {
+      id: 5,
+      number: '5',
+      title: 'Igualdad de Género',
+      icon: '⚡',
+      desc: 'El Mundial 2026 potencia el desarrollo del fútbol femenino y promueve la igualdad de oportunidades en el deporte.',
+      stat: '⚡ Igualdad & Inclusión'
+    },
+    {
+      id: 7,
+      number: '7',
+      title: 'Energía Asequible',
+      icon: '☀️',
+      desc: '100% de los estadios sede operarán con energía renovable. Iluminación LED de última generación en los 16 recintos.',
+      stat: '☀️ 100% Energía Renovable'
+    },
+    {
+      id: 11,
+      number: '11',
+      title: 'Ciudades Sostenibles',
+      icon: '🏙️',
+      desc: 'Infraestructura de transporte público reforzada en todas las ciudades sede para minimizar la huella de carbono del evento.',
+      stat: '🏙️ Movilidad Verde Sede'
+    },
+    {
+      id: 13,
+      number: '13',
+      title: 'Acción por el Clima',
+      icon: '🌍',
+      desc: 'Compensación de emisiones de CO2 del torneo mediante proyectos de reforestación en los tres países anfitriones.',
+      stat: '🌍 Huella Carbono Neutra'
+    },
+    {
+      id: 16,
+      number: '16',
+      title: 'Paz e Instituciones',
+      icon: '🕊️',
+      desc: 'El fútbol como diplomacia deportiva: el Mundial une culturas y promueve el diálogo entre 48 naciones del planeta.',
+      stat: '🕊️ Diplomacia & Unión'
+    },
+    {
+      id: 17,
+      number: '17',
+      title: 'Alianzas para los Objetivos',
+      icon: '🤝',
+      desc: 'FIFA, CONMEBOL, UEFA y confederaciones aliadas coordinan iniciativas globales de sostenibilidad con organismos de la ONU.',
+      stat: '🤝 Alianzas Globales ONU'
+    }
+  ];
+}
+
 export const FIFA_API = {
   getNews,
   getNewsById,
@@ -2217,7 +2286,7 @@ export const FIFA_API = {
   getKnockout: (forceRefresh = false) => fetchWithCache('eliminatorias', forceRefresh),
   getEvents: () => fetchWithCache('events'),
   getTournaments: (forceRefresh = false) => fetchWithCache('torneos', forceRefresh),
-  getODS: () => fetchWithCache('ods'),
+  getODS: () => getODS(),
   getBall: (forceRefresh = false) => getBall(forceRefresh),
   getMascots: (forceRefresh = false) => getMascots(forceRefresh),
   getSound: (forceRefresh = false) => getSound(forceRefresh),
